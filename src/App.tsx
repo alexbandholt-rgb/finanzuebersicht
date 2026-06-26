@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Save, Check, Settings2, Trash2, CalendarDays, LogOut, UserCircle } from 'lucide-react'
 import type { MonthData } from './types'
 import { MONTH_NAMES } from './types'
-import { loadMonth, saveMonth, getAllMonths, loadStammdaten, saveStammdaten, deleteMonth } from './lib/storage'
+import { loadMonth, saveMonth, loadStammdaten, saveStammdaten, deleteMonth } from './lib/storage'
 import type { Stammdaten } from './lib/storage'
 import { cloudLoadMonth, cloudSaveMonth, cloudDeleteMonth, cloudGetAllMonths, cloudLoadStammdaten, cloudSaveStammdaten } from './lib/cloudStorage'
 import { supabase } from './lib/supabase'
@@ -107,21 +107,6 @@ export default function App() {
     saveStammdaten(updated)
   }
 
-  const handleCopyMonthToStammdaten = () => {
-    const updated: typeof stammdaten = {
-      ...stammdaten,
-      einkuenfte: data.einkuenfte,
-      wohnungskosten: data.wohnungskosten,
-      auto: data.auto,
-      fixkosten: data.fixkosten,
-      sparen: data.sparen,
-      versicherungen: data.versicherungen,
-      jaehrliche_kosten: data.jaehrliche_kosten,
-      sparRate: data.sparRate,
-    }
-    setStammdaten(updated)
-    saveStammdaten(updated)
-  }
 
   const handleDelete = async () => {
     deleteMonth(year, month)
