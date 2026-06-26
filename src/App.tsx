@@ -47,6 +47,7 @@ export default function App() {
   const [compareMonths, setCompareMonths] = useState<MonthData[]>([])
   const [allMonths, setAllMonths] = useState<{ year: number; month: number }[]>([])
   const [saved, setSaved] = useState(false)
+  const [isDirty, setIsDirty] = useState(false)
   const [comparePickerOpen, setComparePickerOpen] = useState(false)
   const [selectedForCompare, setSelectedForCompare] = useState<string[]>([])
   const [futureLimit, setFutureLimit] = useState(0)
@@ -91,6 +92,7 @@ export default function App() {
   // Monat wechseln → aus Cloud laden
   useEffect(() => {
     if (!user) return
+    setIsDirty(false)
     const load = async () => {
       const d = await cloudLoadMonth(year, month)
       if (d) { setData(d); return }
@@ -102,18 +104,19 @@ export default function App() {
     load()
   }, [year, month, user])
 
-  // Auto-save: 1 Sekunde nach letzter Änderung
+  // Auto-save: 1 Sekunde nach letzter Nutzer-Änderung
   useEffect(() => {
-    if (!user) return
+    if (!user || !isDirty) return
     const timer = setTimeout(async () => {
       await cloudSaveMonth(data)
       const updated = await cloudGetAllMonths()
       setAllMonths(updated)
+      setIsDirty(false)
       setSaved(true)
       setTimeout(() => setSaved(false), 1500)
     }, 1000)
     return () => clearTimeout(timer)
-  }, [data])
+  }, [data, isDirty])
 
   const handleDelete = async () => {
     await cloudDeleteMonth(year, month)
@@ -315,7 +318,7 @@ return (
 
         {/* Content */}
         <main style={{ padding: isMobile ? '1rem' : '2rem 2.5rem' }}>
-          {tab === 'monat' && <MonthView data={data} onChange={setData} />}
+          {tab === 'monat' && <MonthView data={data} onChange={d => { setData(d); setIsDirty(true) }} />}
           {tab === 'jahresuebersicht' && <JahresUebersicht year={THIS_YEAR} allMonths={allMonths} />}
           {tab === 'compare' && <CompareView months={compareMonths} />}
           {tab === 'konto' && <AccountView email={user.email ?? ''} />}
