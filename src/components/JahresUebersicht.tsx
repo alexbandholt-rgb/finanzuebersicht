@@ -43,6 +43,19 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   )
 }
 
+const CustomXTick = ({ x, y, payload, data }: any) => {
+  const m = data?.find((d: any) => d.name === payload.value)
+  const hasNote = m?.notes?.trim()
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={0} dy={12} textAnchor="middle" fontSize={12} fill="#94a3b8">{payload.value}</text>
+      {hasNote && (
+        <circle cx={0} cy={22} r={3} fill="#f59e0b" />
+      )}
+    </g>
+  )
+}
+
 const SparquoteLabel = ({ x, y, width, index, data }: any) => {
   const m = data?.[index]
   if (!m || !m.sparquote) return null
@@ -134,9 +147,10 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
             <XAxis
               dataKey="name"
-              tick={{ fill: '#94a3b8', fontSize: 12 }}
+              tick={(props: any) => <CustomXTick {...props} data={monate} />}
               axisLine={false}
               tickLine={false}
+              height={40}
             />
             <YAxis
               tick={{ fill: '#94a3b8', fontSize: 11 }}
@@ -169,7 +183,7 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
             {monate.filter(m => m.notes.trim()).map((m, i) => (
               <div key={i} className="flex gap-3 items-start">
                 <div className="mt-0.5 flex-shrink-0 w-6 h-6 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center">
-                  <FileText size={12} className="text-amber-500" />
+                  <FileText size={12} style={{ color: '#f59e0b' }} />
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-slate-500 mb-0.5">{m.fullName}</p>
