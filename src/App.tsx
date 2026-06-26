@@ -61,14 +61,17 @@ export default function App() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Nach Login: Daten laden + ggf. migrieren
+  // Nach Login: Daten laden + ggf. migrieren (nur einmalig pro Nutzer)
   useEffect(() => {
     if (!user) return
     const init = async () => {
+      const migratedKey = `finanz_migrated_${user.id}`
+      const alreadyMigrated = localStorage.getItem(migratedKey)
       const localKeys = getAllMonths()
-      if (localKeys.length > 0) {
+      if (!alreadyMigrated && localKeys.length > 0) {
         setMigrating(true)
         await migrateLocalStorageToCloud()
+        localStorage.setItem(migratedKey, '1')
         setMigrating(false)
       }
       const [cloudMonths, cloudStamm, cloudMonth] = await Promise.all([
