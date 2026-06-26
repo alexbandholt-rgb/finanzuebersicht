@@ -81,7 +81,7 @@ export default function MonthView({ data, onChange }: Props) {
           /></div>
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4" style={{ position: 'sticky', top: '1.5rem', alignSelf: 'start' }}>
           <Summary data={data} />
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex flex-col gap-2">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Notizen</p>
