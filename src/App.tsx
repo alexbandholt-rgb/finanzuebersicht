@@ -164,6 +164,7 @@ export default function App() {
     { id: 'monat' as Tab, label: 'Monatsübersicht', icon: <BarChart2 size={16} /> },
     { id: 'stammdaten' as Tab, label: 'Stammdaten', icon: <Settings2 size={16} /> },
     { id: 'jahresuebersicht' as Tab, label: 'Jahresübersicht', icon: <CalendarDays size={16} /> },
+    { id: 'konto' as Tab, label: 'Konto', icon: <UserCircle size={16} /> },
   ]
 
   if (user === undefined) {
@@ -180,7 +181,7 @@ return (
     <div className="min-h-screen text-slate-800 flex" style={{ background: '#f0f2f7' }}>
 
       {/* Linke Seitenleiste */}
-      <aside style={{ width: '208px', flexShrink: 0, background: 'white', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', paddingTop: '1.5rem', boxShadow: '1px 0 4px rgba(0,0,0,0.04)', height: '100vh', position: 'sticky', top: 0 }}>
+      <aside style={{ width: '208px', flexShrink: 0, background: 'white', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', paddingTop: '1.5rem', boxShadow: '1px 0 4px rgba(0,0,0,0.04)', minHeight: '100vh' }}>
         <div className="flex items-center gap-2 px-5 mb-8">
           <BarChart2 size={18} className="text-emerald-500" />
           <span className="font-bold text-slate-800 text-sm">Finanzübersicht</span>
@@ -218,23 +219,6 @@ return (
           </div>
         </nav>
 
-        {/* Konto + E-Mail fest am Ende der Sidebar */}
-        <div style={{ marginTop: 'auto', padding: '1rem 0.75rem', borderTop: '1px solid #f1f5f9' }}>
-          <button
-            onClick={() => setTab('konto')}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all w-full text-left ${
-              tab === 'konto'
-                ? 'bg-violet-50 text-violet-700 border border-violet-200'
-                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
-            }`}
-          >
-            <UserCircle size={16} className={tab === 'konto' ? 'text-violet-500' : 'text-slate-400'} />
-            <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              <span>Konto</span>
-              <span style={{ fontSize: '10px', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</span>
-            </div>
-          </button>
-        </div>
       </aside>
 
       {/* Hauptbereich */}
