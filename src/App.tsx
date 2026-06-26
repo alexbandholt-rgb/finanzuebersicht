@@ -4,7 +4,7 @@ import type { MonthData } from './types'
 import { MONTH_NAMES } from './types'
 import { loadMonth, saveMonth, getAllMonths, loadStammdaten, saveStammdaten, deleteMonth } from './lib/storage'
 import type { Stammdaten } from './lib/storage'
-import { cloudLoadMonth, cloudSaveMonth, cloudDeleteMonth, cloudGetAllMonths, cloudLoadStammdaten, cloudSaveStammdaten, migrateLocalStorageToCloud } from './lib/cloudStorage'
+import { cloudLoadMonth, cloudSaveMonth, cloudDeleteMonth, cloudGetAllMonths, cloudLoadStammdaten, cloudSaveStammdaten } from './lib/cloudStorage'
 import { supabase } from './lib/supabase'
 import type { User } from '@supabase/supabase-js'
 import MonthView from './components/MonthView'
@@ -44,7 +44,6 @@ export default function App() {
   const [futureLimit, setFutureLimit] = useState(0)
   const [pastLimit, setPastLimit] = useState(0)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
-  const [migrating, setMigrating] = useState(false)
 
   const maxFuture = addMonths(THIS_YEAR, THIS_MONTH, futureLimit)
   const minPast = addMonths(THIS_YEAR, THIS_MONTH, -pastLimit)
@@ -62,21 +61,10 @@ export default function App() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Nach Login: Daten laden + ggf. migrieren (nur einmalig pro Nutzer)
+  // Nach Login: Daten aus Cloud laden
   useEffect(() => {
     if (!user) return
     const init = async () => {
-      const migratedKey = `finanz_migrated_${user.id}`
-      const alreadyMigrated = localStorage.getItem(migratedKey)
-      const localKeys = getAllMonths()
-      if (!alreadyMigrated && localKeys.length > 0) {
-        setMigrating(true)
-        await migrateLocalStorageToCloud()
-        localStorage.setItem(migratedKey, '1')
-        // Lokale Daten löschen damit andere Nutzer sie nicht übernehmen
-        localStorage.removeItem('finanz_all_months')
-        setMigrating(false)
-      }
       const [cloudMonths, cloudStamm, cloudMonth] = await Promise.all([
         cloudGetAllMonths(),
         cloudLoadStammdaten(),
@@ -189,16 +177,7 @@ export default function App() {
 
   if (user === null) return <AuthScreen />
 
-  if (migrating) {
-    return (
-      <div style={{ minHeight: '100vh', background: '#f0f2f7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '12px' }}>
-        <p style={{ color: '#8b5cf6', fontSize: '14px', fontWeight: 600 }}>Daten werden in die Cloud übertragen…</p>
-        <p style={{ color: '#94a3b8', fontSize: '12px' }}>Einen Moment bitte.</p>
-      </div>
-    )
-  }
-
-  return (
+return (
     <div className="min-h-screen text-slate-800 flex" style={{ background: '#f0f2f7' }}>
 
       {/* Linke Seitenleiste */}
