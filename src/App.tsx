@@ -14,6 +14,7 @@ import JahresUebersicht from './components/JahresUebersicht'
 import AuthScreen from './components/AuthScreen'
 import AccountView from './components/AccountView'
 import NutzerView from './components/NutzerView'
+import NameSetupScreen from './components/NameSetupScreen'
 
 const ADMIN_EMAIL = 'alex.bandholt@web.de'
 
@@ -164,6 +165,10 @@ export default function App() {
   }
 
   if (user === null) return <AuthScreen />
+
+  if (user && !user.user_metadata?.name) {
+    return <NameSetupScreen onDone={() => window.location.reload()} />
+  }
 
 return (
     <div className="min-h-screen text-slate-800 flex" style={{ background: '#f8fafc' }}>
