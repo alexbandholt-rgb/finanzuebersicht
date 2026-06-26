@@ -274,10 +274,16 @@ return (
                 </div>
               )
             )}
+            {tab === 'monat' && (
+              <button onClick={() => setDeleteConfirmOpen(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-red-50 text-red-500 border border-red-200 hover:bg-red-100 transition-all">
+                <Trash2 size={13} />
+                {!isMobile && 'Löschen'}
+              </button>
+            )}
             <div style={{ flex: 1 }} />
             {tab === 'monat' && saved && (
               <span className="flex items-center gap-1.5 text-xs text-emerald-500 font-medium px-2">
-                <Check size={13} /> Gespeichert
+                <Check size={13} /> {!isMobile && 'Gespeichert'}
               </span>
             )}
             {!isMobile && (
@@ -288,7 +294,7 @@ return (
             )}
           </div>
 
-          {/* Zweite Zeile (nur Monat-Tab): Vergangener/Zukünftiger Monat + Löschen */}
+          {/* Zweite Zeile: Vergangener/Zukünftiger Monat */}
           {tab === 'monat' && (
             <div className="flex items-center gap-2 mt-2">
               <button onClick={() => setPastLimit(l => l + 1)} className="text-xs text-slate-500 hover:text-violet-600 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-violet-300 bg-white">
@@ -298,20 +304,16 @@ return (
                 <button onClick={async () => {
                   setFutureLimit(l => l + 1)
                   const p = addMonths(year, month, 1)
-                  setYear(p.year); setMonth(p.month)
                   const newMonth = createNewMonth(p.year, p.month, data)
-                  setData(newMonth)
                   await cloudSaveMonth(newMonth)
-                  setAllMonths(await cloudGetAllMonths())
+                  const updated = await cloudGetAllMonths()
+                  setAllMonths(updated)
+                  setData(newMonth)
+                  setYear(p.year); setMonth(p.month)
                 }} className="text-xs text-slate-500 hover:text-violet-600 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-violet-300 bg-white">
                   + Zukünftiger Monat
                 </button>
               )}
-              <div style={{ flex: 1 }} />
-              <button onClick={() => setDeleteConfirmOpen(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-red-50 text-red-500 border border-red-200 hover:bg-red-100 transition-all">
-                <Trash2 size={13} />
-                Löschen
-              </button>
             </div>
           )}
         </header>
