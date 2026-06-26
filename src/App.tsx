@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Save, Check, Settings2, Trash2, FolderInput, CalendarDays, LogOut } from 'lucide-react'
+import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Save, Check, Settings2, Trash2, CalendarDays, LogOut } from 'lucide-react'
 import type { MonthData } from './types'
 import { MONTH_NAMES } from './types'
 import { loadMonth, saveMonth, getAllMonths, loadStammdaten, saveStammdaten, deleteMonth } from './lib/storage'
@@ -262,10 +262,6 @@ export default function App() {
                   + Zukünftiger Monat
                 </button>
               )}
-              <button onClick={handleCopyMonthToStammdaten} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium bg-violet-50 text-violet-600 border border-violet-200 hover:bg-violet-100 transition-all">
-                <FolderInput size={14} />
-                → Stammdaten
-              </button>
               <button onClick={() => setDeleteConfirmOpen(true)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium bg-red-50 text-red-500 border border-red-200 hover:bg-red-100 transition-all">
                 <Trash2 size={14} />
                 Löschen
