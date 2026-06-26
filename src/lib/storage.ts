@@ -54,7 +54,7 @@ export function loadMonth(year: number, month: number): MonthData {
     versicherungen: copyItems(stammdaten.versicherungen),
     jaehrliche_kosten: copyItems(stammdaten.jaehrliche_kosten),
     sparRate: stammdaten.sparRate ?? 10,
-    sparRateActive: stammdaten.sparRateActive ?? true,
+    sparRateActive: stammdaten.sparRateActive ?? false,
   }
 }
 
