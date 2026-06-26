@@ -15,6 +15,7 @@ import AuthScreen from './components/AuthScreen'
 import AccountView from './components/AccountView'
 import NutzerView from './components/NutzerView'
 import NameSetupScreen from './components/NameSetupScreen'
+import NewPasswordScreen from './components/NewPasswordScreen'
 
 const ADMIN_EMAIL = 'alex.bandholt@web.de'
 
@@ -34,6 +35,10 @@ function compareYM(y1: number, m1: number, y2: number, m2: number) {
 type Tab = 'monat' | 'stammdaten' | 'jahresuebersicht' | 'compare' | 'konto' | 'nutzer'
 
 export default function App() {
+  const [isPasswordReset] = useState(() => {
+    const hash = window.location.hash
+    return hash.includes('type=recovery')
+  })
   const [user, setUser] = useState<User | null | undefined>(undefined)
   const [year, setYear] = useState(THIS_YEAR)
   const [month, setMonth] = useState(THIS_MONTH)
@@ -163,6 +168,8 @@ export default function App() {
       </div>
     )
   }
+
+  if (isPasswordReset && user) return <NewPasswordScreen />
 
   if (user === null) return <AuthScreen />
 
