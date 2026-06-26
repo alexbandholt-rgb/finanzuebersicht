@@ -71,7 +71,7 @@ export default function Summary({ data }: Props) {
       {/* Pie chart */}
       {pieData.length > 0 && (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Verteilung</p>
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Verteilung</p>
           <div className="flex items-center gap-3">
             <div className="w-32 h-32 shrink-0">
               <ResponsiveContainer width="100%" height="100%">
