@@ -10,14 +10,26 @@ const fmt = (n: number) =>
   n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
 
 const BLOCKS = [
-  { key: 'einkuenfte', label: 'Einkünfte', color: '#10b981', bg: '#f0fdf4', border: '#bbf7d0' },
-  { key: 'wohnungskosten', label: 'Wohnung', color: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe' },
-  { key: 'auto', label: 'Auto', color: '#f59e0b', bg: '#fffbeb', border: '#fde68a' },
-  { key: 'fixkosten', label: 'Fixkosten', color: '#8b5cf6', bg: '#f5f3ff', border: '#ddd6fe' },
-  { key: 'sparen', label: 'Sparen', color: '#ec4899', bg: '#fdf2f8', border: '#fbcfe8' },
-  { key: 'versicherungen', label: 'Versicherungen', color: '#0ea5e9', bg: '#f0f9ff', border: '#bae6fd' },
-  { key: 'jaehrlichProMonat', label: 'Jährl. / Monat', color: '#f97316', bg: '#fff7ed', border: '#fed7aa' },
+  { key: 'einkuenfte', label: 'Einkünfte', color: '#10b981', bg: '#f0fdf4', border: '#bbf7d0', sectionId: 'section-einkuenfte' },
+  { key: 'wohnungskosten', label: 'Wohnung', color: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe', sectionId: 'section-wohnungskosten' },
+  { key: 'auto', label: 'Auto', color: '#f59e0b', bg: '#fffbeb', border: '#fde68a', sectionId: 'section-auto' },
+  { key: 'fixkosten', label: 'Fixkosten', color: '#8b5cf6', bg: '#f5f3ff', border: '#ddd6fe', sectionId: 'section-fixkosten' },
+  { key: 'sparen', label: 'Sparen', color: '#ec4899', bg: '#fdf2f8', border: '#fbcfe8', sectionId: 'section-sparen' },
+  { key: 'versicherungen', label: 'Versicherungen', color: '#0ea5e9', bg: '#f0f9ff', border: '#bae6fd', sectionId: 'section-versicherungen' },
+  { key: 'jaehrlichProMonat', label: 'Jährl. / Monat', color: '#f97316', bg: '#fff7ed', border: '#fed7aa', sectionId: 'section-jaehrliche_kosten' },
 ]
+
+function scrollToSection(sectionId: string, color: string) {
+  const el = document.getElementById(sectionId)
+  if (!el) return
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  const card = el.firstElementChild as HTMLElement | null
+  if (!card) return
+  const prev = card.style.boxShadow
+  card.style.transition = 'box-shadow 0.2s'
+  card.style.boxShadow = `0 0 0 3px ${color}66`
+  setTimeout(() => { card.style.boxShadow = prev }, 1200)
+}
 
 const PIE_CATEGORIES = [
   { key: 'wohnungskosten', name: 'Wohnung', color: '#3b82f6' },
@@ -113,7 +125,15 @@ export default function Summary({ data }: Props) {
           const val = (s as any)[block.key] as number
           const pct = s.einkuenfte > 0 ? Math.min(100, (val / s.einkuenfte) * 100) : 0
           return (
-            <div key={block.key} className="rounded-lg border flex flex-col gap-1 shadow-sm" style={{ background: block.bg, borderColor: block.border, padding: '6px 8px' }}>
+            <div
+              key={block.key}
+              className="rounded-lg border flex flex-col gap-1 shadow-sm"
+              style={{ background: block.bg, borderColor: block.border, padding: '6px 8px', cursor: 'pointer', transition: 'opacity 0.15s' }}
+              onClick={() => scrollToSection(block.sectionId, block.color)}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.75')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+              title={`Zu ${block.label} springen`}
+            >
               <div className="flex items-center gap-1">
                 <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: block.color }} />
                 <span className="text-[9px] font-bold uppercase tracking-wide truncate" style={{ color: block.color }}>

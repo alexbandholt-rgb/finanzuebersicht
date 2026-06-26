@@ -35,35 +35,35 @@ export default function MonthView({ data, onChange, onCopyToStammdaten }: Props)
     <>
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
         <div className="flex flex-col gap-5" style={{ paddingLeft: '1rem' }}>
-          <CategorySection
+          <div id="section-einkuenfte"><CategorySection
             title="Einkünfte"
             color={COLORS.einkuenfte}
             items={data.einkuenfte}
             onChange={update('einkuenfte')}
             onCopyToStammdaten={copy('einkuenfte')}
-          />
-          <CategorySection
+          /></div>
+          <div id="section-wohnungskosten"><CategorySection
             title="Wohnungskosten"
             color={COLORS.wohnungskosten}
             items={data.wohnungskosten}
             onChange={update('wohnungskosten')}
             onCopyToStammdaten={copy('wohnungskosten')}
-          />
-          <CategorySection
+          /></div>
+          <div id="section-auto"><CategorySection
             title="Auto"
             color={COLORS.auto}
             items={data.auto}
             onChange={update('auto')}
             onCopyToStammdaten={copy('auto')}
-          />
-          <CategorySection
+          /></div>
+          <div id="section-fixkosten"><CategorySection
             title="Fixkosten"
             color={COLORS.fixkosten}
             items={data.fixkosten}
             onChange={update('fixkosten')}
             onCopyToStammdaten={copy('fixkosten')}
-          />
-          <CategorySection
+          /></div>
+          <div id="section-sparen"><CategorySection
             title="Sparen"
             color={COLORS.sparen}
             items={data.sparen}
@@ -73,23 +73,23 @@ export default function MonthView({ data, onChange, onCopyToStammdaten }: Props)
             onSparRateChange={(rate, active) => onChange({ ...data, sparRate: rate, sparRateActive: active })}
             einkuenfte={einkuenfte}
             onCopyToStammdaten={copy('sparen')}
-          />
-          <CategorySection
+          /></div>
+          <div id="section-versicherungen"><CategorySection
             title="Versicherungen"
             color={COLORS.versicherungen}
             items={data.versicherungen}
             onChange={update('versicherungen')}
             showAnnualToggle
             onCopyToStammdaten={copy('versicherungen')}
-          />
-          <CategorySection
+          /></div>
+          <div id="section-jaehrliche_kosten"><CategorySection
             title="Jährliche Kosten"
             color={COLORS.jaehrliche_kosten}
             items={data.jaehrliche_kosten}
             onChange={update('jaehrliche_kosten')}
             annualMode
             onCopyToStammdaten={copy('jaehrliche_kosten')}
-          />
+          /></div>
         </div>
 
         <div className="flex flex-col gap-4">
