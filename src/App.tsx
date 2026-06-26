@@ -257,7 +257,7 @@ return (
                 </button>
               </div>
               {isAtMax && (
-                <button onClick={() => setFutureLimit(l => l + 1)} className="text-xs text-slate-500 hover:text-violet-600 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-violet-300 bg-white">
+                <button onClick={() => { setFutureLimit(l => l + 1); const p = addMonths(year, month, 1); setYear(p.year); setMonth(p.month) }} className="text-xs text-slate-500 hover:text-violet-600 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-violet-300 bg-white">
                   + Zukünftiger Monat
                 </button>
               )}
