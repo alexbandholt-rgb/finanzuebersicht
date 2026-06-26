@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { MONTH_NAMES } from '../types'
+import { useIsMobile } from '../hooks/useIsMobile'
 import type { MonthData } from '../types'
 import { calcSummary } from '../lib/calc'
 import { cloudLoadMonth } from '../lib/cloudStorage'
@@ -52,6 +53,7 @@ const SparquoteLabel = ({ x, y, width, index, data }: any) => {
 }
 
 export default function JahresUebersicht({ year, allMonths }: Props) {
+  const isMobile = useIsMobile()
   const [monthData, setMonthData] = useState<MonthData[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -103,16 +105,16 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
   return (
     <div className="flex flex-col gap-6">
       {/* Jahreszusammenfassung */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: '0.75rem' }}>
         {[
           { label: 'Gesamteinkünfte', value: gesamtEinkuenfte, color: '#10b981', bg: '#f0fdf4', border: '#bbf7d0' },
           { label: 'Gesamtausgaben', value: gesamtAusgaben, color: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe' },
           { label: 'Gesamtsparbetrag', value: gesamtSparen, color: '#ec4899', bg: '#fdf2f8', border: '#fbcfe8' },
           { label: 'Ø Sparquote', value: null, sparquote: durchschnittSparquote, color: '#8b5cf6', bg: '#f5f3ff', border: '#ddd6fe' },
         ].map((k, i) => (
-          <div key={i} className="bg-white rounded-2xl p-4 border shadow-sm" style={{ borderColor: k.border, background: k.bg }}>
-            <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: k.color }}>{k.label}</p>
-            <p className="text-xl font-mono font-bold text-slate-700">
+          <div key={i} className="bg-white rounded-2xl border shadow-sm" style={{ borderColor: k.border, background: k.bg, padding: isMobile ? '10px 12px' : '1rem' }}>
+            <p className="font-semibold uppercase tracking-wide mb-1" style={{ color: k.color, fontSize: isMobile ? '9px' : '11px' }}>{k.label}</p>
+            <p className="font-mono font-bold text-slate-700" style={{ fontSize: isMobile ? '14px' : '20px' }}>
               {k.sparquote !== undefined ? `${k.sparquote.toFixed(1)} %` : fmt(k.value!)}
             </p>
           </div>
@@ -120,11 +122,11 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
       </div>
 
       {/* Balkendiagramm */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: isMobile ? '1rem' : '1.5rem' }}>
         <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-6">
           Jahresvergleich {year}
         </h3>
-        <ResponsiveContainer width="100%" height={320}>
+        <ResponsiveContainer width="100%" height={isMobile ? 220 : 320}>
           <BarChart data={monate} barCategoryGap="25%" barGap={4}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
             <XAxis
