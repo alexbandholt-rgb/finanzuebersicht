@@ -178,8 +178,8 @@ return (
       {/* Linke Seitenleiste */}
       <aside style={{ width: '208px', flexShrink: 0, background: 'white', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', paddingTop: '1.5rem', boxShadow: '1px 0 4px rgba(0,0,0,0.04)', minHeight: '100vh' }}>
         <div className="flex items-center gap-2 px-5" style={{ marginBottom: '2rem' }}>
-          <BarChart2 size={16} className="text-emerald-400" />
-          <span style={{ fontWeight: 600, fontSize: '13px', color: '#94a3b8', letterSpacing: '0.04em' }}>Finanzübersicht</span>
+          <BarChart2 size={18} className="text-emerald-500" />
+          <span style={{ fontWeight: 700, fontSize: '15px', color: '#1e293b' }}>Finanzübersicht</span>
         </div>
 
 
