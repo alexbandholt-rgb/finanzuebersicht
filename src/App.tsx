@@ -95,7 +95,10 @@ export default function App() {
       const all = await cloudGetAllMonths()
       const prev = all.filter(m => m.year * 12 + m.month < year * 12 + month).at(-1)
       const template = prev ? await cloudLoadMonth(prev.year, prev.month) : null
-      setData(createNewMonth(year, month, template ?? defaultStammdaten()))
+      const newMonth = createNewMonth(year, month, template ?? defaultStammdaten())
+      setData(newMonth)
+      await cloudSaveMonth(newMonth)
+      setAllMonths(await cloudGetAllMonths())
     }
     load()
   }, [year, month, user])
