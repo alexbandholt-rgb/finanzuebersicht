@@ -242,17 +242,29 @@ return (
           {/* Erste Zeile: Monatsnavigation + Speichern/Abmelden */}
           <div className="flex items-center gap-2">
             {tab === 'monat' && (
-              <div className="flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-                <button onClick={prevMonth} disabled={isAtMin} className="px-3 py-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
-                  <ChevronLeft size={16} />
-                </button>
-                <span className="px-3 py-2 text-sm font-semibold text-slate-700 text-center" style={{ minWidth: isMobile ? '120px' : '140px' }}>
-                  {MONTH_NAMES[month - 1]} {year}
-                </span>
-                <button onClick={nextMonth} disabled={isAtMax} className="px-3 py-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
-                  <ChevronRight size={16} />
-                </button>
-              </div>
+              isMobile ? (
+                <select
+                  value={`${year}-${month}`}
+                  onChange={e => { const [y, m] = e.target.value.split('-').map(Number); setYear(y); setMonth(m) }}
+                  style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px 12px', fontSize: '14px', fontWeight: 600, color: '#334155', background: 'white', outline: 'none', flex: 1 }}
+                >
+                  {allMonths.map(({ year: y, month: m }) => (
+                    <option key={`${y}-${m}`} value={`${y}-${m}`}>{MONTH_NAMES[m - 1]} {y}</option>
+                  ))}
+                </select>
+              ) : (
+                <div className="flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                  <button onClick={prevMonth} disabled={isAtMin} className="px-3 py-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+                    <ChevronLeft size={16} />
+                  </button>
+                  <span className="px-3 py-2 text-sm font-semibold text-slate-700 text-center" style={{ minWidth: '140px' }}>
+                    {MONTH_NAMES[month - 1]} {year}
+                  </span>
+                  <button onClick={nextMonth} disabled={isAtMax} className="px-3 py-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              )
             )}
             <div style={{ flex: 1 }} />
             {tab !== 'compare' && tab !== 'jahresuebersicht' && tab !== 'konto' && tab !== 'nutzer' && (
