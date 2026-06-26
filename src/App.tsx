@@ -238,25 +238,43 @@ return (
       <div className="flex-1 flex flex-col min-w-0" style={{ paddingBottom: isMobile ? '72px' : 0 }}>
 
         {/* Topbar */}
-        <header className="bg-white border-b border-slate-200 flex items-center gap-2 shadow-sm" style={{ padding: isMobile ? '0.5rem 0.75rem' : '0.75rem 1.5rem' }}>
-          {tab === 'monat' && (
-            <>
-              {isAtMin && (
-                <button onClick={() => setPastLimit(l => l + 1)} className="text-xs text-slate-500 hover:text-violet-600 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-violet-300 bg-white">
-                  + Vergangener Monat
-                </button>
-              )}
+        <header className="bg-white border-b border-slate-200 shadow-sm" style={{ padding: isMobile ? '0.5rem 0.75rem' : '0.75rem 1.5rem' }}>
+          {/* Erste Zeile: Monatsnavigation + Speichern/Abmelden */}
+          <div className="flex items-center gap-2">
+            {tab === 'monat' && (
               <div className="flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
                 <button onClick={prevMonth} disabled={isAtMin} className="px-3 py-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
                   <ChevronLeft size={16} />
                 </button>
-                <span className="px-3 py-2 text-sm font-semibold text-slate-700 min-w-[140px] text-center">
+                <span className="px-3 py-2 text-sm font-semibold text-slate-700 text-center" style={{ minWidth: isMobile ? '120px' : '140px' }}>
                   {MONTH_NAMES[month - 1]} {year}
                 </span>
                 <button onClick={nextMonth} disabled={isAtMax} className="px-3 py-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
                   <ChevronRight size={16} />
                 </button>
               </div>
+            )}
+            <div style={{ flex: 1 }} />
+            {tab !== 'compare' && tab !== 'jahresuebersicht' && tab !== 'konto' && tab !== 'nutzer' && (
+              <button onClick={handleSave} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all border ${saved ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 shadow-sm'}`}>
+                {saved ? <Check size={15} /> : <Save size={15} />}
+                {!isMobile && (saved ? 'Gespeichert' : 'Speichern')}
+              </button>
+            )}
+            {!isMobile && (
+              <button onClick={() => supabase.auth.signOut()} style={{ marginLeft: '1rem' }} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-red-500 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all">
+                <LogOut size={14} />
+                Abmelden
+              </button>
+            )}
+          </div>
+
+          {/* Zweite Zeile (nur Monat-Tab): Vergangener/Zukünftiger Monat + Löschen */}
+          {tab === 'monat' && (
+            <div className="flex items-center gap-2 mt-2">
+              <button onClick={() => setPastLimit(l => l + 1)} className="text-xs text-slate-500 hover:text-violet-600 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-violet-300 bg-white">
+                + Vergangener Monat
+              </button>
               {isAtMax && (
                 <button onClick={async () => {
                   setFutureLimit(l => l + 1)
@@ -273,36 +291,12 @@ return (
                   + Zukünftiger Monat
                 </button>
               )}
-              <button onClick={() => setDeleteConfirmOpen(true)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium bg-red-50 text-red-500 border border-red-200 hover:bg-red-100 transition-all">
-                <Trash2 size={14} />
+              <div style={{ flex: 1 }} />
+              <button onClick={() => setDeleteConfirmOpen(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-red-50 text-red-500 border border-red-200 hover:bg-red-100 transition-all">
+                <Trash2 size={13} />
                 Löschen
               </button>
-            </>
-          )}
-
-          <div style={{ flex: 1 }} />
-          {tab !== 'compare' && tab !== 'jahresuebersicht' && tab !== 'konto' && (
-            <button
-              onClick={handleSave}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all border ${
-                saved
-                  ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 shadow-sm'
-              }`}
-            >
-              {saved ? <Check size={15} /> : <Save size={15} />}
-              {saved ? 'Gespeichert' : 'Speichern'}
-            </button>
-          )}
-          {!isMobile && (
-            <button
-              onClick={() => supabase.auth.signOut()}
-              style={{ marginLeft: '1.5rem' }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-red-500 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all"
-            >
-              <LogOut size={14} />
-              Abmelden
-            </button>
+            </div>
           )}
         </header>
 
