@@ -273,10 +273,11 @@ export default function App() {
             </>
           )}
 
+          <div style={{ flex: 1 }} />
           {tab !== 'compare' && tab !== 'jahresuebersicht' && (
             <button
               onClick={handleSave}
-              className={`ml-auto flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all border ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all border ${
                 saved
                   ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
                   : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 shadow-sm'
@@ -288,7 +289,7 @@ export default function App() {
           )}
           <button
             onClick={() => supabase.auth.signOut()}
-            style={{ marginLeft: tab === 'compare' || tab === 'jahresuebersicht' ? 'auto' : '0' }}
+            style={{ marginLeft: '1.5rem' }}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-red-500 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all"
           >
             <LogOut size={14} />
