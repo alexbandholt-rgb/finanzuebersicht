@@ -162,10 +162,18 @@ export default function CategorySection({ title, color, items, onChange, annualM
               </div>
 
               {showShare && item.amount !== null && (
-                <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '80px' }}>
-                  <span className="text-xs text-slate-400">
-                    = <span className="font-mono font-medium" style={{ color }}>{fmt(effective)}</span> dein Anteil
-                  </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ flex: 1 }} />
+                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <span className="text-xs text-slate-400">
+                      = <span className="font-mono font-medium" style={{ color }}>{fmt(effective)}</span> dein Anteil
+                    </span>
+                  </div>
+                  <div style={{ visibility: 'hidden', display: 'flex', alignItems: 'center', borderRadius: '12px', overflow: 'hidden' }}>
+                    <input type="number" className="bg-transparent px-2 py-0 text-sm text-right" style={{ width: '40px' }} readOnly />
+                  </div>
+                  <div style={{ visibility: 'hidden' }}><button className="p-2"><CalendarClock size={14} /></button></div>
+                  <div style={{ visibility: 'hidden' }}><button className="p-2"><Trash2 size={14} /></button></div>
                 </div>
               )}
             </div>
