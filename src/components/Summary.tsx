@@ -152,7 +152,7 @@ export default function Summary({ data }: Props) {
         })}
 
         <div style={{ gridColumn: '1 / -1' }} className="rounded-2xl p-3 bg-slate-50 border border-slate-200 flex items-center justify-between shadow-sm">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Gesamt Ausgaben</span>
+          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Gesamtausgaben</span>
           <span className="text-sm font-mono font-semibold text-slate-700">{fmt(s.gesamtAusgaben)}</span>
         </div>
       </div>

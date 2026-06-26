@@ -51,7 +51,7 @@ export default function CompareView({ months }: Props) {
     { key: 'sparen', label: 'Sparen' },
     { key: 'versicherungen', label: 'Versicherungen' },
     { key: 'jaehrlichProMonat', label: 'Jährl./Monat' },
-    { key: 'gesamtAusgaben', label: 'Gesamt Ausgaben' },
+    { key: 'gesamtAusgaben', label: 'Gesamtausgaben' },
     { key: 'verbleibend', label: 'Verbleibend' },
   ]
 
