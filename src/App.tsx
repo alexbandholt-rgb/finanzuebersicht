@@ -163,7 +163,7 @@ export default function App() {
   if (user === null) return <AuthScreen />
 
 return (
-    <div className="min-h-screen text-slate-800 flex" style={{ background: '#f0f2f7' }}>
+    <div className="min-h-screen text-slate-800 flex" style={{ background: '#f8fafc' }}>
 
       {/* Linke Seitenleiste */}
       <aside style={{ width: '208px', flexShrink: 0, background: 'white', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', paddingTop: '1.5rem', boxShadow: '1px 0 4px rgba(0,0,0,0.04)', minHeight: '100vh' }}>
