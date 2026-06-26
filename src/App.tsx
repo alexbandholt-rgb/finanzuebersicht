@@ -95,10 +95,7 @@ export default function App() {
       const all = await cloudGetAllMonths()
       const prev = all.filter(m => m.year * 12 + m.month < year * 12 + month).at(-1)
       const template = prev ? await cloudLoadMonth(prev.year, prev.month) : null
-      const newMonth = createNewMonth(year, month, template ?? defaultStammdaten())
-      setData(newMonth)
-      await cloudSaveMonth(newMonth)
-      setAllMonths(await cloudGetAllMonths())
+      setData(createNewMonth(year, month, template ?? defaultStammdaten()))
     }
     load()
   }, [year, month, user])
@@ -259,7 +256,18 @@ return (
                 </button>
               </div>
               {isAtMax && (
-                <button onClick={() => { setFutureLimit(l => l + 1); const p = addMonths(year, month, 1); setYear(p.year); setMonth(p.month) }} className="text-xs text-slate-500 hover:text-violet-600 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-violet-300 bg-white">
+                <button onClick={async () => {
+                  setFutureLimit(l => l + 1)
+                  const p = addMonths(year, month, 1)
+                  setYear(p.year); setMonth(p.month)
+                  const all = await cloudGetAllMonths()
+                  const prev = all.filter(m => m.year * 12 + m.month < p.year * 12 + p.month).at(-1)
+                  const template = prev ? await cloudLoadMonth(prev.year, prev.month) : null
+                  const newMonth = createNewMonth(p.year, p.month, template ?? defaultStammdaten())
+                  setData(newMonth)
+                  await cloudSaveMonth(newMonth)
+                  setAllMonths(await cloudGetAllMonths())
+                }} className="text-xs text-slate-500 hover:text-violet-600 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-violet-300 bg-white">
                   + Zukünftiger Monat
                 </button>
               )}
