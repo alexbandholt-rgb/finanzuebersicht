@@ -180,7 +180,7 @@ return (
     <div className="min-h-screen text-slate-800 flex" style={{ background: '#f0f2f7' }}>
 
       {/* Linke Seitenleiste */}
-      <aside className="w-52 shrink-0 bg-white border-r border-slate-200 flex flex-col pt-6 shadow-sm" style={{ minHeight: '100vh' }}>
+      <aside style={{ width: '208px', flexShrink: 0, background: 'white', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', paddingTop: '1.5rem', boxShadow: '1px 0 4px rgba(0,0,0,0.04)', height: '100vh', position: 'sticky', top: 0 }}>
         <div className="flex items-center gap-2 px-5 mb-8">
           <BarChart2 size={18} className="text-emerald-500" />
           <span className="font-bold text-slate-800 text-sm">Finanzübersicht</span>
