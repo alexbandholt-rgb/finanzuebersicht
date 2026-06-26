@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { MONTH_NAMES } from '../types'
 import { useIsMobile } from '../hooks/useIsMobile'
 import type { MonthData } from '../types'
@@ -43,18 +43,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   )
 }
 
-const CustomXTick = ({ x, y, payload, data }: any) => {
-  const m = data?.find((d: any) => d.name === payload.value)
-  const hasNote = m?.notes?.trim()
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={12} textAnchor="middle" fontSize={12} fill="#94a3b8">{payload.value}</text>
-      {hasNote && (
-        <circle cx={0} cy={22} r={3} fill="#f59e0b" />
-      )}
-    </g>
-  )
-}
 
 const SparquoteLabel = ({ x, y, width, index, data }: any) => {
   const m = data?.[index]
@@ -63,6 +51,35 @@ const SparquoteLabel = ({ x, y, width, index, data }: any) => {
     <text x={x + width / 2} y={y - 5} textAnchor="middle" fontSize={10} fill="#8b5cf6" fontWeight="600">
       {m.sparquote.toFixed(0)}%
     </text>
+  )
+}
+
+function NoteChip({ name, notes }: { name: string; notes: string }) {
+  const [visible, setVisible] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+      <span style={{ fontSize: '11px', color: '#94a3b8' }}>{name}</span>
+      <div
+        onMouseEnter={() => setVisible(true)}
+        onMouseLeave={() => setVisible(false)}
+        style={{ width: '22px', height: '22px', borderRadius: '6px', background: '#fef3c7', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'default' }}
+      >
+        <FileText size={12} style={{ color: '#f59e0b', flexShrink: 0 }} />
+      </div>
+      {visible && (
+        <div style={{
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+          marginTop: '6px', background: '#1e293b', color: '#f8fafc',
+          borderRadius: '10px', padding: '8px 12px', fontSize: '12px', lineHeight: '1.5',
+          whiteSpace: 'pre-wrap', maxWidth: '200px', zIndex: 50, boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
+          pointerEvents: 'none',
+        }}>
+          {notes}
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -147,10 +164,9 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
             <XAxis
               dataKey="name"
-              tick={(props: any) => <CustomXTick {...props} data={monate} />}
+              tick={{ fill: '#94a3b8', fontSize: 12 }}
               axisLine={false}
               tickLine={false}
-              height={40}
             />
             <YAxis
               tick={{ fill: '#94a3b8', fontSize: 11 }}
@@ -173,27 +189,15 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
           <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-sm bg-blue-500" /><span className="text-xs text-slate-400">Ausgaben</span></div>
           <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-sm bg-violet-500" /><span className="text-xs text-slate-400">Sparen (% = Sparquote)</span></div>
         </div>
-      </div>
 
-      {/* Notizen */}
-      {monate.some(m => m.notes.trim()) && (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: isMobile ? '1rem' : '1.5rem' }}>
-          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-4">Notizen</h3>
-          <div className="flex flex-col gap-3">
+        {monate.some(m => m.notes.trim()) && (
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
             {monate.filter(m => m.notes.trim()).map((m, i) => (
-              <div key={i} className="flex gap-3 items-start">
-                <div className="mt-0.5 flex-shrink-0 w-6 h-6 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center">
-                  <FileText size={12} style={{ color: '#f59e0b' }} />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-slate-500 mb-0.5">{m.fullName}</p>
-                  <p className="text-sm text-slate-600 leading-relaxed">{m.notes}</p>
-                </div>
-              </div>
+              <NoteChip key={i} name={m.name} notes={m.notes} />
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
