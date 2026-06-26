@@ -13,6 +13,9 @@ import StammdatenView from './components/StammdatenView'
 import JahresUebersicht from './components/JahresUebersicht'
 import AuthScreen from './components/AuthScreen'
 import AccountView from './components/AccountView'
+import NutzerView from './components/NutzerView'
+
+const ADMIN_EMAIL = 'alex.bandholt@web.de'
 
 const now = new Date()
 const THIS_YEAR = now.getFullYear()
@@ -27,7 +30,7 @@ function compareYM(y1: number, m1: number, y2: number, m2: number) {
   return y1 * 12 + m1 - (y2 * 12 + m2)
 }
 
-type Tab = 'monat' | 'stammdaten' | 'jahresuebersicht' | 'compare' | 'konto'
+type Tab = 'monat' | 'stammdaten' | 'jahresuebersicht' | 'compare' | 'konto' | 'nutzer'
 
 export default function App() {
   const [user, setUser] = useState<User | null | undefined>(undefined)
@@ -189,6 +192,22 @@ return (
             </button>
           ))}
 
+          {user.email === ADMIN_EMAIL && (
+            <button
+              onClick={() => setTab('nutzer')}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all w-full text-left ${
+                tab === 'nutzer'
+                  ? 'bg-violet-50 text-violet-700 border border-violet-200'
+                  : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              <span className={tab === 'nutzer' ? 'text-violet-500' : 'text-slate-400'}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </span>
+              Nutzer
+            </button>
+          )}
+
           <div className="mt-2 pt-2 border-t border-slate-100">
             <button
               onClick={() => tab === 'compare' ? setTab('monat') : setComparePickerOpen(true)}
@@ -272,6 +291,7 @@ return (
           {tab === 'jahresuebersicht' && <JahresUebersicht year={THIS_YEAR} />}
           {tab === 'compare' && <CompareView months={compareMonths} />}
           {tab === 'konto' && <AccountView email={user.email ?? ''} />}
+          {tab === 'nutzer' && <NutzerView />}
         </main>
       </div>
 
