@@ -160,6 +160,13 @@ export default function App() {
     setTab('compare')
   }
 
+  // Jahresübersicht: allMonths beim Öffnen aktualisieren
+  useEffect(() => {
+    if (tab === 'jahresuebersicht' && user) {
+      cloudGetAllMonths().then(setAllMonths)
+    }
+  }, [tab])
+
   const navItems = [
     { id: 'monat' as Tab, label: 'Monatsübersicht', icon: <BarChart2 size={16} /> },
     { id: 'jahresuebersicht' as Tab, label: 'Jahresübersicht', icon: <CalendarDays size={16} /> },
