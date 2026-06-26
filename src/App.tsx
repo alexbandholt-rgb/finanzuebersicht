@@ -118,8 +118,13 @@ export default function App() {
     await cloudDeleteMonth(year, month)
     const updated = await cloudGetAllMonths()
     setAllMonths(updated)
-    setData(createNewMonth(year, month, stammdaten))
     setDeleteConfirmOpen(false)
+    const last = updated[updated.length - 1]
+    if (last) {
+      setYear(last.year); setMonth(last.month)
+    } else {
+      setYear(THIS_YEAR); setMonth(THIS_MONTH)
+    }
   }
 
   const prevMonth = () => {
