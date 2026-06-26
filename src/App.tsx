@@ -292,10 +292,7 @@ return (
                   setFutureLimit(l => l + 1)
                   const p = addMonths(year, month, 1)
                   setYear(p.year); setMonth(p.month)
-                  const all = await cloudGetAllMonths()
-                  const prev = all.filter(m => m.year * 12 + m.month < p.year * 12 + p.month).at(-1)
-                  const template = prev ? await cloudLoadMonth(prev.year, prev.month) : null
-                  const newMonth = createNewMonth(p.year, p.month, template ?? defaultStammdaten())
+                  const newMonth = createNewMonth(p.year, p.month, data)
                   setData(newMonth)
                   await cloudSaveMonth(newMonth)
                   setAllMonths(await cloudGetAllMonths())
