@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Save, Check, Trash2, CalendarDays, LogOut, UserCircle } from 'lucide-react'
+import { useIsMobile } from './hooks/useIsMobile'
 import type { MonthData } from './types'
 import { MONTH_NAMES } from './types'
 import { createNewMonth, defaultStammdaten } from './lib/storage'
@@ -33,6 +34,7 @@ function compareYM(y1: number, m1: number, y2: number, m2: number) {
 type Tab = 'monat' | 'jahresuebersicht' | 'compare' | 'konto' | 'nutzer'
 
 export default function App() {
+  const isMobile = useIsMobile()
   const [isPasswordReset] = useState(() => {
     const hash = window.location.hash
     return hash.includes('type=recovery')
@@ -173,15 +175,15 @@ export default function App() {
   }
 
 return (
-    <div className="min-h-screen text-slate-800 flex" style={{ background: '#f8fafc' }}>
+    <div className="min-h-screen text-slate-800 flex" style={{ background: '#f8fafc', flexDirection: isMobile ? 'column' : 'row' }}>
 
-      {/* Linke Seitenleiste */}
+      {/* Sidebar (Desktop) */}
+      {!isMobile && (
       <aside style={{ width: '208px', flexShrink: 0, background: 'white', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', paddingTop: '1.5rem', boxShadow: '1px 0 4px rgba(0,0,0,0.04)', minHeight: '100vh' }}>
         <div className="flex items-center gap-2 px-5" style={{ marginBottom: '2rem' }}>
           <BarChart2 size={18} className="text-emerald-500" />
           <span style={{ fontWeight: 700, fontSize: '15px', color: '#1e293b' }}>Finanzübersicht</span>
         </div>
-
 
         <nav className="flex flex-col gap-1 px-3">
           {navItems.map(item => (
@@ -229,14 +231,14 @@ return (
             </button>
           </div>
         </nav>
-
       </aside>
+      )}
 
       {/* Hauptbereich */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0" style={{ paddingBottom: isMobile ? '72px' : 0 }}>
 
         {/* Topbar */}
-        <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center gap-3 shadow-sm">
+        <header className="bg-white border-b border-slate-200 flex items-center gap-2 shadow-sm" style={{ padding: isMobile ? '0.5rem 0.75rem' : '0.75rem 1.5rem' }}>
           {tab === 'monat' && (
             <>
               {isAtMin && (
@@ -292,18 +294,20 @@ return (
               {saved ? 'Gespeichert' : 'Speichern'}
             </button>
           )}
-          <button
-            onClick={() => supabase.auth.signOut()}
-            style={{ marginLeft: '1.5rem' }}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-red-500 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all"
-          >
-            <LogOut size={14} />
-            Abmelden
-          </button>
+          {!isMobile && (
+            <button
+              onClick={() => supabase.auth.signOut()}
+              style={{ marginLeft: '1.5rem' }}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-red-500 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all"
+            >
+              <LogOut size={14} />
+              Abmelden
+            </button>
+          )}
         </header>
 
         {/* Content */}
-        <main style={{ padding: '2rem 2.5rem' }}>
+        <main style={{ padding: isMobile ? '1rem' : '2rem 2.5rem' }}>
           {tab === 'monat' && <MonthView data={data} onChange={setData} />}
           {tab === 'jahresuebersicht' && <JahresUebersicht year={THIS_YEAR} allMonths={allMonths} />}
           {tab === 'compare' && <CompareView months={compareMonths} />}
@@ -311,6 +315,22 @@ return (
           {tab === 'nutzer' && <NutzerView />}
         </main>
       </div>
+
+      {/* Mobile Bottom Nav */}
+      {isMobile && (
+        <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'white', borderTop: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', zIndex: 50, height: '64px', boxShadow: '0 -2px 8px rgba(0,0,0,0.06)' }}>
+          {[...navItems, ...(user.email === ADMIN_EMAIL ? [{ id: 'nutzer' as Tab, label: 'Nutzer', icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> }] : [])].map(item => (
+            <button key={item.id} onClick={() => setTab(item.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px', color: tab === item.id ? '#7c3aed' : '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', fontSize: '10px', fontWeight: tab === item.id ? 600 : 400, height: '100%' }}>
+              <span style={{ color: tab === item.id ? '#7c3aed' : '#94a3b8' }}>{item.icon}</span>
+              {item.label.replace('übersicht', '').replace('Monats', 'Monat')}
+            </button>
+          ))}
+          <button onClick={() => supabase.auth.signOut()} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px', color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', fontSize: '10px', height: '100%' }}>
+            <LogOut size={20} />
+            Abmelden
+          </button>
+        </nav>
+      )}
 
       {/* Delete Confirm Modal */}
       {deleteConfirmOpen && (
