@@ -35,14 +35,14 @@ export function saveStammdaten(data: Stammdaten): void {
   localStorage.setItem(STAMMDATEN_KEY, JSON.stringify(data))
 }
 
-export function loadMonth(year: number, month: number): MonthData {
+export function loadMonth(year: number, month: number, overrideStammdaten?: Stammdaten): MonthData {
   try {
     const raw = localStorage.getItem(KEY(year, month))
     if (raw) return JSON.parse(raw)
   } catch {}
 
   // Neuer Monat → Stammdaten als Vorlage (mit Beträgen)
-  const stammdaten = loadStammdaten()
+  const stammdaten = overrideStammdaten ?? loadStammdaten()
   return {
     year,
     month,

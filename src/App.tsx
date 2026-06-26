@@ -80,9 +80,10 @@ export default function App() {
         cloudLoadMonth(THIS_YEAR, THIS_MONTH),
       ])
       setAllMonths(cloudMonths)
+      const effectiveStamm = cloudStamm ?? stammdaten
       if (cloudStamm) setStammdaten(cloudStamm)
       if (cloudMonth) setData(cloudMonth)
-      else setData(loadMonth(THIS_YEAR, THIS_MONTH))
+      else setData(loadMonth(THIS_YEAR, THIS_MONTH, effectiveStamm))
     }
     init()
   }, [user])
@@ -92,7 +93,7 @@ export default function App() {
     if (!user) return
     cloudLoadMonth(year, month).then(d => {
       if (d) setData(d)
-      else setData(loadMonth(year, month))
+      else setData(loadMonth(year, month, stammdaten))
     })
   }, [year, month, user])
 
@@ -122,7 +123,7 @@ export default function App() {
     await cloudDeleteMonth(year, month)
     const updated = await cloudGetAllMonths()
     setAllMonths(updated)
-    setData(loadMonth(year, month))
+    setData(loadMonth(year, month, stammdaten))
     setDeleteConfirmOpen(false)
   }
 
