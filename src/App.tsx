@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Save, Check, Settings2, Trash2, CalendarDays, LogOut, UserCircle } from 'lucide-react'
 import type { MonthData } from './types'
 import { MONTH_NAMES } from './types'
-import { loadMonth, saveMonth, loadStammdaten, saveStammdaten, deleteMonth } from './lib/storage'
+import { createNewMonth, defaultStammdaten } from './lib/storage'
 import type { Stammdaten } from './lib/storage'
 import { cloudLoadMonth, cloudSaveMonth, cloudDeleteMonth, cloudGetAllMonths, cloudLoadStammdaten, cloudSaveStammdaten } from './lib/cloudStorage'
 import { supabase } from './lib/supabase'
@@ -42,8 +42,8 @@ export default function App() {
   const [user, setUser] = useState<User | null | undefined>(undefined)
   const [year, setYear] = useState(THIS_YEAR)
   const [month, setMonth] = useState(THIS_MONTH)
-  const [data, setData] = useState<MonthData>(() => loadMonth(THIS_YEAR, THIS_MONTH))
-  const [stammdaten, setStammdaten] = useState<Stammdaten>(() => loadStammdaten())
+  const [data, setData] = useState<MonthData>(() => createNewMonth(THIS_YEAR, THIS_MONTH, defaultStammdaten()))
+  const [stammdaten, setStammdaten] = useState<Stammdaten>(() => defaultStammdaten())
   const [tab, setTab] = useState<Tab>('monat')
   const [compareMonths, setCompareMonths] = useState<MonthData[]>([])
   const [allMonths, setAllMonths] = useState<{ year: number; month: number }[]>([])
@@ -83,7 +83,7 @@ export default function App() {
       const effectiveStamm = cloudStamm ?? stammdaten
       if (cloudStamm) setStammdaten(cloudStamm)
       if (cloudMonth) setData(cloudMonth)
-      else setData(loadMonth(THIS_YEAR, THIS_MONTH, effectiveStamm))
+      else setData(createNewMonth(THIS_YEAR, THIS_MONTH, effectiveStamm))
     }
     init()
   }, [user])
@@ -93,16 +93,14 @@ export default function App() {
     if (!user) return
     cloudLoadMonth(year, month).then(d => {
       if (d) setData(d)
-      else setData(loadMonth(year, month, stammdaten))
+      else setData(createNewMonth(year, month, stammdaten))
     })
   }, [year, month, user])
 
   const handleSave = useCallback(async () => {
     if (tab === 'stammdaten') {
-      saveStammdaten(stammdaten)
       await cloudSaveStammdaten(stammdaten)
     } else {
-      saveMonth(data)
       await cloudSaveMonth(data)
       const updated = await cloudGetAllMonths()
       setAllMonths(updated)
@@ -114,16 +112,13 @@ export default function App() {
   const handleCopyToStammdaten = (key: string, items: MonthData[keyof MonthData]) => {
     const updated = { ...stammdaten, [key]: items }
     setStammdaten(updated)
-    saveStammdaten(updated)
   }
 
-
   const handleDelete = async () => {
-    deleteMonth(year, month)
     await cloudDeleteMonth(year, month)
     const updated = await cloudGetAllMonths()
     setAllMonths(updated)
-    setData(loadMonth(year, month, stammdaten))
+    setData(createNewMonth(year, month, stammdaten))
     setDeleteConfirmOpen(false)
   }
 
@@ -145,11 +140,11 @@ export default function App() {
     )
   }
 
-  const startCompare = () => {
-    const months = selectedForCompare.map(key => {
+  const startCompare = async () => {
+    const months = await Promise.all(selectedForCompare.map(async key => {
       const [y, m] = key.split('-').map(Number)
-      return loadMonth(y, m)
-    })
+      return (await cloudLoadMonth(y, m)) ?? createNewMonth(y, m, stammdaten)
+    }))
     setCompareMonths(months)
     setComparePickerOpen(false)
     setTab('compare')
@@ -301,7 +296,7 @@ return (
         <main style={{ padding: '2rem 2.5rem' }}>
           {tab === 'monat' && <MonthView data={data} onChange={setData} onCopyToStammdaten={handleCopyToStammdaten} />}
           {tab === 'stammdaten' && <StammdatenView data={stammdaten} onChange={setStammdaten} />}
-          {tab === 'jahresuebersicht' && <JahresUebersicht year={THIS_YEAR} />}
+          {tab === 'jahresuebersicht' && <JahresUebersicht year={THIS_YEAR} allMonths={allMonths} />}
           {tab === 'compare' && <CompareView months={compareMonths} />}
           {tab === 'konto' && <AccountView email={user.email ?? ''} />}
           {tab === 'nutzer' && <NutzerView />}

@@ -1,12 +1,15 @@
+import { useState, useEffect } from 'react'
 import { MONTH_NAMES } from '../types'
-import { loadMonth, getAllMonths } from '../lib/storage'
+import type { MonthData } from '../types'
 import { calcSummary } from '../lib/calc'
+import { cloudLoadMonth } from '../lib/cloudStorage'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LabelList
 } from 'recharts'
 
 interface Props {
   year: number
+  allMonths: { year: number; month: number }[]
 }
 
 const fmt = (n: number) =>
@@ -48,15 +51,24 @@ const SparquoteLabel = ({ x, y, width, index, data }: any) => {
   )
 }
 
-export default function JahresUebersicht({ year }: Props) {
-  const gespeichert = getAllMonths().filter(m => m.year === year)
+export default function JahresUebersicht({ year, allMonths }: Props) {
+  const [monthData, setMonthData] = useState<MonthData[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const monate = gespeichert.map(({ month }) => {
-    const data = loadMonth(year, month)
+  useEffect(() => {
+    const gespeichert = allMonths.filter(m => m.year === year)
+    if (gespeichert.length === 0) { setMonthData([]); setLoading(false); return }
+    Promise.all(gespeichert.map(({ month }) => cloudLoadMonth(year, month))).then(results => {
+      setMonthData(results.filter((d): d is MonthData => d !== null))
+      setLoading(false)
+    })
+  }, [year, allMonths])
+
+  const monate = monthData.map(data => {
     const s = calcSummary(data)
     const sparquote = s.einkuenfte > 0 ? (s.sparen / s.einkuenfte) * 100 : 0
     return {
-      name: MONTH_NAMES[month - 1].slice(0, 3),
+      name: MONTH_NAMES[data.month - 1].slice(0, 3),
       einkuenfte: s.einkuenfte,
       ausgaben: s.gesamtAusgaben,
       sparen: s.sparen,
@@ -67,13 +79,18 @@ export default function JahresUebersicht({ year }: Props) {
 
   const gesamtEinkuenfte = monate.reduce((a, m) => a + m.einkuenfte, 0)
   const gesamtAusgaben = monate.reduce((a, m) => a + m.ausgaben, 0)
-  const gesamtSparen = gespeichert.reduce((a, { month }) => {
-    const s = calcSummary(loadMonth(year, month))
-    return a + s.sparen
-  }, 0)
+  const gesamtSparen = monate.reduce((a, m) => a + m.sparen, 0)
   const durchschnittSparquote = monate.length > 0
     ? monate.reduce((a, m) => a + m.sparquote, 0) / monate.length
     : 0
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20 text-slate-400 text-sm">
+        Lade Jahresübersicht…
+      </div>
+    )
+  }
 
   if (monate.length === 0) {
     return (
