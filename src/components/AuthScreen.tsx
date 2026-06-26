@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import { BarChart2, Loader2 } from 'lucide-react'
 
 export default function AuthScreen() {
-  const [mode, setMode] = useState<'login' | 'register'>('login')
+  const [mode, setMode] = useState<'login' | 'register' | 'reset'>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -19,10 +19,16 @@ export default function AuthScreen() {
     if (mode === 'login') {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) setError('E-Mail oder Passwort falsch.')
-    } else {
+    } else if (mode === 'register') {
       const { error } = await supabase.auth.signUp({ email, password })
       if (error) setError(error.message)
       else setSuccess('Konto erstellt! Du bist jetzt eingeloggt.')
+    } else if (mode === 'reset') {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/`,
+      })
+      if (error) setError(error.message)
+      else setSuccess('E-Mail gesendet! Prüfe dein Postfach und klicke auf den Link.')
     }
     setLoading(false)
   }
@@ -49,57 +55,27 @@ export default function AuthScreen() {
         </div>
 
         <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b', marginBottom: '0.25rem' }}>
-          {mode === 'login' ? 'Anmelden' : 'Konto erstellen'}
+          {mode === 'login' ? 'Anmelden' : mode === 'register' ? 'Konto erstellen' : 'Passwort zurücksetzen'}
         </h2>
         <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '1.5rem' }}>
-          {mode === 'login' ? 'Melde dich mit deinem Konto an.' : 'Erstelle ein neues Konto.'}
+          {mode === 'login' ? 'Melde dich mit deinem Konto an.' : mode === 'register' ? 'Erstelle ein neues Konto.' : 'Wir schicken dir einen Link per E-Mail.'}
         </p>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '4px' }}>
-              E-Mail
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              placeholder="deine@email.de"
-              style={{
-                width: '100%',
-                padding: '9px 12px',
-                borderRadius: '10px',
-                border: '1px solid #e2e8f0',
-                fontSize: '14px',
-                color: '#334155',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
+            <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '4px' }}>E-Mail</label>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="deine@email.de"
+              style={{ width: '100%', padding: '9px 12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '14px', color: '#334155', outline: 'none', boxSizing: 'border-box' }}
             />
           </div>
-          <div>
-            <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '4px' }}>
-              Passwort
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              placeholder="Mindestens 6 Zeichen"
-              style={{
-                width: '100%',
-                padding: '9px 12px',
-                borderRadius: '10px',
-                border: '1px solid #e2e8f0',
-                fontSize: '14px',
-                color: '#334155',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
-            />
-          </div>
+          {mode !== 'reset' && (
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '4px' }}>Passwort</label>
+              <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Mindestens 6 Zeichen"
+                style={{ width: '100%', padding: '9px 12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '14px', color: '#334155', outline: 'none', boxSizing: 'border-box' }}
+              />
+            </div>
+          )}
 
           {error && (
             <p style={{ fontSize: '12px', color: '#ef4444', background: '#fef2f2', padding: '8px 12px', borderRadius: '8px' }}>
@@ -133,19 +109,38 @@ export default function AuthScreen() {
             }}
           >
             {loading && <Loader2 size={14} className="animate-spin" />}
-            {mode === 'login' ? 'Anmelden' : 'Konto erstellen'}
+            {mode === 'login' ? 'Anmelden' : mode === 'register' ? 'Konto erstellen' : 'Link senden'}
           </button>
         </form>
 
-        <p style={{ fontSize: '12px', color: '#94a3b8', textAlign: 'center', marginTop: '1.25rem' }}>
-          {mode === 'login' ? 'Noch kein Konto?' : 'Bereits ein Konto?'}{' '}
-          <button
-            onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); setSuccess('') }}
-            style={{ color: '#8b5cf6', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px' }}
-          >
-            {mode === 'login' ? 'Registrieren' : 'Anmelden'}
-          </button>
-        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '1.25rem', alignItems: 'center' }}>
+          {mode === 'login' && (
+            <>
+              <p style={{ fontSize: '12px', color: '#94a3b8' }}>
+                Noch kein Konto?{' '}
+                <button onClick={() => { setMode('register'); setError(''); setSuccess('') }}
+                  style={{ color: '#8b5cf6', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px' }}>
+                  Registrieren
+                </button>
+              </p>
+              <p style={{ fontSize: '12px', color: '#94a3b8' }}>
+                Passwort vergessen?{' '}
+                <button onClick={() => { setMode('reset'); setError(''); setSuccess('') }}
+                  style={{ color: '#8b5cf6', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px' }}>
+                  Zurücksetzen
+                </button>
+              </p>
+            </>
+          )}
+          {mode !== 'login' && (
+            <p style={{ fontSize: '12px', color: '#94a3b8' }}>
+              <button onClick={() => { setMode('login'); setError(''); setSuccess('') }}
+                style={{ color: '#8b5cf6', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px' }}>
+                ← Zurück zur Anmeldung
+              </button>
+            </p>
+          )}
+        </div>
       </div>
     </div>
   )
