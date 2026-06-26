@@ -17,12 +17,8 @@ export default function NutzerView() {
 
   useEffect(() => {
     const load = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      const res = await fetch('https://zgqfoztgzdesamzgpwdk.supabase.co/functions/v1/list-users', {
-        headers: { Authorization: `Bearer ${session?.access_token}` },
-      })
-      const data = await res.json()
-      if (!res.ok) { setError(data.error ?? 'Fehler'); setLoading(false); return }
+      const { data, error: fnError } = await supabase.functions.invoke('list-users')
+      if (fnError) { setError(fnError.message); setLoading(false); return }
       setUsers(data)
       setLoading(false)
     }
