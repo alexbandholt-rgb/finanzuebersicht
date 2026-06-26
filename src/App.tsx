@@ -70,9 +70,15 @@ export default function App() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Nach Login: Daten aus Cloud laden
+  // Nach Login: State zurücksetzen und Daten aus Cloud laden
   useEffect(() => {
     if (!user) return
+    setYear(THIS_YEAR)
+    setMonth(THIS_MONTH)
+    setTab('monat')
+    setFutureLimit(0)
+    setPastLimit(0)
+    setIsDirty(false)
     const init = async () => {
       const [cloudMonths, cloudMonth] = await Promise.all([
         cloudGetAllMonths(),
