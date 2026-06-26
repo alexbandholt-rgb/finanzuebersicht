@@ -287,14 +287,14 @@ export default function App() {
                 {saved ? 'Gespeichert' : 'Speichern'}
               </button>
             )}
-            <button
-              onClick={() => supabase.auth.signOut()}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-red-500 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all"
-            >
-              <LogOut size={14} />
-              Abmelden
-            </button>
           </div>
+          <button
+            onClick={() => supabase.auth.signOut()}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-red-500 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all"
+          >
+            <LogOut size={14} />
+            Abmelden
+          </button>
         </header>
 
         {/* Content */}
