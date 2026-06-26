@@ -28,8 +28,11 @@ Deno.serve(async (req) => {
     { global: { headers: { Authorization: authHeader } } }
   )
 
-  const { data: { user } } = await supabaseUser.auth.getUser()
-  if (!user || user.email !== ADMIN_EMAIL) {
+  const { data: { user }, error: authError } = await supabaseUser.auth.getUser()
+  if (authError || !user) {
+    return new Response(JSON.stringify({ error: 'Nicht eingeloggt' }), { status: 401, headers: corsHeaders })
+  }
+  if (user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
     return new Response(JSON.stringify({ error: 'Kein Zugriff' }), { status: 403, headers: corsHeaders })
   }
 
