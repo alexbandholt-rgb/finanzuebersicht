@@ -1,0 +1,143 @@
+import { MONTH_NAMES } from '../types'
+import { loadMonth, getAllMonths } from '../lib/storage'
+import { calcSummary } from '../lib/calc'
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LabelList
+} from 'recharts'
+
+interface Props {
+  year: number
+}
+
+const fmt = (n: number) =>
+  n.toLocaleString('de-DE', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' €'
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null
+  const d = payload[0].payload
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl shadow-lg px-4 py-3 text-xs flex flex-col gap-1">
+      <p className="font-semibold text-slate-700 mb-1">{label}</p>
+      <div className="flex justify-between gap-6">
+        <span className="text-slate-400">Einkünfte</span>
+        <span className="font-mono text-emerald-600">{fmt(d.einkuenfte)}</span>
+      </div>
+      <div className="flex justify-between gap-6">
+        <span className="text-slate-400">Ausgaben</span>
+        <span className="font-mono text-blue-500">{fmt(d.ausgaben)}</span>
+      </div>
+      <div className="flex justify-between gap-6">
+        <span className="text-slate-400">Verbleibend</span>
+        <span className={`font-mono ${d.verbleibend >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>{fmt(d.verbleibend)}</span>
+      </div>
+      <div className="flex justify-between gap-6 pt-1 border-t border-slate-100">
+        <span className="text-slate-400">Sparquote</span>
+        <span className="font-mono font-semibold text-violet-500">{d.sparquote.toFixed(1)} %</span>
+      </div>
+    </div>
+  )
+}
+
+const SparquoteLabel = ({ x, y, width, index, data }: any) => {
+  const m = data?.[index]
+  if (!m || !m.sparquote) return null
+  return (
+    <text x={x + width / 2} y={y - 5} textAnchor="middle" fontSize={10} fill="#8b5cf6" fontWeight="600">
+      {m.sparquote.toFixed(0)}%
+    </text>
+  )
+}
+
+export default function JahresUebersicht({ year }: Props) {
+  const gespeichert = getAllMonths().filter(m => m.year === year)
+
+  const monate = gespeichert.map(({ month }) => {
+    const data = loadMonth(year, month)
+    const s = calcSummary(data)
+    const sparquote = s.einkuenfte > 0 ? (s.sparen / s.einkuenfte) * 100 : 0
+    return {
+      name: MONTH_NAMES[month - 1].slice(0, 3),
+      einkuenfte: s.einkuenfte,
+      ausgaben: s.gesamtAusgaben,
+      sparen: s.sparen,
+      verbleibend: s.verbleibend,
+      sparquote,
+    }
+  })
+
+  const gesamtEinkuenfte = monate.reduce((a, m) => a + m.einkuenfte, 0)
+  const gesamtAusgaben = monate.reduce((a, m) => a + m.ausgaben, 0)
+  const gesamtSparen = gespeichert.reduce((a, { month }) => {
+    const s = calcSummary(loadMonth(year, month))
+    return a + s.sparen
+  }, 0)
+  const durchschnittSparquote = monate.length > 0
+    ? monate.reduce((a, m) => a + m.sparquote, 0) / monate.length
+    : 0
+
+  if (monate.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+        <p className="text-sm">Noch keine Monate für {year} gespeichert.</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      {/* Jahreszusammenfassung */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+        {[
+          { label: 'Gesamteinkünfte', value: gesamtEinkuenfte, color: '#10b981', bg: '#f0fdf4', border: '#bbf7d0' },
+          { label: 'Gesamtausgaben', value: gesamtAusgaben, color: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe' },
+          { label: 'Gesamtsparbetrag', value: gesamtSparen, color: '#ec4899', bg: '#fdf2f8', border: '#fbcfe8' },
+          { label: 'Ø Sparquote', value: null, sparquote: durchschnittSparquote, color: '#8b5cf6', bg: '#f5f3ff', border: '#ddd6fe' },
+        ].map((k, i) => (
+          <div key={i} className="bg-white rounded-2xl p-4 border shadow-sm" style={{ borderColor: k.border, background: k.bg }}>
+            <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: k.color }}>{k.label}</p>
+            <p className="text-xl font-mono font-bold text-slate-700">
+              {k.sparquote !== undefined ? `${k.sparquote.toFixed(1)} %` : fmt(k.value!)}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Balkendiagramm */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-6">
+          Jahresvergleich {year}
+        </h3>
+        <ResponsiveContainer width="100%" height={320}>
+          <BarChart data={monate} barCategoryGap="25%" barGap={4}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+            <XAxis
+              dataKey="name"
+              tick={{ fill: '#94a3b8', fontSize: 12 }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <YAxis
+              tick={{ fill: '#94a3b8', fontSize: 11 }}
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={v => `${v}€`}
+              width={70}
+            />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.03)' }} />
+            <Bar dataKey="einkuenfte" name="Einkünfte" fill="#10b981" radius={[6, 6, 0, 0]} maxBarSize={28} />
+            <Bar dataKey="ausgaben" name="Ausgaben" fill="#3b82f6" radius={[6, 6, 0, 0]} maxBarSize={28} />
+            <Bar dataKey="sparen" name="Sparen" fill="#8b5cf6" radius={[6, 6, 0, 0]} maxBarSize={28}>
+              <LabelList content={(props: any) => <SparquoteLabel {...props} data={monate} />} />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+
+        <div className="flex items-center gap-4 mt-3">
+          <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-sm bg-emerald-500" /><span className="text-xs text-slate-400">Einkünfte</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-sm bg-blue-500" /><span className="text-xs text-slate-400">Ausgaben</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-sm bg-violet-500" /><span className="text-xs text-slate-400">Sparen (% = Sparquote)</span></div>
+        </div>
+      </div>
+    </div>
+  )
+}
