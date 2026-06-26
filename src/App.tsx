@@ -131,7 +131,7 @@ export default function App() {
   const nextMonth = () => {
     if (isAtMax) return
     const p = addMonths(year, month, 1)
-    setYear(p.year); setMonth(p.month)
+    setYear(p.year); setMonth(p.month); setTab('monat')
   }
 
   const toggleCompareMonth = (key: string) => {
