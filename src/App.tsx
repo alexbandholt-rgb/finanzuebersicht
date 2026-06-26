@@ -72,6 +72,8 @@ export default function App() {
         setMigrating(true)
         await migrateLocalStorageToCloud()
         localStorage.setItem(migratedKey, '1')
+        // Lokale Daten löschen damit andere Nutzer sie nicht übernehmen
+        localStorage.removeItem('finanz_all_months')
         setMigrating(false)
       }
       const [cloudMonths, cloudStamm, cloudMonth] = await Promise.all([
