@@ -26,13 +26,19 @@ export async function cloudSaveMonth(monthData: MonthData): Promise<void> {
   if (!uid) return
   await supabase
     .from('month_data')
-    .upsert({
+    .delete()
+    .eq('user_id', uid)
+    .eq('year', monthData.year)
+    .eq('month', monthData.month)
+  await supabase
+    .from('month_data')
+    .insert({
       user_id: uid,
       year: monthData.year,
       month: monthData.month,
       data: monthData,
       updated_at: new Date().toISOString(),
-    }, { onConflict: 'user_id,year,month' })
+    })
 }
 
 export async function cloudDeleteMonth(year: number, month: number): Promise<void> {
@@ -56,7 +62,14 @@ export async function cloudGetAllMonths(): Promise<{ year: number; month: number
     .order('year', { ascending: true })
     .order('month', { ascending: true })
   if (error || !data) return []
-  return data as { year: number; month: number }[]
+  // Deduplizieren falls doppelte Einträge in der DB existieren
+  const seen = new Set<string>()
+  return (data as { year: number; month: number }[]).filter(({ year, month }) => {
+    const key = `${year}-${month}`
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
 }
 
 export async function cloudLoadStammdaten(): Promise<Stammdaten | null> {
