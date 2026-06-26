@@ -164,7 +164,6 @@ export default function App() {
     { id: 'monat' as Tab, label: 'Monatsübersicht', icon: <BarChart2 size={16} /> },
     { id: 'stammdaten' as Tab, label: 'Stammdaten', icon: <Settings2 size={16} /> },
     { id: 'jahresuebersicht' as Tab, label: 'Jahresübersicht', icon: <CalendarDays size={16} /> },
-    { id: 'konto' as Tab, label: 'Konto', icon: <UserCircle size={16} /> },
   ]
 
   if (user === undefined) {
@@ -218,6 +217,24 @@ return (
             </button>
           </div>
         </nav>
+
+        {/* Konto + E-Mail fest am Ende der Sidebar */}
+        <div style={{ marginTop: 'auto', padding: '1rem 0.75rem', borderTop: '1px solid #f1f5f9' }}>
+          <button
+            onClick={() => setTab('konto')}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all w-full text-left ${
+              tab === 'konto'
+                ? 'bg-violet-50 text-violet-700 border border-violet-200'
+                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            <UserCircle size={16} className={tab === 'konto' ? 'text-violet-500' : 'text-slate-400'} />
+            <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              <span>Konto</span>
+              <span style={{ fontSize: '10px', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</span>
+            </div>
+          </button>
+        </div>
       </aside>
 
       {/* Hauptbereich */}
