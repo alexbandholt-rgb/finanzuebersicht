@@ -1,15 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
-import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Save, Check, Settings2, Trash2, CalendarDays, LogOut, UserCircle } from 'lucide-react'
+import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Save, Check, Trash2, CalendarDays, LogOut, UserCircle } from 'lucide-react'
 import type { MonthData } from './types'
 import { MONTH_NAMES } from './types'
 import { createNewMonth, defaultStammdaten } from './lib/storage'
-import type { Stammdaten } from './lib/storage'
-import { cloudLoadMonth, cloudSaveMonth, cloudDeleteMonth, cloudGetAllMonths, cloudLoadStammdaten, cloudSaveStammdaten } from './lib/cloudStorage'
+import { cloudLoadMonth, cloudSaveMonth, cloudDeleteMonth, cloudGetAllMonths } from './lib/cloudStorage'
 import { supabase } from './lib/supabase'
 import type { User } from '@supabase/supabase-js'
 import MonthView from './components/MonthView'
 import CompareView from './components/CompareView'
-import StammdatenView from './components/StammdatenView'
 import JahresUebersicht from './components/JahresUebersicht'
 import AuthScreen from './components/AuthScreen'
 import AccountView from './components/AccountView'
@@ -32,7 +30,7 @@ function compareYM(y1: number, m1: number, y2: number, m2: number) {
   return y1 * 12 + m1 - (y2 * 12 + m2)
 }
 
-type Tab = 'monat' | 'stammdaten' | 'jahresuebersicht' | 'compare' | 'konto' | 'nutzer'
+type Tab = 'monat' | 'jahresuebersicht' | 'compare' | 'konto' | 'nutzer'
 
 export default function App() {
   const [isPasswordReset] = useState(() => {
@@ -43,7 +41,6 @@ export default function App() {
   const [year, setYear] = useState(THIS_YEAR)
   const [month, setMonth] = useState(THIS_MONTH)
   const [data, setData] = useState<MonthData>(() => createNewMonth(THIS_YEAR, THIS_MONTH, defaultStammdaten()))
-  const [stammdaten, setStammdaten] = useState<Stammdaten>(() => defaultStammdaten())
   const [tab, setTab] = useState<Tab>('monat')
   const [compareMonths, setCompareMonths] = useState<MonthData[]>([])
   const [allMonths, setAllMonths] = useState<{ year: number; month: number }[]>([])
@@ -74,16 +71,17 @@ export default function App() {
   useEffect(() => {
     if (!user) return
     const init = async () => {
-      const [cloudMonths, cloudStamm, cloudMonth] = await Promise.all([
+      const [cloudMonths, cloudMonth] = await Promise.all([
         cloudGetAllMonths(),
-        cloudLoadStammdaten(),
         cloudLoadMonth(THIS_YEAR, THIS_MONTH),
       ])
       setAllMonths(cloudMonths)
-      const effectiveStamm = cloudStamm ?? stammdaten
-      if (cloudStamm) setStammdaten(cloudStamm)
       if (cloudMonth) setData(cloudMonth)
-      else setData(createNewMonth(THIS_YEAR, THIS_MONTH, effectiveStamm))
+      else {
+        const prev = cloudMonths.filter(m => m.year * 12 + m.month < THIS_YEAR * 12 + THIS_MONTH).at(-1)
+        const template = prev ? await cloudLoadMonth(prev.year, prev.month) : null
+        setData(createNewMonth(THIS_YEAR, THIS_MONTH, template ?? defaultStammdaten()))
+      }
     }
     init()
   }, [user])
@@ -91,28 +89,24 @@ export default function App() {
   // Monat wechseln → aus Cloud laden
   useEffect(() => {
     if (!user) return
-    cloudLoadMonth(year, month).then(d => {
-      if (d) setData(d)
-      else setData(createNewMonth(year, month, stammdaten))
-    })
+    const load = async () => {
+      const d = await cloudLoadMonth(year, month)
+      if (d) { setData(d); return }
+      const all = await cloudGetAllMonths()
+      const prev = all.filter(m => m.year * 12 + m.month < year * 12 + month).at(-1)
+      const template = prev ? await cloudLoadMonth(prev.year, prev.month) : null
+      setData(createNewMonth(year, month, template ?? defaultStammdaten()))
+    }
+    load()
   }, [year, month, user])
 
   const handleSave = useCallback(async () => {
-    if (tab === 'stammdaten') {
-      await cloudSaveStammdaten(stammdaten)
-    } else {
-      await cloudSaveMonth(data)
-      const updated = await cloudGetAllMonths()
-      setAllMonths(updated)
-    }
+    await cloudSaveMonth(data)
+    const updated = await cloudGetAllMonths()
+    setAllMonths(updated)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
-  }, [tab, data, stammdaten])
-
-  const handleCopyToStammdaten = (key: string, items: MonthData[keyof MonthData]) => {
-    const updated = { ...stammdaten, [key]: items }
-    setStammdaten(updated)
-  }
+  }, [data])
 
   const handleDelete = async () => {
     await cloudDeleteMonth(year, month)
@@ -125,7 +119,7 @@ export default function App() {
     setYear(targetYear)
     setMonth(targetMonth)
     const d = last ? await cloudLoadMonth(targetYear, targetMonth) : null
-    setData(d ?? createNewMonth(targetYear, targetMonth, stammdaten))
+    setData(d ?? createNewMonth(targetYear, targetMonth, defaultStammdaten()))
   }
 
   const prevMonth = () => {
@@ -149,7 +143,7 @@ export default function App() {
   const startCompare = async () => {
     const months = await Promise.all(selectedForCompare.map(async key => {
       const [y, m] = key.split('-').map(Number)
-      return (await cloudLoadMonth(y, m)) ?? createNewMonth(y, m, stammdaten)
+      return (await cloudLoadMonth(y, m)) ?? createNewMonth(y, m, defaultStammdaten())
     }))
     setCompareMonths(months)
     setComparePickerOpen(false)
@@ -158,7 +152,6 @@ export default function App() {
 
   const navItems = [
     { id: 'monat' as Tab, label: 'Monatsübersicht', icon: <BarChart2 size={16} /> },
-    { id: 'stammdaten' as Tab, label: 'Stammdaten', icon: <Settings2 size={16} /> },
     { id: 'jahresuebersicht' as Tab, label: 'Jahresübersicht', icon: <CalendarDays size={16} /> },
     { id: 'konto' as Tab, label: 'Konto', icon: <UserCircle size={16} /> },
   ]
@@ -300,8 +293,7 @@ return (
 
         {/* Content */}
         <main style={{ padding: '2rem 2.5rem' }}>
-          {tab === 'monat' && <MonthView data={data} onChange={setData} onCopyToStammdaten={handleCopyToStammdaten} />}
-          {tab === 'stammdaten' && <StammdatenView data={stammdaten} onChange={setStammdaten} />}
+          {tab === 'monat' && <MonthView data={data} onChange={setData} />}
           {tab === 'jahresuebersicht' && <JahresUebersicht year={THIS_YEAR} allMonths={allMonths} />}
           {tab === 'compare' && <CompareView months={compareMonths} />}
           {tab === 'konto' && <AccountView email={user.email ?? ''} />}

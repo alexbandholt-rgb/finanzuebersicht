@@ -16,18 +16,14 @@ const COLORS = {
 interface Props {
   data: MonthData
   onChange: (data: MonthData) => void
-  onCopyToStammdaten?: (key: string, items: MonthData[keyof MonthData]) => void
 }
 
 type CategoryKey = 'einkuenfte' | 'wohnungskosten' | 'auto' | 'fixkosten' | 'sparen' | 'versicherungen' | 'jaehrliche_kosten'
 
-export default function MonthView({ data, onChange, onCopyToStammdaten }: Props) {
+export default function MonthView({ data, onChange }: Props) {
   const update = (key: CategoryKey) => (items: LineItem[]) => {
     onChange({ ...data, [key]: items })
   }
-
-  const copy = (key: CategoryKey) =>
-    onCopyToStammdaten ? () => onCopyToStammdaten(key, data[key]) : undefined
 
   const einkuenfte = sum(data.einkuenfte)
 
@@ -40,28 +36,24 @@ export default function MonthView({ data, onChange, onCopyToStammdaten }: Props)
             color={COLORS.einkuenfte}
             items={data.einkuenfte}
             onChange={update('einkuenfte')}
-            onCopyToStammdaten={copy('einkuenfte')}
           /></div>
           <div id="section-wohnungskosten"><CategorySection
             title="Wohnungskosten"
             color={COLORS.wohnungskosten}
             items={data.wohnungskosten}
             onChange={update('wohnungskosten')}
-            onCopyToStammdaten={copy('wohnungskosten')}
           /></div>
           <div id="section-auto"><CategorySection
             title="Auto"
             color={COLORS.auto}
             items={data.auto}
             onChange={update('auto')}
-            onCopyToStammdaten={copy('auto')}
           /></div>
           <div id="section-fixkosten"><CategorySection
             title="Fixkosten"
             color={COLORS.fixkosten}
             items={data.fixkosten}
             onChange={update('fixkosten')}
-            onCopyToStammdaten={copy('fixkosten')}
           /></div>
           <div id="section-sparen"><CategorySection
             title="Sparen"
@@ -72,7 +64,6 @@ export default function MonthView({ data, onChange, onCopyToStammdaten }: Props)
             sparRateActive={data.sparRateActive}
             onSparRateChange={(rate, active) => onChange({ ...data, sparRate: rate, sparRateActive: active })}
             einkuenfte={einkuenfte}
-            onCopyToStammdaten={copy('sparen')}
           /></div>
           <div id="section-versicherungen"><CategorySection
             title="Versicherungen"
@@ -80,7 +71,6 @@ export default function MonthView({ data, onChange, onCopyToStammdaten }: Props)
             items={data.versicherungen}
             onChange={update('versicherungen')}
             showAnnualToggle
-            onCopyToStammdaten={copy('versicherungen')}
           /></div>
           <div id="section-jaehrliche_kosten"><CategorySection
             title="Jährliche Kosten"
@@ -88,7 +78,6 @@ export default function MonthView({ data, onChange, onCopyToStammdaten }: Props)
             items={data.jaehrliche_kosten}
             onChange={update('jaehrliche_kosten')}
             annualMode
-            onCopyToStammdaten={copy('jaehrliche_kosten')}
           /></div>
         </div>
 
