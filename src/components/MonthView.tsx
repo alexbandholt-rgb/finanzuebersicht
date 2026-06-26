@@ -69,7 +69,8 @@ export default function MonthView({ data, onChange, onCopyToStammdaten }: Props)
             items={data.sparen}
             onChange={update('sparen')}
             sparRate={data.sparRate}
-            onSparRateChange={rate => onChange({ ...data, sparRate: rate })}
+            sparRateActive={data.sparRateActive}
+            onSparRateChange={(rate, active) => onChange({ ...data, sparRate: rate, sparRateActive: active })}
             einkuenfte={einkuenfte}
             onCopyToStammdaten={copy('sparen')}
           />

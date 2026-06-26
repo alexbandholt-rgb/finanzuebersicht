@@ -25,6 +25,7 @@ export interface MonthData {
   versicherungen: LineItem[]
   jaehrliche_kosten: LineItem[]
   sparRate?: number
+  sparRateActive?: boolean
   notes?: string
   created_at?: string
   updated_at?: string

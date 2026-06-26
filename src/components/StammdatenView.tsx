@@ -33,7 +33,7 @@ export default function StammdatenView({ data, onChange }: Props) {
       <CategorySection title="Wohnungskosten" color={COLORS.wohnungskosten} items={data.wohnungskosten} onChange={update('wohnungskosten')} />
       <CategorySection title="Auto" color={COLORS.auto} items={data.auto} onChange={update('auto')} />
       <CategorySection title="Fixkosten" color={COLORS.fixkosten} items={data.fixkosten} onChange={update('fixkosten')} />
-      <CategorySection title="Sparen" color={COLORS.sparen} items={data.sparen} onChange={update('sparen')} sparRate={data.sparRate} onSparRateChange={rate => onChange({ ...data, sparRate: rate })} einkuenfte={einkuenfte} />
+      <CategorySection title="Sparen" color={COLORS.sparen} items={data.sparen} onChange={update('sparen')} sparRate={data.sparRate} sparRateActive={data.sparRateActive} onSparRateChange={(rate, active) => onChange({ ...data, sparRate: rate, sparRateActive: active })} einkuenfte={einkuenfte} />
       <CategorySection title="Versicherungen" color={COLORS.versicherungen} items={data.versicherungen} onChange={update('versicherungen')} showAnnualToggle />
       <CategorySection title="Jährliche Kosten" color={COLORS.jaehrliche_kosten} items={data.jaehrliche_kosten} onChange={update('jaehrliche_kosten')} annualMode />
     </div>

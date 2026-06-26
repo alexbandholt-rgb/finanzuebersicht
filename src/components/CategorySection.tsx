@@ -13,7 +13,8 @@ interface Props {
   annualMode?: boolean
   showAnnualToggle?: boolean
   sparRate?: number
-  onSparRateChange?: (rate: number | undefined) => void
+  sparRateActive?: boolean
+  onSparRateChange?: (rate: number | undefined, active: boolean) => void
   einkuenfte?: number
   onCopyToStammdaten?: () => void
 }
@@ -22,7 +23,7 @@ function newItem(): LineItem {
   return { id: crypto.randomUUID(), label: '', amount: null }
 }
 
-export default function CategorySection({ title, color, items, onChange, annualMode, showAnnualToggle, sparRate, onSparRateChange, einkuenfte, onCopyToStammdaten }: Props) {
+export default function CategorySection({ title, color, items, onChange, annualMode, showAnnualToggle, sparRate, sparRateActive, onSparRateChange, einkuenfte, onCopyToStammdaten }: Props) {
   const updateField = (id: string, field: keyof LineItem, value: string) => {
     onChange(items.map(item => {
       if (item.id !== id) return item
@@ -77,19 +78,28 @@ export default function CategorySection({ title, color, items, onChange, annualM
       {/* Sparrate */}
       {onSparRateChange !== undefined && (
         <div className="rounded-xl px-4 py-3 flex items-center justify-between gap-3 bg-slate-50 border border-slate-200">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-xs font-semibold text-slate-600">Sparrate vom Einkommen</span>
-            {sparRate !== undefined && einkuenfte !== undefined && einkuenfte > 0 && (
-              <span className="text-xs text-slate-400 font-mono">
-                = {fmt((einkuenfte * sparRate) / 100)} / Monat
-              </span>
-            )}
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={sparRateActive ?? false}
+              onChange={e => onSparRateChange(sparRate, e.target.checked)}
+              style={{ width: '16px', height: '16px', accentColor: '#8b5cf6', cursor: 'pointer', flexShrink: 0 }}
+            />
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xs font-semibold text-slate-600">Sparrate vom Einkommen</span>
+              {sparRateActive && sparRate !== undefined && einkuenfte !== undefined && einkuenfte > 0 && (
+                <span className="text-xs text-slate-400 font-mono">
+                  = {fmt((einkuenfte * sparRate) / 100)} / Monat
+                </span>
+              )}
+            </div>
           </div>
-          <div className="flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+          <div className="flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm" style={{ opacity: sparRateActive ? 1 : 0.4 }}>
             <input
               type="number"
               value={sparRate ?? ''}
-              onChange={e => onSparRateChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
+              onChange={e => onSparRateChange(e.target.value === '' ? undefined : parseFloat(e.target.value), sparRateActive ?? false)}
+              disabled={!sparRateActive}
               placeholder="0"
               min="0"
               max="100"

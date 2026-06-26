@@ -13,7 +13,7 @@ export function calcSummary(data: MonthData) {
   const wohnungskosten = sum(data.wohnungskosten)
   const auto = sum(data.auto)
   const fixkosten = sum(data.fixkosten)
-  const sparRateBetrag = data.sparRate && einkuenfte > 0 ? (einkuenfte * data.sparRate) / 100 : 0
+  const sparRateBetrag = data.sparRate && data.sparRateActive !== false && einkuenfte > 0 ? (einkuenfte * data.sparRate) / 100 : 0
   const sparen = sum(data.sparen) + sparRateBetrag
   const versicherungen = sum(data.versicherungen.filter(i => !i.isAnnual))
   const jaehrlichProMonat = annualPerMonth(data.jaehrliche_kosten)
