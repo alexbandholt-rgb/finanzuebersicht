@@ -22,13 +22,16 @@ const BLOCKS = [
 function scrollToSection(sectionId: string, color: string) {
   const el = document.getElementById(sectionId)
   if (!el) return
-  el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  const top = el.getBoundingClientRect().top + window.scrollY - 80
+  window.scrollTo({ top, behavior: 'smooth' })
   const card = el.firstElementChild as HTMLElement | null
   if (!card) return
-  const prev = card.style.boxShadow
-  card.style.transition = 'box-shadow 0.2s'
-  card.style.boxShadow = `0 0 0 3px ${color}66`
-  setTimeout(() => { card.style.boxShadow = prev }, 1200)
+  card.style.transition = 'box-shadow 0.3s ease'
+  card.style.boxShadow = `0 0 0 3px ${color}88`
+  setTimeout(() => {
+    card.style.transition = 'box-shadow 0.6s ease'
+    card.style.boxShadow = ''
+  }, 1000)
 }
 
 const PIE_CATEGORIES = [
