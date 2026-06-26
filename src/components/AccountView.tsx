@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { Check, Loader2, Trash2, AlertTriangle } from 'lucide-react'
 
@@ -8,6 +8,12 @@ interface Props {
 
 export default function AccountView({ email }: Props) {
   const [name, setName] = useState('')
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.user_metadata?.name) setName(user.user_metadata.name)
+    })
+  }, [])
   const [newEmail, setNewEmail] = useState(email)
   const [newPassword, setNewPassword] = useState('')
   const [saving, setSaving] = useState(false)
