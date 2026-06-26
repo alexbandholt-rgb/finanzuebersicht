@@ -117,7 +117,7 @@ export default function CategorySection({ title, color, items, onChange, annualM
                   className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none focus:border-slate-400 transition-colors"
                   style={{ flex: 1 }}
                 />
-                <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden" style={{ width: '120px' }}>
                   <input
                     type="number"
                     value={item.amount ?? ''}
@@ -128,7 +128,7 @@ export default function CategorySection({ title, color, items, onChange, annualM
                   />
                   <span className="pr-3 text-slate-400 text-xs select-none">€</span>
                 </div>
-                <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden" style={{ width: '52px' }}>
                   <input
                     type="number"
                     value={item.share ?? ''}
@@ -140,22 +140,25 @@ export default function CategorySection({ title, color, items, onChange, annualM
                     className="w-full bg-transparent px-2 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none text-right"
                   />
                 </div>
-                {showAnnualToggle ? (
-                  <button
-                    onClick={() => toggleAnnual(item.id)}
-                    title={item.isAnnual ? 'Jährlich (klicken zum Deaktivieren)' : 'Als jährlich markieren'}
-                    className={`p-2 rounded-lg transition-all ${
-                      item.isAnnual
-                        ? 'text-orange-500 bg-orange-50 border border-orange-200'
-                        : 'text-slate-300 hover:text-orange-400 hover:bg-orange-50 border border-transparent'
-                    }`}
-                  >
-                    <CalendarClock size={14} />
-                  </button>
-                ) : <div />}
+                <div style={{ width: '30px', display: 'flex', justifyContent: 'center' }}>
+                  {showAnnualToggle ? (
+                    <button
+                      onClick={() => toggleAnnual(item.id)}
+                      title={item.isAnnual ? 'Jährlich (klicken zum Deaktivieren)' : 'Als jährlich markieren'}
+                      className={`p-2 rounded-lg transition-all ${
+                        item.isAnnual
+                          ? 'text-orange-500 bg-orange-50 border border-orange-200'
+                          : 'text-slate-300 hover:text-orange-400 hover:bg-orange-50 border border-transparent'
+                      }`}
+                    >
+                      <CalendarClock size={14} />
+                    </button>
+                  ) : null}
+                </div>
                 <button
                   onClick={() => remove(item.id)}
                   className="p-2 text-slate-300 hover:text-red-400 transition-colors rounded-lg hover:bg-red-50"
+                  style={{ width: '30px' }}
                 >
                   <Trash2 size={14} />
                 </button>
@@ -164,16 +167,14 @@ export default function CategorySection({ title, color, items, onChange, annualM
               {showShare && item.amount !== null && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div style={{ flex: 1 }} />
-                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <div style={{ width: '120px', display: 'flex', justifyContent: 'flex-end', paddingRight: '4px' }}>
                     <span className="text-xs text-slate-400">
                       = <span className="font-mono font-medium" style={{ color }}>{fmt(effective)}</span> dein Anteil
                     </span>
                   </div>
-                  <div style={{ visibility: 'hidden', display: 'flex', alignItems: 'center', borderRadius: '12px', overflow: 'hidden' }}>
-                    <input type="number" className="bg-transparent px-2 py-0 text-sm text-right" style={{ width: '40px' }} readOnly />
-                  </div>
-                  <div style={{ visibility: 'hidden' }}><button className="p-2"><CalendarClock size={14} /></button></div>
-                  <div style={{ visibility: 'hidden' }}><button className="p-2"><Trash2 size={14} /></button></div>
+                  <div style={{ width: '52px' }} />
+                  <div style={{ width: '30px' }} />
+                  <div style={{ width: '30px' }} />
                 </div>
               )}
             </div>
