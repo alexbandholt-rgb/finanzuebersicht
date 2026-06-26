@@ -4,6 +4,7 @@ import { useIsMobile } from '../hooks/useIsMobile'
 import type { MonthData } from '../types'
 import { calcSummary } from '../lib/calc'
 import { cloudLoadMonth } from '../lib/cloudStorage'
+import { FileText } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LabelList
 } from 'recharts'
@@ -71,11 +72,13 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
     const sparquote = s.einkuenfte > 0 ? (s.sparen / s.einkuenfte) * 100 : 0
     return {
       name: MONTH_NAMES[data.month - 1].slice(0, 3),
+      fullName: MONTH_NAMES[data.month - 1],
       einkuenfte: s.einkuenfte,
       ausgaben: s.gesamtAusgaben,
       sparen: s.sparen,
       verbleibend: s.verbleibend,
       sparquote,
+      notes: data.notes ?? '',
     }
   })
 
@@ -157,6 +160,26 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
           <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-sm bg-violet-500" /><span className="text-xs text-slate-400">Sparen (% = Sparquote)</span></div>
         </div>
       </div>
+
+      {/* Notizen */}
+      {monate.some(m => m.notes.trim()) && (
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: isMobile ? '1rem' : '1.5rem' }}>
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-4">Notizen</h3>
+          <div className="flex flex-col gap-3">
+            {monate.filter(m => m.notes.trim()).map((m, i) => (
+              <div key={i} className="flex gap-3 items-start">
+                <div className="mt-0.5 flex-shrink-0 w-6 h-6 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center">
+                  <FileText size={12} className="text-amber-500" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 mb-0.5">{m.fullName}</p>
+                  <p className="text-sm text-slate-600 leading-relaxed">{m.notes}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
