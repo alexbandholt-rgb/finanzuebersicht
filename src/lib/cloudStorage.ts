@@ -2,10 +2,18 @@ import { supabase } from './supabase'
 import type { MonthData } from '../types'
 import type { Stammdaten } from './storage'
 
+async function getUserId(): Promise<string | null> {
+  const { data: { user } } = await supabase.auth.getUser()
+  return user?.id ?? null
+}
+
 export async function cloudLoadMonth(year: number, month: number): Promise<MonthData | null> {
+  const uid = await getUserId()
+  if (!uid) return null
   const { data, error } = await supabase
     .from('month_data')
     .select('data')
+    .eq('user_id', uid)
     .eq('year', year)
     .eq('month', month)
     .single()
@@ -14,12 +22,12 @@ export async function cloudLoadMonth(year: number, month: number): Promise<Month
 }
 
 export async function cloudSaveMonth(monthData: MonthData): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return
+  const uid = await getUserId()
+  if (!uid) return
   await supabase
     .from('month_data')
     .upsert({
-      user_id: user.id,
+      user_id: uid,
       year: monthData.year,
       month: monthData.month,
       data: monthData,
@@ -28,17 +36,23 @@ export async function cloudSaveMonth(monthData: MonthData): Promise<void> {
 }
 
 export async function cloudDeleteMonth(year: number, month: number): Promise<void> {
+  const uid = await getUserId()
+  if (!uid) return
   await supabase
     .from('month_data')
     .delete()
+    .eq('user_id', uid)
     .eq('year', year)
     .eq('month', month)
 }
 
 export async function cloudGetAllMonths(): Promise<{ year: number; month: number }[]> {
+  const uid = await getUserId()
+  if (!uid) return []
   const { data, error } = await supabase
     .from('month_data')
     .select('year, month')
+    .eq('user_id', uid)
     .order('year', { ascending: true })
     .order('month', { ascending: true })
   if (error || !data) return []
@@ -46,21 +60,24 @@ export async function cloudGetAllMonths(): Promise<{ year: number; month: number
 }
 
 export async function cloudLoadStammdaten(): Promise<Stammdaten | null> {
+  const uid = await getUserId()
+  if (!uid) return null
   const { data, error } = await supabase
     .from('stammdaten')
     .select('data')
+    .eq('user_id', uid)
     .single()
   if (error || !data) return null
   return data.data as Stammdaten
 }
 
 export async function cloudSaveStammdaten(stammdaten: Stammdaten): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return
+  const uid = await getUserId()
+  if (!uid) return
   await supabase
     .from('stammdaten')
     .upsert({
-      user_id: user.id,
+      user_id: uid,
       data: stammdaten,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'user_id' })
@@ -71,16 +88,10 @@ export async function migrateLocalStorageToCloud(): Promise<void> {
   const keys: string[] = allMonthsRaw ? JSON.parse(allMonthsRaw) : []
 
   for (const key of keys) {
-    const raw = localStorage.getItem(`finanz_${key.replace('-', '_')}`)
-    if (!raw) {
-      const raw2 = localStorage.getItem(`finanz_${key}`)
-      if (!raw2) continue
-      const monthData: MonthData = JSON.parse(raw2)
-      await cloudSaveMonth(monthData)
-    } else {
-      const monthData: MonthData = JSON.parse(raw)
-      await cloudSaveMonth(monthData)
-    }
+    const raw = localStorage.getItem(`finanz_${key.replace('-', '_')}`) ?? localStorage.getItem(`finanz_${key}`)
+    if (!raw) continue
+    const monthData: MonthData = JSON.parse(raw)
+    await cloudSaveMonth(monthData)
   }
 
   const stammdatenRaw = localStorage.getItem('finanz_stammdaten')
