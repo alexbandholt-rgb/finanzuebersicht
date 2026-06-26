@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Save, Check, Settings2, Trash2, CalendarDays, LogOut } from 'lucide-react'
+import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Save, Check, Settings2, Trash2, CalendarDays, LogOut, UserCircle } from 'lucide-react'
 import type { MonthData } from './types'
 import { MONTH_NAMES } from './types'
 import { loadMonth, saveMonth, getAllMonths, loadStammdaten, saveStammdaten, deleteMonth } from './lib/storage'
@@ -12,6 +12,7 @@ import CompareView from './components/CompareView'
 import StammdatenView from './components/StammdatenView'
 import JahresUebersicht from './components/JahresUebersicht'
 import AuthScreen from './components/AuthScreen'
+import AccountView from './components/AccountView'
 
 const now = new Date()
 const THIS_YEAR = now.getFullYear()
@@ -26,7 +27,7 @@ function compareYM(y1: number, m1: number, y2: number, m2: number) {
   return y1 * 12 + m1 - (y2 * 12 + m2)
 }
 
-type Tab = 'monat' | 'stammdaten' | 'jahresuebersicht' | 'compare'
+type Tab = 'monat' | 'stammdaten' | 'jahresuebersicht' | 'compare' | 'konto'
 
 export default function App() {
   const [user, setUser] = useState<User | null | undefined>(undefined)
@@ -175,6 +176,7 @@ export default function App() {
     { id: 'monat' as Tab, label: 'Monatsübersicht', icon: <BarChart2 size={16} /> },
     { id: 'stammdaten' as Tab, label: 'Stammdaten', icon: <Settings2 size={16} /> },
     { id: 'jahresuebersicht' as Tab, label: 'Jahresübersicht', icon: <CalendarDays size={16} /> },
+    { id: 'konto' as Tab, label: 'Konto', icon: <UserCircle size={16} /> },
   ]
 
   if (user === undefined) {
@@ -275,7 +277,7 @@ export default function App() {
           )}
 
           <div style={{ flex: 1 }} />
-          {tab !== 'compare' && tab !== 'jahresuebersicht' && (
+          {tab !== 'compare' && tab !== 'jahresuebersicht' && tab !== 'konto' && (
             <button
               onClick={handleSave}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all border ${
@@ -304,6 +306,7 @@ export default function App() {
           {tab === 'stammdaten' && <StammdatenView data={stammdaten} onChange={setStammdaten} />}
           {tab === 'jahresuebersicht' && <JahresUebersicht year={THIS_YEAR} />}
           {tab === 'compare' && <CompareView months={compareMonths} />}
+          {tab === 'konto' && <AccountView email={user.email ?? ''} />}
         </main>
       </div>
 
