@@ -120,11 +120,12 @@ export default function App() {
     setAllMonths(updated)
     setDeleteConfirmOpen(false)
     const last = updated[updated.length - 1]
-    if (last) {
-      setYear(last.year); setMonth(last.month)
-    } else {
-      setYear(THIS_YEAR); setMonth(THIS_MONTH)
-    }
+    const targetYear = last ? last.year : THIS_YEAR
+    const targetMonth = last ? last.month : THIS_MONTH
+    setYear(targetYear)
+    setMonth(targetMonth)
+    const d = last ? await cloudLoadMonth(targetYear, targetMonth) : null
+    setData(d ?? createNewMonth(targetYear, targetMonth, stammdaten))
   }
 
   const prevMonth = () => {
