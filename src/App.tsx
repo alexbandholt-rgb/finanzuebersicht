@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
-import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Save, Check, Trash2, CalendarDays, LogOut, UserCircle } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Check, Trash2, CalendarDays, LogOut, UserCircle } from 'lucide-react'
 import { useIsMobile } from './hooks/useIsMobile'
 import type { MonthData } from './types'
 import { MONTH_NAMES } from './types'
@@ -102,12 +102,17 @@ export default function App() {
     load()
   }, [year, month, user])
 
-  const handleSave = useCallback(async () => {
-    await cloudSaveMonth(data)
-    const updated = await cloudGetAllMonths()
-    setAllMonths(updated)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+  // Auto-save: 1 Sekunde nach letzter Änderung
+  useEffect(() => {
+    if (!user) return
+    const timer = setTimeout(async () => {
+      await cloudSaveMonth(data)
+      const updated = await cloudGetAllMonths()
+      setAllMonths(updated)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 1500)
+    }, 1000)
+    return () => clearTimeout(timer)
   }, [data])
 
   const handleDelete = async () => {
@@ -267,11 +272,10 @@ return (
               )
             )}
             <div style={{ flex: 1 }} />
-            {tab !== 'compare' && tab !== 'jahresuebersicht' && tab !== 'konto' && tab !== 'nutzer' && (
-              <button onClick={handleSave} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all border ${saved ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 shadow-sm'}`}>
-                {saved ? <Check size={15} /> : <Save size={15} />}
-                {!isMobile && (saved ? 'Gespeichert' : 'Speichern')}
-              </button>
+            {tab === 'monat' && saved && (
+              <span className="flex items-center gap-1.5 text-xs text-emerald-500 font-medium px-2">
+                <Check size={13} /> Gespeichert
+              </span>
             )}
             {!isMobile && (
               <button onClick={() => supabase.auth.signOut()} style={{ marginLeft: '1rem' }} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-red-500 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all">
