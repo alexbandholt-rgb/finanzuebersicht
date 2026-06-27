@@ -12,6 +12,15 @@ interface Props {
 const fmt = (n: number) =>
   n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
 
+const DEFAULT_BUDGETS: Record<string, number> = {
+  wohnungskosten: 30,
+  auto: 15,
+  fixkosten: 10,
+  sparen: 20,
+  versicherungen: 5,
+  jaehrlichProMonat: 5,
+}
+
 const BLOCKS = [
   { key: 'einkuenfte', label: 'Einkünfte', color: '#10b981', bg: '#f0fdf4', border: '#bbf7d0', sectionId: 'section-einkuenfte' },
   { key: 'wohnungskosten', label: 'Wohnung', color: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe', sectionId: 'section-wohnungskosten' },
@@ -62,11 +71,12 @@ export default function Summary({ data, onChange }: Props) {
   const [editingBudget, setEditingBudget] = useState<string | null>(null)
   const [budgetInput, setBudgetInput] = useState('')
 
-  const budgets = data.budgets ?? {}
+  const customBudgets = data.budgets ?? {}
+  const budgets = { ...DEFAULT_BUDGETS, ...customBudgets }
 
   const saveBudget = (key: string) => {
     const val = parseFloat(budgetInput)
-    const updated = { ...budgets }
+    const updated = { ...customBudgets }
     if (isNaN(val) || val <= 0) {
       delete updated[key]
     } else {
@@ -175,7 +185,7 @@ export default function Summary({ data, onChange }: Props) {
                 {onChange && !isEditing && (
                   <button
                     className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={e => { e.stopPropagation(); setBudgetInput(budget?.toString() ?? ''); setEditingBudget(block.key) }}
+                    onClick={e => { e.stopPropagation(); setBudgetInput((budgets[block.key] ?? '').toString()); setEditingBudget(block.key) }}
                     title="Budget setzen"
                     style={{ padding: '1px', lineHeight: 1 }}
                   >
