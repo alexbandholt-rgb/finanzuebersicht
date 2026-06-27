@@ -51,6 +51,12 @@ export function createNewMonth(year: number, month: number, stammdaten: Stammdat
     sparRate: stammdaten.sparRate ?? 10,
     sparRateActive: stammdaten.sparRateActive ?? false,
     budgets: stammdaten.budgets,
-    schulden: copyItems(stammdaten.schulden ?? []),
+    schulden: (stammdaten.schulden ?? []).map(s => {
+      const base = { ...s, id: crypto.randomUUID() }
+      if (!s.aktiv || !s.monatlicheRate || (s.amount ?? 0) <= 0) return base
+      const zinsenMonat = s.zinssatz ? (s.amount ?? 0) * (s.zinssatz / 100 / 12) : 0
+      const tilgung = Math.max(0, s.monatlicheRate - zinsenMonat)
+      return { ...base, amount: Math.max(0, (s.amount ?? 0) - tilgung) }
+    }),
   }
 }

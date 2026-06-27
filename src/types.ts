@@ -11,6 +11,8 @@ export interface LineItem {
   monatlicheRate?: number
   startDatum?: string
   inkludiereInFixkosten?: boolean
+  aktiv?: boolean       // wird gerade abgezahlt → Restbetrag sinkt monatlich
+  zinssatz?: number     // Jahreszins in % (z.B. 4.5)
 }
 
 export interface Category {
