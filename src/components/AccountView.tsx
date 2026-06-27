@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { Check, Loader2, Trash2, AlertTriangle, Sparkles } from 'lucide-react'
+import { Check, Loader2, Trash2, AlertTriangle, Sparkles, Download } from 'lucide-react'
 
 interface Props {
   email: string
@@ -23,6 +23,26 @@ export default function AccountView({ email, lastSignInAt, onShowWhatsNew }: Pro
   const [error, setError] = useState('')
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [exporting, setExporting] = useState(false)
+
+  const handleExport = async () => {
+    setExporting(true)
+    try {
+      const { data, error } = await supabase.functions.invoke('export-data')
+      if (error) throw error
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `finanzuebersicht_export_${new Date().toISOString().slice(0, 10)}.json`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (e: any) {
+      alert('Export fehlgeschlagen: ' + (e.message ?? 'Unbekannter Fehler'))
+    } finally {
+      setExporting(false)
+    }
+  }
 
   const handleSave = async () => {
     setSaving(true)
@@ -146,6 +166,20 @@ export default function AccountView({ email, lastSignInAt, onShowWhatsNew }: Pro
       {/* Einstellungen */}
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Einstellungen</p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <p style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Daten exportieren</p>
+            <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>Alle Monate als JSON-Datei herunterladen</p>
+          </div>
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            style={{ padding: '8px 14px', borderRadius: '10px', border: '1px solid #d1fae5', background: '#f0fdf4', color: '#059669', fontSize: '13px', fontWeight: 600, cursor: exporting ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '5px' }}
+          >
+            {exporting ? <Loader2 size={13} className="animate-spin" /> : <Download size={13} />}
+            {exporting ? 'Lädt…' : 'Export'}
+          </button>
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <p style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Neuigkeiten</p>
