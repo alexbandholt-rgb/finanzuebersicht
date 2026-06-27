@@ -20,9 +20,9 @@ export function calcSummary(data: MonthData) {
     + sum(data.versicherungen.filter(i => i.isAnnual)) / 12
 
   const gesamtAusgaben =
-    wohnungskosten + auto + fixkosten + sparen + versicherungen + jaehrlichProMonat
+    wohnungskosten + auto + fixkosten + versicherungen + jaehrlichProMonat
 
-  const verbleibend = einkuenfte - gesamtAusgaben
+  const verbleibend = einkuenfte - gesamtAusgaben - sparen
 
   return {
     einkuenfte,

@@ -166,7 +166,7 @@ export default function Summary({ data }: Props) {
             Verbleibend
           </p>
           <p className="text-xs text-slate-400 mt-0.5">
-            nach Sparen: {fmt(s.einkuenfte - (s.gesamtAusgaben - s.sparen))}
+            vor Sparen: {fmt(s.einkuenfte - s.gesamtAusgaben)}
           </p>
         </div>
         <span className={`text-xl font-mono font-bold ${isPositive ? 'text-emerald-600' : 'text-red-500'}`}>
