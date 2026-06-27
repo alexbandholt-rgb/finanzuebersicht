@@ -106,7 +106,47 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
       verbleibend: s.verbleibend,
       sparquote,
       notes: data.notes ?? '',
+      budgets: data.budgets ?? {},
+      wohnungskosten: s.wohnungskosten,
+      auto: s.auto,
+      fixkosten: s.fixkosten,
+      versicherungen: s.versicherungen,
+      jaehrlichProMonat: s.jaehrlichProMonat,
+      lebenshaltung: s.lebenshaltung,
     }
+  })
+
+  const DEFAULT_BUDGETS: Record<string, number> = {
+    wohnungskosten: 30, auto: 10, fixkosten: 10, sparen: 20,
+    versicherungen: 5, jaehrlichProMonat: 5, lebenshaltung: 15,
+  }
+
+  const KATEGORIE_CONFIG = [
+    { key: 'wohnungskosten', label: 'Wohnung', color: '#3b82f6' },
+    { key: 'auto', label: 'Auto', color: '#f59e0b' },
+    { key: 'fixkosten', label: 'Fixkosten', color: '#8b5cf6' },
+    { key: 'lebenshaltung', label: 'Lebenshaltung', color: '#14b8a6' },
+    { key: 'sparen', label: 'Sparen', color: '#ec4899', invert: true },
+    { key: 'versicherungen', label: 'Versicherungen', color: '#0ea5e9' },
+    { key: 'jaehrlichProMonat', label: 'Jährl./Monat', color: '#f97316' },
+  ]
+
+  const budgetJahr = KATEGORIE_CONFIG.map(k => {
+    const avgPct = monate.length > 0
+      ? monate.reduce((acc, m) => {
+          const val = (m as any)[k.key] ?? 0
+          return acc + (m.einkuenfte > 0 ? (val / m.einkuenfte) * 100 : 0)
+        }, 0) / monate.length
+      : 0
+    const budget = monate.length > 0
+      ? ({ ...DEFAULT_BUDGETS, ...(monate[0].budgets ?? {}) })[k.key] ?? DEFAULT_BUDGETS[k.key]
+      : DEFAULT_BUDGETS[k.key]
+    const ratio = budget > 0 ? avgPct / budget : 0
+    const color = k.invert
+      ? ratio >= 1 ? '#10b981' : ratio >= 0.75 ? '#f59e0b' : '#ef4444'
+      : ratio > 1.05 ? '#ef4444' : ratio > 1.02 ? '#f59e0b' : '#10b981'
+    const barWidth = k.invert ? Math.min(100, ratio * 100) : Math.min(100, ratio * 100)
+    return { ...k, avgPct, budget, color, barWidth }
   })
 
   const gesamtEinkuenfte = monate.reduce((a, m) => a + m.einkuenfte, 0)
@@ -218,7 +258,33 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
           <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-sm bg-blue-500" /><span className="text-xs text-slate-400">Ausgaben</span></div>
           <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-sm bg-violet-500" /><span className="text-xs text-slate-400">Sparen (% = Sparquote)</span></div>
         </div>
+      </div>
 
+      {/* Budgeteinhaltung */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: isMobile ? '1rem' : '1.5rem' }}>
+        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-5">Budgeteinhaltung {year}</h3>
+        <div className="flex flex-col gap-4">
+          {budgetJahr.map(k => (
+            <div key={k.key}>
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full" style={{ background: k.color }} />
+                  <span className="text-xs font-medium text-slate-600">{k.label}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono" style={{ color: k.color }}>
+                    Ø {k.avgPct.toFixed(1)} %
+                  </span>
+                  <span className="text-xs text-slate-300">/</span>
+                  <span className="text-xs font-mono text-slate-400">Ziel {k.budget} %</span>
+                </div>
+              </div>
+              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-full rounded-full transition-all" style={{ width: `${k.barWidth}%`, background: k.color }} />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
