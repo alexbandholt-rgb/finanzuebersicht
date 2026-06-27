@@ -26,10 +26,11 @@ export function defaultStammdaten(): Stammdaten {
 }
 
 export function migrateMonthData(data: MonthData): MonthData {
+  const barvermoegen = data.barvermoegen ?? []
   return {
     ...data,
     lebenshaltung: data.lebenshaltung ?? makeDefaultItems(DEFAULT_ITEMS.lebenshaltung),
-    barvermoegen: data.barvermoegen ?? makeDefaultItems(DEFAULT_ITEMS.barvermoegen),
+    barvermoegen: barvermoegen.length > 0 ? barvermoegen : makeDefaultItems(DEFAULT_ITEMS.barvermoegen),
   }
 }
 
