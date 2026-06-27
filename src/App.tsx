@@ -21,6 +21,7 @@ import NameSetupScreen from './components/NameSetupScreen'
 import NewPasswordScreen from './components/NewPasswordScreen'
 import OnboardingWizard from './components/OnboardingWizard'
 import PrivacyConsentScreen from './components/PrivacyConsentScreen'
+import WhatsNewModal, { CHANGELOG, getNewEntries, LATEST_DATE } from './components/WhatsNewModal'
 
 const ADMIN_EMAIL = 'alex.bandholt@web.de'
 
@@ -65,6 +66,8 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [showBudgetEditor, setShowBudgetEditor] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [whatsNewEntries, setWhatsNewEntries] = useState<ReturnType<typeof getNewEntries>>([])
+  const whatsNewShownRef = useRef(false)
 
   const maxFuture = addMonths(THIS_YEAR, THIS_MONTH, futureLimit)
   const minPast = addMonths(THIS_YEAR, THIS_MONTH, -pastLimit)
@@ -75,6 +78,13 @@ export default function App() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
+      if (session?.user && !whatsNewShownRef.current) {
+        whatsNewShownRef.current = true
+        const key = `finanz_changelog_seen_${session.user.id}`
+        const seen = localStorage.getItem(key)
+        const entries = getNewEntries(seen)
+        if (entries.length > 0) setWhatsNewEntries(entries)
+      }
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
@@ -552,6 +562,17 @@ return (
         </main>
       </div>
 
+
+      {/* What's New Modal */}
+      {whatsNewEntries.length > 0 && (
+        <WhatsNewModal
+          entries={whatsNewEntries}
+          onClose={() => {
+            if (user) localStorage.setItem(`finanz_changelog_seen_${user.id}`, LATEST_DATE)
+            setWhatsNewEntries([])
+          }}
+        />
+      )}
 
       {/* Delete Confirm Modal */}
       {deleteConfirmOpen && (
