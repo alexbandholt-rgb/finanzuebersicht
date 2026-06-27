@@ -17,6 +17,7 @@ import NutzerView from './components/NutzerView'
 import NameSetupScreen from './components/NameSetupScreen'
 import NewPasswordScreen from './components/NewPasswordScreen'
 import OnboardingWizard from './components/OnboardingWizard'
+import PrivacyConsentScreen from './components/PrivacyConsentScreen'
 
 const ADMIN_EMAIL = 'alex.bandholt@web.de'
 
@@ -210,6 +211,15 @@ export default function App() {
   if (isPasswordReset && user) return <NewPasswordScreen />
 
   if (user === null) return <AuthScreen />
+
+  if (user && !user.user_metadata?.privacy_accepted) {
+    return (
+      <PrivacyConsentScreen onAccept={async () => {
+        await supabase.auth.updateUser({ data: { privacy_accepted: true } })
+        window.location.reload()
+      }} />
+    )
+  }
 
   if (user && !user.user_metadata?.name) {
     return <NameSetupScreen onDone={() => window.location.reload()} />
