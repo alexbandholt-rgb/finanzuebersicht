@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Check, Trash2, CalendarDays, LogOut, UserCircle } from 'lucide-react'
+import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Check, Trash2, CalendarDays, LogOut, UserCircle, PiggyBank } from 'lucide-react'
 import { useIsMobile } from './hooks/useIsMobile'
 import type { MonthData } from './types'
 import { MONTH_NAMES } from './types'
@@ -178,7 +178,7 @@ export default function App() {
   const navItems = [
     { id: 'monat' as Tab, label: 'Monatsübersicht', icon: <BarChart2 size={16} /> },
     { id: 'jahresuebersicht' as Tab, label: 'Jahresübersicht', icon: <CalendarDays size={16} /> },
-    { id: 'barvermoegen' as Tab, label: 'Vermögen', icon: <GitCompare size={16} /> },
+    { id: 'barvermoegen' as Tab, label: 'Vermögen', icon: <PiggyBank size={16} /> },
     { id: 'konto' as Tab, label: 'Konto', icon: <UserCircle size={16} /> },
   ]
 
