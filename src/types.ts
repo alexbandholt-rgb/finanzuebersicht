@@ -26,6 +26,7 @@ export interface MonthData {
   jaehrliche_kosten: LineItem[]
   lebenshaltung: LineItem[]
   barvermoegen?: LineItem[]
+  barvermoegenSichtbar?: boolean
   sparRate?: number
   sparRateActive?: boolean
   notes?: string
