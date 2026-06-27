@@ -102,7 +102,7 @@ export default function Summary({ data, onChange }: Props) {
   }
 
   const sparquote = s.einkuenfte > 0 ? (s.sparen / s.einkuenfte) * 100 : 0
-  const sparquoteColor = sparquote >= 20 ? '#10b981' : sparquote >= 10 ? '#f59e0b' : '#ef4444'
+  const sparquoteColor = sparquote >= 10 ? '#10b981' : sparquote >= 8 ? '#f59e0b' : '#ef4444'
 
   const pieData = [
     ...PIE_CATEGORIES.map(c => ({ name: c.name, value: (s as any)[c.key] as number, color: c.color })).filter(c => c.value > 0),
@@ -158,9 +158,9 @@ export default function Summary({ data, onChange }: Props) {
             </p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-slate-400">Ziel: 10–20 %</p>
+            <p className="text-xs text-slate-400">Ziel: ab 10 %</p>
             <p className="text-xs mt-1 font-medium" style={{ color: sparquoteColor }}>
-              {sparquote >= 20 ? '✓ Sehr gut' : sparquote >= 10 ? '~ Im Ziel' : '↑ Unter Ziel'}
+              {sparquote >= 10 ? '✓ Im Ziel' : sparquote >= 8 ? '~ Knapp drunter' : '↑ Unter Ziel'}
             </p>
           </div>
         </div>
