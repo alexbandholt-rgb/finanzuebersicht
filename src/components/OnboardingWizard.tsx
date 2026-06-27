@@ -1,10 +1,6 @@
 import { useState } from 'react'
 import { BarChart2, ChevronRight, Check } from 'lucide-react'
 
-interface Props {
-  onComplete: (budgets: Record<string, number>) => void
-}
-
 const BUDGET_ITEMS = [
   { key: 'wohnungskosten', label: 'Wohnungskosten', color: '#3b82f6', default: 30, hint: 'Miete, Strom, Internet …' },
   { key: 'auto', label: 'Fahrzeuge', color: '#f59e0b', default: 10, hint: 'Sprit, Versicherung, Steuer …' },
@@ -15,8 +11,13 @@ const BUDGET_ITEMS = [
   { key: 'sparen', label: 'Sparen', color: '#ec4899', default: 20, hint: 'ETF, Aktien, Rücklage …' },
 ]
 
+interface Props {
+  onComplete: (budgets: Record<string, number>, name: string) => void
+}
+
 export default function OnboardingWizard({ onComplete }: Props) {
   const [step, setStep] = useState(0)
+  const [name, setName] = useState('')
   const [budgets, setBudgets] = useState<Record<string, number>>(
     Object.fromEntries(BUDGET_ITEMS.map(i => [i.key, i.default]))
   )
@@ -52,6 +53,17 @@ export default function OnboardingWizard({ onComplete }: Props) {
                 <span style={{ fontSize: '13px', color: '#475569' }}>{text}</span>
               </div>
             ))}
+          </div>
+          <div style={{ width: '100%', textAlign: 'left' }}>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '6px' }}>Wie heißt du?</label>
+            <input
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder="Dein Name"
+              autoFocus
+              style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '14px', color: '#334155', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
+            />
           </div>
           <button
             onClick={() => setStep(1)}
@@ -123,7 +135,7 @@ export default function OnboardingWizard({ onComplete }: Props) {
               Zurück
             </button>
             <button
-              onClick={() => onComplete(budgets)}
+              onClick={() => onComplete(budgets, name)}
               style={{ flex: 2, padding: '12px', borderRadius: '12px', background: '#7c3aed', color: 'white', fontWeight: 700, fontSize: '14px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
             >
               <Check size={16} /> Fertig & loslegen

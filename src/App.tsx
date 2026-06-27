@@ -132,12 +132,13 @@ export default function App() {
     return () => clearTimeout(timer)
   }, [data, isDirty])
 
-  const handleOnboardingComplete = async (budgets: Record<string, number>) => {
+  const handleOnboardingComplete = async (budgets: Record<string, number>, name: string) => {
     const newMonth = { ...data, budgets }
     setData(newMonth)
     await cloudSaveMonth(newMonth)
     const updated = await cloudGetAllMonths()
     setAllMonths(updated)
+    if (name.trim()) await supabase.auth.updateUser({ data: { name: name.trim() } })
     setShowOnboarding(false)
   }
 
