@@ -174,34 +174,42 @@ export default function CategorySection({ title, color, items, onChange, annualM
           const showShare = item.share !== undefined
 
           return (
-            <div key={item.id} className="flex flex-col gap-0.5">
+            <div key={item.id} className="flex flex-col gap-1.5">
+
+              {/* Coin-Picker (wenn Krypto-Modus aktiv) */}
+              {item.coinId && (
+                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                  {COMMON_COINS.map(c => (
+                    <button
+                      key={c.id}
+                      onClick={() => updateCoin(item.id, c.id)}
+                      style={{
+                        padding: '3px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 700,
+                        cursor: 'pointer', border: `1px solid ${item.coinId === c.id ? '#6366f1' : '#e2e8f0'}`,
+                        background: item.coinId === c.id ? '#eef2ff' : 'white',
+                        color: item.coinId === c.id ? '#6366f1' : '#94a3b8',
+                      }}
+                    >
+                      {c.symbol}
+                    </button>
+                  ))}
+                </div>
+              )}
+
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {/* Label oder Coin-Dropdown */}
-                {item.coinId ? (
-                  <select
-                    value={item.coinId}
-                    onChange={e => updateCoin(item.id, e.target.value)}
-                    className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 focus:outline-none"
-                    style={{ flex: 1 }}
-                  >
-                    {COMMON_COINS.map(c => (
-                      <option key={c.id} value={c.id}>{c.symbol} — {c.name}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type="text"
-                    value={item.label}
-                    onChange={e => updateField(item.id, 'label', e.target.value)}
-                    placeholder="Position"
-                    className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none focus:border-slate-400 transition-colors"
-                    style={{ flex: 1 }}
-                  />
-                )}
+                {/* Label immer als Textfeld */}
+                <input
+                  type="text"
+                  value={item.label}
+                  onChange={e => updateField(item.id, 'label', e.target.value)}
+                  placeholder={item.coinId ? COMMON_COINS.find(c => c.id === item.coinId)?.name ?? 'Position' : 'Position'}
+                  className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none focus:border-slate-400 transition-colors"
+                  style={{ flex: 1 }}
+                />
 
                 {/* Menge (Krypto) oder Betrag (normal) */}
                 {item.coinId ? (
-                  <div className="flex flex-col gap-0.5" style={{ width: '140px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '140px' }}>
                     <div className="flex items-center bg-slate-50 border border-indigo-200 rounded-xl overflow-hidden">
                       <input
                         type="number"
@@ -211,13 +219,13 @@ export default function CategorySection({ title, color, items, onChange, annualM
                         step="any"
                         className="flex-1 bg-transparent px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none text-right min-w-0"
                       />
-                      <span className="pr-2 text-indigo-400 text-xs select-none">{COMMON_COINS.find(c => c.id === item.coinId)?.symbol ?? ''}</span>
+                      <span className="pr-2 text-indigo-400 text-xs select-none">{COMMON_COINS.find(c => c.id === item.coinId)?.symbol}</span>
                     </div>
                     {item.amount !== null && (
-                      <span className="text-xs font-mono text-indigo-500 text-right pr-1">≈ {fmt(item.amount)}</span>
+                      <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#6366f1', textAlign: 'right' }}>≈ {fmt(item.amount)}</span>
                     )}
                     {item.coinId && cryptoPrices[item.coinId] && (
-                      <span className="text-xs text-slate-400 text-right pr-1">{fmt(cryptoPrices[item.coinId])} / Stk.</span>
+                      <span style={{ fontSize: '10px', color: '#94a3b8', textAlign: 'right' }}>{fmt(cryptoPrices[item.coinId])} / Stk.</span>
                     )}
                   </div>
                 ) : (
@@ -254,7 +262,7 @@ export default function CategorySection({ title, color, items, onChange, annualM
                   <button
                     onClick={() => toggleCrypto(item.id)}
                     title={item.coinId ? 'Krypto-Modus deaktivieren' : 'Als Krypto eintragen'}
-                    style={{ padding: '6px', borderRadius: '8px', border: `1px solid ${item.coinId ? '#a5b4fc' : 'transparent'}`, background: item.coinId ? '#eef2ff' : 'transparent', color: item.coinId ? '#6366f1' : '#cbd5e1', fontSize: '13px', cursor: 'pointer', flexShrink: 0 }}
+                    style={{ padding: '6px 8px', borderRadius: '8px', border: `1px solid ${item.coinId ? '#a5b4fc' : 'transparent'}`, background: item.coinId ? '#eef2ff' : 'transparent', color: item.coinId ? '#6366f1' : '#cbd5e1', fontSize: '13px', fontWeight: 700, cursor: 'pointer', flexShrink: 0 }}
                   >
                     ₿
                   </button>
