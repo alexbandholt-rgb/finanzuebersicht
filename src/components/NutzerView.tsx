@@ -38,7 +38,7 @@ export default function NutzerView() {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `finanzuebersicht_alle_nutzer_${new Date().toISOString().slice(0, 10)}.json`
+      a.download = `finanzblick_alle_nutzer_${new Date().toISOString().slice(0, 10)}.json`
       a.click()
       URL.revokeObjectURL(url)
     } catch (e: any) {

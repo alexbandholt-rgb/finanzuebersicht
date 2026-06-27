@@ -39,7 +39,7 @@ export default function OnboardingWizard({ onComplete, initialStep = 0, initialB
             <BarChart2 size={28} className="text-emerald-500" />
           </div>
           <div className="flex flex-col gap-2">
-            <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#1e293b' }}>Willkommen bei Finanzübersicht</h1>
+            <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#1e293b' }}>Willkommen bei Finanzblick</h1>
             <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.6 }}>
               Hier behältst du deine Finanzen im Blick — Ausgaben, Sparziele und dein Vermögen, alles an einem Ort.
             </p>

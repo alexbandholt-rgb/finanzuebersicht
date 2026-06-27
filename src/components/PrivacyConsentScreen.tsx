@@ -14,7 +14,7 @@ export default function PrivacyConsentScreen({ onAccept }: Props) {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
           <BarChart2 size={18} style={{ color: '#10b981' }} />
-          <span style={{ fontWeight: 700, fontSize: '15px', color: '#1e293b' }}>Finanzübersicht</span>
+          <span style={{ fontWeight: 700, fontSize: '15px', color: '#1e293b' }}>Finanzblick</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', marginTop: '24px' }}>

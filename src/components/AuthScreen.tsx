@@ -51,7 +51,7 @@ export default function AuthScreen() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2rem' }}>
           <BarChart2 size={20} color="#10b981" />
-          <span style={{ fontWeight: 700, fontSize: '16px', color: '#1e293b' }}>Finanzübersicht</span>
+          <span style={{ fontWeight: 700, fontSize: '16px', color: '#1e293b' }}>Finanzblick</span>
         </div>
 
         <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b', marginBottom: '0.25rem' }}>

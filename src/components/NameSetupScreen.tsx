@@ -26,7 +26,7 @@ export default function NameSetupScreen({ onDone }: Props) {
       <div style={{ background: 'white', borderRadius: '1.5rem', padding: '2.5rem', width: '360px', boxShadow: '0 4px 24px rgba(0,0,0,0.08)', border: '1px solid #e2e8f0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2rem' }}>
           <BarChart2 size={20} color="#10b981" />
-          <span style={{ fontWeight: 700, fontSize: '16px', color: '#1e293b' }}>Finanzübersicht</span>
+          <span style={{ fontWeight: 700, fontSize: '16px', color: '#1e293b' }}>Finanzblick</span>
         </div>
 
         <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b', marginBottom: '0.25rem' }}>Willkommen! 👋</h2>

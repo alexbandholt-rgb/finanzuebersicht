@@ -107,7 +107,7 @@ function Datenschutz() {
 
       <H2>3. Zweck der Verarbeitung</H2>
       <P>
-        Die Daten werden ausschließlich zum Betrieb der App und zur Bereitstellung der Finanzübersicht genutzt. Es findet keine Auswertung, kein Verkauf und keine Weitergabe an Dritte zu Werbezwecken statt.
+        Die Daten werden ausschließlich zum Betrieb der App und zur Bereitstellung der Finanzblick genutzt. Es findet keine Auswertung, kein Verkauf und keine Weitergabe an Dritte zu Werbezwecken statt.
       </P>
 
       <H2>4. Rechtsgrundlage</H2>
@@ -165,12 +165,12 @@ function AGB() {
 
       <H2>1. Geltungsbereich</H2>
       <P>
-        Diese AGB gelten für die Nutzung der Web-App „Finanzübersicht", angeboten von Alexander Bandholt, Övelgönner Straße 5, 20257 Hamburg (nachfolgend „Anbieter").
+        Diese AGB gelten für die Nutzung der Web-App „Finanzblick", angeboten von Alexander Bandholt, Övelgönner Straße 5, 20257 Hamburg (nachfolgend „Anbieter").
       </P>
 
       <H2>2. Leistungsbeschreibung</H2>
       <P>
-        Finanzübersicht ist eine persönliche Finanzplanungs-App, die es Nutzern ermöglicht, Einnahmen, Ausgaben und Vermögenswerte zu erfassen und auszuwerten. Die App wird als Software-as-a-Service (SaaS) über das Internet bereitgestellt.
+        Finanzblick ist eine persönliche Finanzplanungs-App, die es Nutzern ermöglicht, Einnahmen, Ausgaben und Vermögenswerte zu erfassen und auszuwerten. Die App wird als Software-as-a-Service (SaaS) über das Internet bereitgestellt.
       </P>
 
       <H2>3. Nutzungsmodell</H2>

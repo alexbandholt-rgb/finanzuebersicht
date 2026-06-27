@@ -332,7 +332,7 @@ return (
       <aside style={{ width: '224px', flexShrink: 0, background: 'white', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', paddingTop: '2rem', boxShadow: '1px 0 4px rgba(0,0,0,0.04)', minHeight: '100vh' }}>
         <div className="flex items-center gap-2" style={{ marginBottom: '2.5rem', padding: '0 24px' }}>
           <BarChart2 size={18} className="text-emerald-500" />
-          <span style={{ fontWeight: 700, fontSize: '15px', color: '#1e293b' }}>Finanzübersicht</span>
+          <span style={{ fontWeight: 700, fontSize: '15px', color: '#1e293b' }}>Finanzblick</span>
         </div>
 
         <nav className="flex flex-col gap-1" style={{ padding: '0 12px' }}>
