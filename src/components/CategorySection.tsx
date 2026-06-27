@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Plus, Trash2, CalendarClock, ChevronDown, ChevronUp } from 'lucide-react'
+import { Plus, Trash2, CalendarClock, ChevronDown, ChevronUp, Info } from 'lucide-react'
 import type { LineItem } from '../types'
 import { COMMON_COINS, fetchCryptoPrices } from '../lib/crypto'
 import { useIsMobile } from '../hooks/useIsMobile'
@@ -31,6 +31,20 @@ interface Props {
   sparRateActive?: boolean
   onSparRateChange?: (rate: number | undefined, active: boolean) => void
   einkuenfte?: number
+}
+
+const CATEGORY_INFO: Record<string, string> = {
+  'Einkünfte': 'Alles was monatlich reinkommt — Gehalt, Nebeneinkommen, Mieteinnahmen etc.',
+  'Wohnungskosten': 'Fixe Kosten für deine Unterkunft: Miete, Nebenkosten, Strom, Internet.',
+  'Fahrzeuge': 'Laufende Kosten für Autos, Motorräder etc. Jährliche Kosten (z.B. Steuer) werden automatisch ÷ 12 gerechnet.',
+  'Fixkosten': 'Regelmäßige monatliche Ausgaben: Abos, Mitgliedschaften, Gebühren.',
+  'Sparen & Investieren': 'Was du monatlich zurücklegst oder investierst — ETFs, Aktien, Tagesgeld etc. Wird vom verfügbaren Budget abgezogen.',
+  'Versicherungen': 'Monatliche oder jährliche Versicherungsbeiträge. Jährliche Beträge werden ÷ 12 gerechnet.',
+  'Jährliche Kosten': 'Einmalige Jahresausgaben wie Urlaub, Mitgliedsbeiträge oder Abonnements — werden automatisch auf den Monat umgerechnet.',
+  'Lebenshaltung': 'Variable monatliche Ausgaben: Lebensmittel, Restaurants, Shopping, Freizeit.',
+  'Vermögen': 'Dein aktuelles Gesamtvermögen: Bankguthaben, ETFs, Krypto etc. Erhöht deinen Nettovermögenswert in der Übersicht.',
+  'Sachwerte': 'Physische Wertgegenstände wie Uhren, Autos oder Immobilien. Fließen in deinen Gesamtvermögenswert ein.',
+  'Schulden': 'Laufende Verbindlichkeiten. Aktive Schulden mit Rate werden monatlich automatisch reduziert.',
 }
 
 function newItem(): LineItem {
@@ -67,6 +81,8 @@ export default function CategorySection({ title, color, items, onChange, annualM
   const [collapsed, setCollapsed] = useState(false)
   const [coinPickerOpen, setCoinPickerOpen] = useState<string | null>(null)
   const [annualTooltip, setAnnualTooltip] = useState<{ id: string; x: number; y: number; isAnnual: boolean } | null>(null)
+  const [infoOpen, setInfoOpen] = useState(false)
+  const infoText = CATEGORY_INFO[title]
   const [cryptoPrices, setCryptoPrices] = useState<Record<string, number>>({})
   const cardRef = useRef<HTMLDivElement>(null)
 
@@ -153,6 +169,14 @@ export default function CategorySection({ title, color, items, onChange, annualM
           {collapsed && total > 0 && (
             <span className="text-xs font-mono text-slate-400">{fmt(total)}</span>
           )}
+          {infoText && (
+            <button
+              onClick={e => { e.stopPropagation(); setInfoOpen(o => !o) }}
+              style={{ color: infoOpen ? color : '#cbd5e1', display: 'flex', alignItems: 'center', background: 'none', border: 'none', cursor: 'pointer', padding: '2px', flexShrink: 0 }}
+            >
+              <Info size={13} />
+            </button>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {annualMode && !collapsed && (
@@ -165,6 +189,12 @@ export default function CategorySection({ title, color, items, onChange, annualM
           </span>
         </div>
       </div>
+
+      {infoOpen && infoText && (
+        <div style={{ background: '#f8fafc', border: `1px solid`, borderColor: color + '40', borderRadius: '10px', padding: '10px 14px', fontSize: '13px', color: '#475569', lineHeight: '1.5', marginTop: '-8px' }}>
+          {infoText}
+        </div>
+      )}
 
       {annualTooltip && (
         <div style={{
