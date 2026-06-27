@@ -42,7 +42,9 @@ export default function CategorySection({ title, color, items, onChange, annualM
   const remove = (id: string) => onChange(items.filter(i => i.id !== id))
   const add = () => onChange([...items, newItem()])
 
-  const total = items.reduce((acc, i) => acc + (i.amount ?? 0) * (i.share ?? 1), 0)
+  const monthlyTotal = items.filter(i => !i.isAnnual).reduce((acc, i) => acc + (i.amount ?? 0) * (i.share ?? 1), 0)
+  const annualTotal = items.filter(i => i.isAnnual).reduce((acc, i) => acc + (i.amount ?? 0) * (i.share ?? 1), 0)
+  const total = showAnnualToggle ? monthlyTotal : items.reduce((acc, i) => acc + (i.amount ?? 0) * (i.share ?? 1), 0)
 
   return (
     <div
@@ -191,9 +193,17 @@ export default function CategorySection({ title, color, items, onChange, annualM
       </button>
 
       {items.length > 0 && (
-        <div className="flex items-center justify-between pt-3 mt-1 border-t border-slate-100">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Gesamt</span>
-          <span className="text-sm font-mono font-bold" style={{ color }}>{fmt(total)}</span>
+        <div className="flex flex-col gap-1 pt-3 mt-1 border-t border-slate-100">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Gesamt monatlich</span>
+            <span className="text-sm font-mono font-bold" style={{ color }}>{fmt(total)}</span>
+          </div>
+          {showAnnualToggle && annualTotal > 0 && (
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-slate-400">Jährlich (÷ 12 = {fmt(annualTotal / 12)}/Monat)</span>
+              <span className="text-xs font-mono text-slate-400">{fmt(annualTotal)}</span>
+            </div>
+          )}
         </div>
       )}
     </div>
