@@ -546,7 +546,7 @@ return (
             }}
           />}
           {tab === 'compare' && <CompareView months={compareMonths} />}
-          {tab === 'konto' && <AccountView email={user.email ?? ''} />}
+          {tab === 'konto' && <AccountView email={user.email ?? ''} lastSignInAt={user.last_sign_in_at ?? null} />}
           {tab === 'nutzer' && <NutzerView />}
           {tab === 'legal' && <LegalView />}
         </main>

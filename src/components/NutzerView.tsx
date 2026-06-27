@@ -26,6 +26,7 @@ export default function NutzerView() {
   }, [])
 
   const fmt = (iso: string) => iso ? new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'
+  const fmtDateTime = (iso: string) => iso ? new Date(iso).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' Uhr' : '—'
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -56,7 +57,7 @@ export default function NutzerView() {
           </div>
           <div style={{ textAlign: 'right', flexShrink: 0 }}>
             <p style={{ fontSize: '11px', color: '#94a3b8' }}>Registriert: {fmt(u.created_at)}</p>
-            <p style={{ fontSize: '11px', color: '#94a3b8' }}>Zuletzt: {fmt(u.last_sign_in_at)}</p>
+            <p style={{ fontSize: '11px', color: '#94a3b8' }}>Zuletzt: {fmtDateTime(u.last_sign_in_at)}</p>
           </div>
         </div>
       ))}

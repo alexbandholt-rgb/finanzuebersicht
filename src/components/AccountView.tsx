@@ -4,9 +4,10 @@ import { Check, Loader2, Trash2, AlertTriangle } from 'lucide-react'
 
 interface Props {
   email: string
+  lastSignInAt: string | null
 }
 
-export default function AccountView({ email }: Props) {
+export default function AccountView({ email, lastSignInAt }: Props) {
   const [name, setName] = useState('')
 
   useEffect(() => {
@@ -68,7 +69,14 @@ export default function AccountView({ email }: Props) {
 
   return (
     <div style={{ maxWidth: '480px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b' }}>Konto</h2>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
+        <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b' }}>Konto</h2>
+        {lastSignInAt && (
+          <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+            Letzter Login: {new Date(lastSignInAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })} Uhr
+          </span>
+        )}
+      </div>
 
       {/* Profil */}
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
