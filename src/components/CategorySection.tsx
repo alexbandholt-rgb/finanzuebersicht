@@ -213,6 +213,7 @@ export default function CategorySection({ title, color, items, onChange, annualM
                         onChange={e => updateCoinQuantity(item.id, e.target.value === '' ? null : parseFloat(e.target.value))}
                         placeholder="Menge"
                         step="any"
+                        className="no-spinner"
                         style={{ flex: 1, background: 'transparent', border: 'none', padding: isMobile ? '6px 4px' : '8px 8px', fontSize: isMobile ? '12px' : '13px', color: '#334155', outline: 'none', textAlign: 'right', minWidth: 0 }}
                       />
                       <span style={{ paddingRight: isMobile ? '6px' : '10px', fontSize: '11px', color: '#94a3b8', flexShrink: 0 }}>{COMMON_COINS.find(c => c.id === item.coinId)?.symbol}</span>
@@ -241,6 +242,7 @@ export default function CategorySection({ title, color, items, onChange, annualM
                         onChange={e => updateField(item.id, 'amount', e.target.value)}
                         placeholder="0"
                         step="0.01"
+                        className="no-spinner"
                         style={{ flex: 1, background: 'transparent', border: 'none', padding: isMobile ? '6px 4px' : '8px 6px', fontSize: isMobile ? '12px' : '13px', color: '#334155', outline: 'none', textAlign: 'right', minWidth: 0 }}
                       />
                       <span style={{ paddingRight: isMobile ? '6px' : '8px', fontSize: '11px', color: '#94a3b8' }}>€</span>
