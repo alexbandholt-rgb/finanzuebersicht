@@ -405,8 +405,8 @@ return (
 
       {/* Month Picker Modal (Mobile) */}
       {monthPickerOpen && (
-        <div className="fixed inset-0 bg-black/40 flex items-end justify-center z-50" onClick={() => setMonthPickerOpen(false)}>
-          <div className="bg-white rounded-t-2xl shadow-xl w-full max-h-[60vh] flex flex-col" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/40 flex items-start justify-center z-50" onClick={() => setMonthPickerOpen(false)}>
+          <div className="bg-white rounded-b-2xl shadow-xl w-full max-h-[60vh] flex flex-col" style={{ maxWidth: '480px' }} onClick={e => e.stopPropagation()}>
             <div style={{ padding: '16px 20px 8px', borderBottom: '1px solid #f1f5f9' }}>
               <p className="text-sm font-semibold text-slate-700">Monat auswählen</p>
             </div>
