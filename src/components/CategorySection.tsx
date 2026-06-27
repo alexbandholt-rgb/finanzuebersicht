@@ -177,47 +177,42 @@ export default function CategorySection({ title, color, items, onChange, annualM
           return (
             <div key={item.id} className="flex flex-col gap-1.5">
 
-              {/* Coin-Picker (wenn Krypto-Modus aktiv) */}
-              {item.coinId && (
-                <div style={{ position: 'relative' }}>
-                  <button
-                    onClick={() => setCoinPickerOpen(coinPickerOpen === item.id ? null : item.id)}
-                    style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '3px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 700, cursor: 'pointer', border: '1px solid #a5b4fc', background: '#eef2ff', color: '#6366f1' }}
-                  >
-                    {COMMON_COINS.find(c => c.id === item.coinId)?.symbol ?? item.coinId}
-                    <span style={{ fontSize: '10px' }}>▾</span>
-                  </button>
-                  {coinPickerOpen === item.id && (
-                    <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: '4px', display: 'flex', gap: '4px', flexWrap: 'wrap', background: 'white', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 10 }}>
-                      {COMMON_COINS.map(c => (
-                        <button
-                          key={c.id}
-                          onClick={() => { updateCoin(item.id, c.id); setCoinPickerOpen(null) }}
-                          style={{
-                            padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 700,
-                            cursor: 'pointer', border: `1px solid ${item.coinId === c.id ? '#6366f1' : '#e2e8f0'}`,
-                            background: item.coinId === c.id ? '#eef2ff' : 'white',
-                            color: item.coinId === c.id ? '#6366f1' : '#64748b',
-                          }}
-                        >
-                          {c.symbol}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {/* Label immer als Textfeld */}
-                <input
-                  type="text"
-                  value={item.label}
-                  onChange={e => updateField(item.id, 'label', e.target.value)}
-                  placeholder={item.coinId ? COMMON_COINS.find(c => c.id === item.coinId)?.name ?? 'Position' : 'Position'}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none focus:border-slate-400 transition-colors"
-                  style={{ flex: 1 }}
-                />
+                {/* Label: Coin-Badge wenn Krypto, sonst Textfeld */}
+                {item.coinId ? (
+                  <div style={{ flex: 1, position: 'relative' }}>
+                    <button
+                      onClick={() => setCoinPickerOpen(coinPickerOpen === item.id ? null : item.id)}
+                      style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 14px', borderRadius: '12px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', border: '1px solid #a5b4fc', background: '#eef2ff', color: '#6366f1', width: '100%' }}
+                    >
+                      <span>{COMMON_COINS.find(c => c.id === item.coinId)?.symbol}</span>
+                      <span style={{ fontSize: '11px', color: '#a5b4fc', fontWeight: 400 }}>{COMMON_COINS.find(c => c.id === item.coinId)?.name}</span>
+                      <span style={{ marginLeft: 'auto', fontSize: '10px' }}>▾</span>
+                    </button>
+                    {coinPickerOpen === item.id && (
+                      <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: '4px', display: 'flex', gap: '4px', flexWrap: 'wrap', background: 'white', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 10 }}>
+                        {COMMON_COINS.map(c => (
+                          <button
+                            key={c.id}
+                            onClick={() => { updateCoin(item.id, c.id); setCoinPickerOpen(null) }}
+                            style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer', border: `1px solid ${item.coinId === c.id ? '#6366f1' : '#e2e8f0'}`, background: item.coinId === c.id ? '#eef2ff' : 'white', color: item.coinId === c.id ? '#6366f1' : '#64748b' }}
+                          >
+                            {c.symbol}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <input
+                    type="text"
+                    value={item.label}
+                    onChange={e => updateField(item.id, 'label', e.target.value)}
+                    placeholder="Position"
+                    className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none focus:border-slate-400 transition-colors"
+                    style={{ flex: 1 }}
+                  />
+                )}
 
                 {/* Menge (Krypto) oder Betrag (normal) */}
                 {item.coinId ? (
