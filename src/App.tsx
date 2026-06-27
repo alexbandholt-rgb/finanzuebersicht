@@ -365,7 +365,7 @@ return (
               <span className={tab === 'nutzer' ? 'text-violet-500' : 'text-slate-400'}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
               </span>
-              Nutzer
+              Admin
             </button>
           )}
 
@@ -411,7 +411,7 @@ return (
             <>
               <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setMobileMenuOpen(false)} />
               <div style={{ position: 'fixed', top: '52px', left: '12px', zIndex: 50, background: 'white', borderRadius: '16px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)', border: '1px solid #e2e8f0', minWidth: '200px', overflow: 'hidden' }}>
-                {[...navItems, ...(user.email === ADMIN_EMAIL ? [{ id: 'nutzer' as Tab, label: 'Nutzer', icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> }] : [])].map(item => (
+                {[...navItems, ...(user.email === ADMIN_EMAIL ? [{ id: 'nutzer' as Tab, label: 'Admin', icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> }] : [])].map(item => (
                   <button key={item.id} onClick={() => { setTab(item.id); setMobileMenuOpen(false) }}
                     style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%', padding: '13px 18px', background: tab === item.id ? '#f5f3ff' : 'transparent', color: tab === item.id ? '#7c3aed' : '#475569', border: 'none', fontSize: '14px', fontWeight: tab === item.id ? 600 : 400, cursor: 'pointer', textAlign: 'left', borderBottom: '1px solid #f8fafc' }}>
                     <span style={{ color: tab === item.id ? '#7c3aed' : '#94a3b8' }}>{item.icon}</span>
