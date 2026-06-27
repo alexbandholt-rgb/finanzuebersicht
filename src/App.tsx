@@ -387,7 +387,7 @@ return (
       {/* Delete Confirm Modal */}
       {deleteConfirmOpen && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onClick={() => setDeleteConfirmOpen(false)}>
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-80 flex flex-col gap-4" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl shadow-xl flex flex-col gap-4" style={{ padding: '28px 24px', width: '320px', maxWidth: 'calc(100vw - 32px)' }} onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
                 <Trash2 size={18} className="text-red-500" />
