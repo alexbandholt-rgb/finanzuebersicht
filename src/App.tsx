@@ -202,18 +202,19 @@ return (
 
       {/* Sidebar (Desktop) */}
       {!isMobile && (
-      <aside style={{ width: '208px', flexShrink: 0, background: 'white', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', paddingTop: '1.5rem', boxShadow: '1px 0 4px rgba(0,0,0,0.04)', minHeight: '100vh' }}>
-        <div className="flex items-center gap-2 px-5" style={{ marginBottom: '2rem' }}>
+      <aside style={{ width: '224px', flexShrink: 0, background: 'white', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', paddingTop: '2rem', boxShadow: '1px 0 4px rgba(0,0,0,0.04)', minHeight: '100vh' }}>
+        <div className="flex items-center gap-2" style={{ marginBottom: '2.5rem', padding: '0 24px' }}>
           <BarChart2 size={18} className="text-emerald-500" />
           <span style={{ fontWeight: 700, fontSize: '15px', color: '#1e293b' }}>Finanzübersicht</span>
         </div>
 
-        <nav className="flex flex-col gap-1 px-3">
+        <nav className="flex flex-col gap-1" style={{ padding: '0 12px' }}>
           {navItems.map(item => (
             <button
               key={item.id}
               onClick={() => setTab(item.id)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left ${
+              style={{ padding: '10px 14px' }}
+              className={`flex items-center gap-3 rounded-xl text-sm font-medium transition-all text-left ${
                 tab === item.id
                   ? 'bg-violet-50 text-violet-700 border border-violet-200'
                   : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
@@ -227,7 +228,8 @@ return (
           {user.email === ADMIN_EMAIL && (
             <button
               onClick={() => setTab('nutzer')}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all w-full text-left ${
+              style={{ padding: '10px 14px' }}
+              className={`flex items-center gap-3 rounded-xl text-sm font-medium transition-all w-full text-left ${
                 tab === 'nutzer'
                   ? 'bg-violet-50 text-violet-700 border border-violet-200'
                   : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
@@ -243,7 +245,8 @@ return (
           <div className="mt-2 pt-2 border-t border-slate-100">
             <button
               onClick={() => tab === 'compare' ? setTab('monat') : setComparePickerOpen(true)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all w-full text-left ${
+              style={{ padding: '10px 14px' }}
+              className={`flex items-center gap-3 rounded-xl text-sm font-medium transition-all w-full text-left ${
                 tab === 'compare'
                   ? 'bg-violet-50 text-violet-700 border border-violet-200'
                   : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
