@@ -10,6 +10,7 @@ import type { User } from '@supabase/supabase-js'
 import MonthView from './components/MonthView'
 import CompareView from './components/CompareView'
 import JahresUebersicht from './components/JahresUebersicht'
+import BarvermoegenView from './components/BarvermoegenView'
 import AuthScreen from './components/AuthScreen'
 import AccountView from './components/AccountView'
 import NutzerView from './components/NutzerView'
@@ -31,7 +32,7 @@ function compareYM(y1: number, m1: number, y2: number, m2: number) {
   return y1 * 12 + m1 - (y2 * 12 + m2)
 }
 
-type Tab = 'monat' | 'jahresuebersicht' | 'compare' | 'konto' | 'nutzer'
+type Tab = 'monat' | 'jahresuebersicht' | 'barvermoegen' | 'compare' | 'konto' | 'nutzer'
 
 export default function App() {
   const isMobile = useIsMobile()
@@ -166,9 +167,9 @@ export default function App() {
     setTab('compare')
   }
 
-  // Jahresübersicht: allMonths beim Öffnen aktualisieren
+  // allMonths beim Öffnen der Übersichten aktualisieren
   useEffect(() => {
-    if (tab === 'jahresuebersicht' && user) {
+    if ((tab === 'jahresuebersicht' || tab === 'barvermoegen') && user) {
       cloudGetAllMonths().then(setAllMonths)
     }
   }, [tab])
@@ -176,6 +177,7 @@ export default function App() {
   const navItems = [
     { id: 'monat' as Tab, label: 'Monatsübersicht', icon: <BarChart2 size={16} /> },
     { id: 'jahresuebersicht' as Tab, label: 'Jahresübersicht', icon: <CalendarDays size={16} /> },
+    { id: 'barvermoegen' as Tab, label: 'Barvermögen', icon: <GitCompare size={16} /> },
     { id: 'konto' as Tab, label: 'Konto', icon: <UserCircle size={16} /> },
   ]
 
@@ -335,6 +337,7 @@ return (
         <main style={{ padding: isMobile ? '1rem' : '2rem 2.5rem' }}>
           {tab === 'monat' && <MonthView data={data} onChange={d => { setData(d); setIsDirty(true) }} />}
           {tab === 'jahresuebersicht' && <JahresUebersicht year={THIS_YEAR} allMonths={allMonths} />}
+          {tab === 'barvermoegen' && <BarvermoegenView allMonths={allMonths} />}
           {tab === 'compare' && <CompareView months={compareMonths} />}
           {tab === 'konto' && <AccountView email={user.email ?? ''} />}
           {tab === 'nutzer' && <NutzerView />}
