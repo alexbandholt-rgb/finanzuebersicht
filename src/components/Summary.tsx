@@ -1,9 +1,12 @@
+import { useState } from 'react'
 import type { MonthData } from '../types'
 import { calcSummary } from '../lib/calc'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
+import { Pencil, Check } from 'lucide-react'
 
 interface Props {
   data: MonthData
+  onChange?: (data: MonthData) => void
 }
 
 const fmt = (n: number) =>
@@ -53,9 +56,32 @@ const CustomTooltip = ({ active, payload }: any) => {
   )
 }
 
-export default function Summary({ data }: Props) {
+export default function Summary({ data, onChange }: Props) {
   const s = calcSummary(data)
   const isPositive = s.verbleibend >= 0
+  const [editingBudget, setEditingBudget] = useState<string | null>(null)
+  const [budgetInput, setBudgetInput] = useState('')
+
+  const budgets = data.budgets ?? {}
+
+  const saveBudget = (key: string) => {
+    const val = parseFloat(budgetInput)
+    const updated = { ...budgets }
+    if (isNaN(val) || val <= 0) {
+      delete updated[key]
+    } else {
+      updated[key] = val
+    }
+    onChange?.({ ...data, budgets: updated })
+    setEditingBudget(null)
+  }
+
+  const budgetColor = (pct: number, budgetPct: number) => {
+    const ratio = pct / budgetPct
+    if (ratio >= 1) return '#ef4444'
+    if (ratio >= 0.85) return '#f59e0b'
+    return '#10b981'
+  }
 
   const sparquote = s.einkuenfte > 0 ? (s.sparen / s.einkuenfte) * 100 : 0
   const sparquoteColor = sparquote >= 20 ? '#10b981' : sparquote >= 10 ? '#f59e0b' : '#ef4444'
@@ -126,26 +152,68 @@ export default function Summary({ data }: Props) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
         {BLOCKS.map(block => {
           const val = (s as any)[block.key] as number
-          const pct = s.einkuenfte > 0 ? Math.min(100, (val / s.einkuenfte) * 100) : 0
+          const pct = s.einkuenfte > 0 ? (val / s.einkuenfte) * 100 : 0
+          const budget = budgets[block.key]
+          const barColor = budget ? budgetColor(pct, budget) : block.color
+          const barWidth = budget ? Math.min(100, (pct / budget) * 100) : Math.min(100, pct)
+          const isEditing = editingBudget === block.key
+
           return (
             <div
               key={block.key}
-              className="rounded-lg border flex flex-col gap-1 shadow-sm"
-              style={{ background: block.bg, borderColor: block.border, padding: '6px 8px', cursor: 'pointer', transition: 'opacity 0.15s' }}
-              onClick={() => scrollToSection(block.sectionId, block.color)}
-              onMouseEnter={e => (e.currentTarget.style.opacity = '0.75')}
-              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-              title={`Zu ${block.label} springen`}
+              className="rounded-lg border flex flex-col gap-1 shadow-sm group"
+              style={{ background: block.bg, borderColor: isEditing ? barColor : block.border, padding: '6px 8px', cursor: 'pointer', transition: 'border-color 0.15s' }}
+              onClick={() => { if (!isEditing) scrollToSection(block.sectionId, block.color) }}
             >
-              <div className="flex items-center gap-1">
-                <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: block.color }} />
-                <span className="text-[9px] font-bold uppercase tracking-wide truncate" style={{ color: block.color }}>
-                  {block.label}
-                </span>
+              <div className="flex items-center justify-between gap-1">
+                <div className="flex items-center gap-1 min-w-0">
+                  <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: block.color }} />
+                  <span className="text-[9px] font-bold uppercase tracking-wide truncate" style={{ color: block.color }}>
+                    {block.label}
+                  </span>
+                </div>
+                {onChange && !isEditing && (
+                  <button
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={e => { e.stopPropagation(); setBudgetInput(budget?.toString() ?? ''); setEditingBudget(block.key) }}
+                    title="Budget setzen"
+                    style={{ padding: '1px', lineHeight: 1 }}
+                  >
+                    <Pencil size={9} style={{ color: block.color }} />
+                  </button>
+                )}
               </div>
-              <span className="text-[11px] font-mono font-bold text-slate-700">{fmt(val)}</span>
+
+              {isEditing ? (
+                <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+                  <input
+                    autoFocus
+                    type="number"
+                    value={budgetInput}
+                    onChange={e => setBudgetInput(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') saveBudget(block.key); if (e.key === 'Escape') setEditingBudget(null) }}
+                    placeholder="z.B. 30"
+                    min="0" max="100"
+                    style={{ width: '100%', fontSize: '11px', border: `1px solid ${barColor}`, borderRadius: '4px', padding: '2px 4px', outline: 'none', background: 'white' }}
+                  />
+                  <span style={{ fontSize: '9px', color: block.color, flexShrink: 0 }}>%</span>
+                  <button onClick={() => saveBudget(block.key)} style={{ flexShrink: 0 }}>
+                    <Check size={11} style={{ color: barColor }} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-end justify-between gap-1">
+                  <span className="text-[11px] font-mono font-bold text-slate-700">{fmt(val)}</span>
+                  {budget && (
+                    <span className="text-[9px] font-mono shrink-0" style={{ color: barColor }}>
+                      {pct.toFixed(0)}/{budget}%
+                    </span>
+                  )}
+                </div>
+              )}
+
               <div className="h-1 bg-white rounded-full overflow-hidden">
-                <div className="h-full rounded-full" style={{ width: `${pct}%`, background: block.color, opacity: 0.7 }} />
+                <div className="h-full rounded-full transition-all" style={{ width: `${barWidth}%`, background: barColor, opacity: budget ? 1 : 0.7 }} />
               </div>
             </div>
           )

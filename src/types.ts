@@ -27,6 +27,7 @@ export interface MonthData {
   sparRate?: number
   sparRateActive?: boolean
   notes?: string
+  budgets?: Record<string, number>
   created_at?: string
   updated_at?: string
 }
