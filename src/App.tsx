@@ -466,7 +466,14 @@ return (
 
         {/* Content */}
         <main style={{ padding: isMobile ? '1rem' : '2rem 2.5rem' }}>
-          {tab === 'monat' && <MonthView data={data} onChange={d => { setData(d); setIsDirty(true) }} />}
+          {tab === 'monat' && <MonthView data={data} onChange={d => {
+            setData(d)
+            setIsDirty(true)
+            // Sofort lokal sichern (kein Netzwerk nötig)
+            try {
+              localStorage.setItem(`finanz_local_${d.year}_${d.month}`, JSON.stringify({ data: d, savedAt: Date.now() }))
+            } catch {}
+          }} />}
           {tab === 'jahresuebersicht' && <JahresUebersicht year={THIS_YEAR} allMonths={allMonths} />}
           {tab === 'barvermoegen' && <BarvermoegenView allMonths={allMonths} />}
           {tab === 'krypto' && <KryptoView allMonths={allMonths} />}

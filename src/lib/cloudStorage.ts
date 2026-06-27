@@ -16,32 +16,60 @@ export async function cloudLoadMonth(year: number, month: number): Promise<Month
     .eq('user_id', uid)
     .eq('year', year)
     .eq('month', month)
-    .single()
-  if (error || !data) return null
-  return data.data as MonthData
+    .maybeSingle()
+
+  if (!error && data) return data.data as MonthData
+
+  // Fallback: lokale Kopie verwenden wenn Cloud nicht erreichbar
+  try {
+    const raw = localStorage.getItem(`finanz_local_${year}_${month}`)
+    if (raw) {
+      const backup = JSON.parse(raw) as { data: MonthData; savedAt: number }
+      return backup.data
+    }
+  } catch {}
+  return null
 }
 
 export async function cloudSaveMonth(monthData: MonthData): Promise<void> {
   const uid = await getUserId()
   if (!uid) return
-  // Delete + insert als atomares Muster (Supabase unterstützt kein upsert ohne unique constraint)
-  const { error: delErr } = await supabase
+
+  // Zuerst lokal sichern (sofort, kein Netzwerkrisiko)
+  try {
+    localStorage.setItem(
+      `finanz_local_${monthData.year}_${monthData.month}`,
+      JSON.stringify({ data: monthData, savedAt: Date.now() })
+    )
+  } catch {}
+
+  // Prüfen ob Zeile existiert → UPDATE, sonst INSERT (kein DELETE = kein Datenverlust-Risiko)
+  const { data: existing } = await supabase
     .from('month_data')
-    .delete()
+    .select('id')
     .eq('user_id', uid)
     .eq('year', monthData.year)
     .eq('month', monthData.month)
-  if (delErr) console.error('cloudSaveMonth delete error:', delErr)
-  const { error: insErr } = await supabase
-    .from('month_data')
-    .insert({
-      user_id: uid,
-      year: monthData.year,
-      month: monthData.month,
-      data: monthData,
-      updated_at: new Date().toISOString(),
-    })
-  if (insErr) console.error('cloudSaveMonth insert error:', insErr)
+    .maybeSingle()
+
+  if (existing?.id) {
+    const { error } = await supabase
+      .from('month_data')
+      .update({ data: monthData, updated_at: new Date().toISOString() })
+      .eq('id', existing.id)
+    if (error) console.error('cloudSaveMonth update error:', error)
+  } else {
+    const { error } = await supabase
+      .from('month_data')
+      .insert({
+        user_id: uid,
+        year: monthData.year,
+        month: monthData.month,
+        data: monthData,
+        updated_at: new Date().toISOString(),
+      })
+    if (error) console.error('cloudSaveMonth insert error:', error)
+  }
 }
 
 export async function cloudDeleteMonth(year: number, month: number): Promise<void> {
