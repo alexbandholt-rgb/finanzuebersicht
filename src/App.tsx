@@ -64,6 +64,7 @@ export default function App() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [showBudgetEditor, setShowBudgetEditor] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const maxFuture = addMonths(THIS_YEAR, THIS_MONTH, futureLimit)
   const minPast = addMonths(THIS_YEAR, THIS_MONTH, -pastLimit)
@@ -367,15 +368,43 @@ return (
       )}
 
       {/* Hauptbereich */}
-      <div className="flex-1 flex flex-col min-w-0" style={{ paddingBottom: isMobile ? 'calc(72px + env(safe-area-inset-bottom))' : 0 }}>
+      <div className="flex-1 flex flex-col min-w-0">
 
         {/* Topbar */}
         <header className="bg-white border-b border-slate-200 shadow-sm" style={{ padding: isMobile ? '0.5rem 0.75rem' : '0.75rem 1.5rem' }}>
+          {/* Mobile Dropdown Menu */}
+          {isMobile && mobileMenuOpen && (
+            <>
+              <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setMobileMenuOpen(false)} />
+              <div style={{ position: 'fixed', top: '52px', left: '12px', zIndex: 50, background: 'white', borderRadius: '16px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)', border: '1px solid #e2e8f0', minWidth: '200px', overflow: 'hidden' }}>
+                {[...navItems, ...(user.email === ADMIN_EMAIL ? [{ id: 'nutzer' as Tab, label: 'Nutzer', icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> }] : [])].map(item => (
+                  <button key={item.id} onClick={() => { setTab(item.id); setMobileMenuOpen(false) }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%', padding: '13px 18px', background: tab === item.id ? '#f5f3ff' : 'transparent', color: tab === item.id ? '#7c3aed' : '#475569', border: 'none', fontSize: '14px', fontWeight: tab === item.id ? 600 : 400, cursor: 'pointer', textAlign: 'left', borderBottom: '1px solid #f8fafc' }}>
+                    <span style={{ color: tab === item.id ? '#7c3aed' : '#94a3b8' }}>{item.icon}</span>
+                    {item.label}
+                  </button>
+                ))}
+                <div style={{ height: '1px', background: '#e2e8f0' }} />
+                <button onClick={() => supabase.auth.signOut()}
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%', padding: '13px 18px', background: 'transparent', color: '#94a3b8', border: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left' }}>
+                  <LogOut size={16} />
+                  Abmelden
+                </button>
+              </div>
+            </>
+          )}
+
           {/* Erste Zeile: Monatsnavigation + Speichern/Abmelden */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }}>
             {tab === 'monat' && (
               isMobile ? (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', gap: '6px' }}>
+                  {/* Hamburger */}
+                  <button onClick={() => setMobileMenuOpen(o => !o)} style={{ padding: '7px 9px', borderRadius: '10px', border: '1px solid #e2e8f0', background: mobileMenuOpen ? '#f5f3ff' : 'white', color: mobileMenuOpen ? '#7c3aed' : '#64748b', display: 'flex', flexDirection: 'column', gap: '4px', flexShrink: 0, alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ display: 'block', width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }} />
+                    <span style={{ display: 'block', width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }} />
+                    <span style={{ display: 'block', width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }} />
+                  </button>
                   <button onClick={() => setPastLimit(l => l + 1)} style={{ padding: '7px 10px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', fontSize: '12px', fontWeight: 600, lineHeight: 1, flexShrink: 0 }} title="Vergangenen Monat laden">
                     ←+
                   </button>
@@ -443,6 +472,19 @@ return (
                 </div>
               )
             )}
+            {/* Auf Mobile & anderen Tabs: Hamburger + Tab-Name */}
+            {isMobile && tab !== 'monat' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
+                <button onClick={() => setMobileMenuOpen(o => !o)} style={{ padding: '8px 9px', borderRadius: '10px', border: '1px solid #e2e8f0', background: mobileMenuOpen ? '#f5f3ff' : 'white', color: mobileMenuOpen ? '#7c3aed' : '#64748b', display: 'flex', flexDirection: 'column', gap: '4px', flexShrink: 0, alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ display: 'block', width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }} />
+                  <span style={{ display: 'block', width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }} />
+                  <span style={{ display: 'block', width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }} />
+                </button>
+                <span style={{ fontWeight: 700, fontSize: '15px', color: '#334155' }}>
+                  {navItems.find(n => n.id === tab)?.label ?? tab}
+                </span>
+              </div>
+            )}
             <div style={{ flex: 1 }} />
             {tab === 'monat' && saved && (
               <span className="flex items-center gap-1.5 text-xs text-emerald-500 font-medium px-2">
@@ -493,21 +535,6 @@ return (
         </main>
       </div>
 
-      {/* Mobile Bottom Nav */}
-      {isMobile && (
-        <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'white', borderTop: '1px solid #e2e8f0', display: 'flex', alignItems: 'flex-start', zIndex: 50, paddingBottom: 'env(safe-area-inset-bottom)', boxShadow: '0 -2px 8px rgba(0,0,0,0.06)' }}>
-          {[...navItems, ...(user.email === ADMIN_EMAIL ? [{ id: 'nutzer' as Tab, label: 'Nutzer', icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> }] : [])].map(item => (
-            <button key={item.id} onClick={() => setTab(item.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px', color: tab === item.id ? '#7c3aed' : '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', fontSize: '10px', fontWeight: tab === item.id ? 600 : 400, paddingTop: '12px', paddingBottom: '8px' }}>
-              <span style={{ color: tab === item.id ? '#7c3aed' : '#94a3b8' }}>{item.icon}</span>
-              {item.label.replace('übersicht', '').replace('Monats', 'Monat')}
-            </button>
-          ))}
-          <button onClick={() => supabase.auth.signOut()} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px', color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', fontSize: '10px', paddingTop: '12px', paddingBottom: '8px' }}>
-            <LogOut size={20} />
-            Abmelden
-          </button>
-        </nav>
-      )}
 
       {/* Delete Confirm Modal */}
       {deleteConfirmOpen && (
