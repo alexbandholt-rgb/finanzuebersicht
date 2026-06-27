@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { fetchDailyPrices, type DailyPrice } from '../lib/cryptoHistory'
 import { COMMON_COINS } from '../lib/crypto'
 import type { MonthData } from '../types'
@@ -16,6 +16,15 @@ const fmtEur = (n: number) =>
 export default function KryptoChart({ monthData }: Props) {
   const [prices, setPrices] = useState<DailyPrice[]>([])
   const [activeCoin, setActiveCoin] = useState<string | null>(null)
+  const svgRef = useRef<SVGSVGElement>(null)
+  const [svgPx, setSvgPx] = useState(0)
+
+  useEffect(() => {
+    if (!svgRef.current) return
+    const ro = new ResizeObserver(e => setSvgPx(Math.round(e[0].contentRect.width)))
+    ro.observe(svgRef.current)
+    return () => ro.disconnect()
+  }, [])
 
   // Alle Coins aus allen Monaten sammeln
   const cryptoItems = monthData.flatMap(d =>
@@ -133,7 +142,7 @@ export default function KryptoChart({ monthData }: Props) {
       </div>
 
       <div style={{ position: 'relative' }}>
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
+      <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
         {/* Grid-Linien */}
         {yTicks.map(t => (
           <g key={t.value}>
@@ -174,25 +183,29 @@ export default function KryptoChart({ monthData }: Props) {
         ))}
       </svg>
 
-      {/* X-Achse Labels als HTML — schärfer als SVG-Text */}
-      <div style={{ position: 'relative', height: '20px', marginLeft: `${(PAD.left / W * 100).toFixed(2)}%`, marginRight: `${(PAD.right / W * 100).toFixed(2)}%` }}>
-        {monthLabels.map((m, i) => {
-          const pct = ((m.x - PAD.left) / (W - PAD.left - PAD.right) * 100)
-          const clamped = Math.max(0, Math.min(100, pct))
-          return (
-            <span key={i} style={{
-              position: 'absolute',
-              left: `${clamped}%`,
-              transform: 'translateX(-50%)',
-              fontSize: '11px',
-              fontWeight: 500,
-              color: '#64748b',
-              whiteSpace: 'nowrap',
-              lineHeight: '20px',
-            }}>{m.label}</span>
-          )
-        })}
-      </div>
+      {/* X-Achse Labels — pixelgenaue Positionierung für scharfe Darstellung */}
+      {svgPx > 0 && (
+        <div style={{ position: 'relative', height: '20px' }}>
+          {monthLabels.map((m, i) => {
+            const scale = svgPx / W
+            const px = Math.round(m.x * scale)
+            const leftPx = Math.max(0, Math.min(svgPx, px))
+            return (
+              <span key={i} style={{
+                position: 'absolute',
+                left: `${leftPx}px`,
+                transform: 'translateX(-50%)',
+                fontSize: '11px',
+                fontWeight: 600,
+                color: '#64748b',
+                whiteSpace: 'nowrap',
+                lineHeight: '20px',
+                WebkitFontSmoothing: 'antialiased',
+              } as React.CSSProperties}>{m.label}</span>
+            )
+          })}
+        </div>
+      )}
       </div>
 
       {/* Legende mit aktuellem Wert */}
