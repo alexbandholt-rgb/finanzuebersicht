@@ -26,6 +26,7 @@ interface Props {
   showAnnualToggle?: boolean
   hideShare?: boolean
   showCrypto?: boolean
+  isCurrentMonth?: boolean
   sparRate?: number
   sparRateActive?: boolean
   onSparRateChange?: (rate: number | undefined, active: boolean) => void
@@ -61,7 +62,7 @@ function SortableRow({ id, children }: { id: string; children: (handle: React.Re
   )
 }
 
-export default function CategorySection({ title, color, items, onChange, annualMode, showAnnualToggle, hideShare, showCrypto, sparRate, sparRateActive, onSparRateChange, einkuenfte }: Props) {
+export default function CategorySection({ title, color, items, onChange, annualMode, showAnnualToggle, hideShare, showCrypto, isCurrentMonth = true, sparRate, sparRateActive, onSparRateChange, einkuenfte }: Props) {
   const isMobile = useIsMobile()
   const [collapsed, setCollapsed] = useState(false)
   const [coinPickerOpen, setCoinPickerOpen] = useState<string | null>(null)
@@ -70,19 +71,18 @@ export default function CategorySection({ title, color, items, onChange, annualM
   const cardRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!showCrypto) return
+    if (!showCrypto || !isCurrentMonth) return
     const coinIds = items.map(i => i.coinId).filter(Boolean) as string[]
     if (coinIds.length === 0) return
     fetchCryptoPrices(coinIds).then(prices => {
       setCryptoPrices(prices)
-      // Auto-update amounts
       const updated = items.map(item => {
         if (!item.coinId || !item.coinQuantity || !prices[item.coinId]) return item
         return { ...item, amount: Math.round(prices[item.coinId] * item.coinQuantity * 100) / 100 }
       })
       onChange(updated)
     })
-  }, [showCrypto, items.map(i => (i.coinId ?? '') + (i.coinQuantity ?? '')).join(',')])
+  }, [showCrypto, isCurrentMonth, items.map(i => (i.coinId ?? '') + (i.coinQuantity ?? '')).join(',')])
 
   const toggleCrypto = (id: string) => {
     onChange(items.map(item =>
