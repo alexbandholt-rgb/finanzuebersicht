@@ -118,7 +118,7 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
 
   const DEFAULT_BUDGETS: Record<string, number> = {
     wohnungskosten: 30, auto: 10, fixkosten: 10, sparen: 20,
-    versicherungen: 5, jaehrlichProMonat: 5, lebenshaltung: 15,
+    versicherungen: 5, lebenshaltung: 15,
   }
 
   const KATEGORIE_CONFIG = [
@@ -128,7 +128,6 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
     { key: 'lebenshaltung', label: 'Lebenshaltung', color: '#14b8a6' },
     { key: 'sparen', label: 'Sparen', color: '#ec4899', invert: true },
     { key: 'versicherungen', label: 'Versicherungen', color: '#0ea5e9' },
-    { key: 'jaehrlichProMonat', label: 'Jährl./Monat', color: '#f97316' },
   ]
 
   const budgetJahr = KATEGORIE_CONFIG.map(k => {

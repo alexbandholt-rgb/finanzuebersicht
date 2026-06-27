@@ -18,7 +18,6 @@ const DEFAULT_BUDGETS: Record<string, number> = {
   fixkosten: 10,
   sparen: 20,
   versicherungen: 5,
-  jaehrlichProMonat: 5,
   lebenshaltung: 15,
 }
 
@@ -29,7 +28,6 @@ const BLOCKS = [
   { key: 'fixkosten', label: 'Fixkosten', color: '#8b5cf6', bg: '#f5f3ff', border: '#ddd6fe', sectionId: 'section-fixkosten' },
   { key: 'sparen', label: 'Sparen', color: '#ec4899', bg: '#fdf2f8', border: '#fbcfe8', sectionId: 'section-sparen' },
   { key: 'versicherungen', label: 'Versicherungen', color: '#0ea5e9', bg: '#f0f9ff', border: '#bae6fd', sectionId: 'section-versicherungen' },
-  { key: 'jaehrlichProMonat', label: 'Jährl. / Monat', color: '#f97316', bg: '#fff7ed', border: '#fed7aa', sectionId: 'section-jaehrliche_kosten' },
   { key: 'lebenshaltung', label: 'Lebenshaltung', color: '#14b8a6', bg: '#f0fdfa', border: '#99f6e4', sectionId: 'section-lebenshaltung' },
 ]
 
@@ -54,7 +52,6 @@ const PIE_CATEGORIES = [
   { key: 'fixkosten', name: 'Fixkosten', color: '#8b5cf6' },
   { key: 'sparen', name: 'Sparen', color: '#ec4899' },
   { key: 'versicherungen', name: 'Versicherungen', color: '#0ea5e9' },
-  { key: 'jaehrlichProMonat', name: 'Jährl./Monat', color: '#f97316' },
   { key: 'lebenshaltung', name: 'Lebenshaltung', color: '#14b8a6' },
 ]
 

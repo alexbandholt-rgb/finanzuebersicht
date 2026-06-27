@@ -74,7 +74,6 @@ export default function MonthView({ data, onChange }: Props) {
         einkuenfte={einkuenfte}
       /></div>
       <div id="section-versicherungen"><CategorySection title="Versicherungen" color={COLORS.versicherungen} items={data.versicherungen} onChange={update('versicherungen')} showAnnualToggle /></div>
-      <div id="section-jaehrliche_kosten"><CategorySection title="Jährliche Kosten" color={COLORS.jaehrliche_kosten} items={data.jaehrliche_kosten} onChange={update('jaehrliche_kosten')} annualMode /></div>
       <div id="section-lebenshaltung"><CategorySection title="Lebenshaltung" color={COLORS.lebenshaltung} items={data.lebenshaltung ?? []} onChange={update('lebenshaltung')} /></div>
 
       <div className="flex items-center gap-3 mt-2">
