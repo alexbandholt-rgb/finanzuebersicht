@@ -266,14 +266,17 @@ return (
         {/* Topbar */}
         <header className="bg-white border-b border-slate-200 shadow-sm" style={{ padding: isMobile ? '0.5rem 0.75rem' : '0.75rem 1.5rem' }}>
           {/* Erste Zeile: Monatsnavigation + Speichern/Abmelden */}
-          <div className="flex items-center gap-2">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }}>
             {tab === 'monat' && (
               isMobile ? (
-                <div style={{ display: 'flex', alignItems: 'center', flex: 1, gap: '4px' }}>
-                  <button onClick={prevMonth} disabled={isAtMin} style={{ padding: '8px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: isAtMin ? '#cbd5e1' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', gap: '6px' }}>
+                  <button onClick={() => setPastLimit(l => l + 1)} style={{ padding: '7px 10px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', fontSize: '12px', fontWeight: 600, lineHeight: 1, flexShrink: 0 }} title="Vergangenen Monat laden">
+                    ←+
+                  </button>
+                  <button onClick={prevMonth} disabled={isAtMin} style={{ padding: '7px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: isAtMin ? '#cbd5e1' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <ChevronLeft size={16} />
                   </button>
-                  <span style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: '15px', color: '#334155' }}>
+                  <span style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: '15px', color: '#334155', whiteSpace: 'nowrap' }}>
                     {MONTH_NAMES[month - 1]} {year}
                   </span>
                   {isAtMax ? (
@@ -286,17 +289,14 @@ return (
                       setAllMonths(updated)
                       setData(newMonth)
                       setYear(p.year); setMonth(p.month)
-                    }} style={{ padding: '8px', borderRadius: '10px', border: '1px solid #ddd6fe', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    }} style={{ padding: '7px', borderRadius: '10px', border: '1px solid #ddd6fe', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <ChevronRight size={16} />
                     </button>
                   ) : (
-                    <button onClick={nextMonth} style={{ padding: '8px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <button onClick={nextMonth} style={{ padding: '7px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <ChevronRight size={16} />
                     </button>
                   )}
-                  <button onClick={() => setPastLimit(l => l + 1)} style={{ padding: '8px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', fontSize: '13px', fontWeight: 600, lineHeight: 1 }} title="Vergangenen Monat laden">
-                    ←+
-                  </button>
                 </div>
               ) : (
                 <div className="flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
