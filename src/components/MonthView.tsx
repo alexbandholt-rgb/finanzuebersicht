@@ -20,7 +20,7 @@ interface Props {
   onChange: (data: MonthData) => void
 }
 
-type CategoryKey = 'einkuenfte' | 'wohnungskosten' | 'auto' | 'fixkosten' | 'sparen' | 'versicherungen' | 'jaehrliche_kosten' | 'lebenshaltung'
+type CategoryKey = 'einkuenfte' | 'wohnungskosten' | 'auto' | 'fixkosten' | 'sparen' | 'versicherungen' | 'jaehrliche_kosten' | 'lebenshaltung' | 'barvermoegen'
 
 export default function MonthView({ data, onChange }: Props) {
   const isMobile = useIsMobile()
@@ -76,6 +76,14 @@ export default function MonthView({ data, onChange }: Props) {
       <div id="section-versicherungen"><CategorySection title="Versicherungen" color={COLORS.versicherungen} items={data.versicherungen} onChange={update('versicherungen')} showAnnualToggle /></div>
       <div id="section-jaehrliche_kosten"><CategorySection title="Jährliche Kosten" color={COLORS.jaehrliche_kosten} items={data.jaehrliche_kosten} onChange={update('jaehrliche_kosten')} annualMode /></div>
       <div id="section-lebenshaltung"><CategorySection title="Lebenshaltung" color={COLORS.lebenshaltung} items={data.lebenshaltung ?? []} onChange={update('lebenshaltung')} /></div>
+
+      <div className="flex items-center gap-3 mt-2">
+        <div className="flex-1 h-px bg-slate-200" />
+        <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Vermögen</span>
+        <div className="flex-1 h-px bg-slate-200" />
+      </div>
+
+      <div id="section-barvermoegen"><CategorySection title="Barvermögen" color="#6366f1" items={data.barvermoegen ?? []} onChange={update('barvermoegen')} /></div>
     </div>
   )
 

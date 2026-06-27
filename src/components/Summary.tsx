@@ -259,6 +259,30 @@ export default function Summary({ data, onChange }: Props) {
           {fmt(s.verbleibend)}
         </span>
       </div>
+
+      {/* Barvermögen */}
+      {(data.barvermoegen ?? []).length > 0 && (() => {
+        const total = (data.barvermoegen ?? []).reduce((acc, i) => acc + (i.amount ?? 0), 0)
+        return (
+          <div
+            className="rounded-2xl p-4 border border-indigo-200 bg-indigo-50 shadow-sm cursor-pointer"
+            onClick={() => scrollToSection('section-barvermoegen', '#6366f1')}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-500">Barvermögen</p>
+              <span className="text-lg font-mono font-bold text-indigo-600">{fmt(total)}</span>
+            </div>
+            <div className="flex flex-col gap-0.5">
+              {(data.barvermoegen ?? []).filter(i => i.amount && i.amount > 0).map(i => (
+                <div key={i.id} className="flex items-center justify-between text-xs">
+                  <span className="text-indigo-400">{i.label}</span>
+                  <span className="font-mono text-indigo-500">{fmt(i.amount ?? 0)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      })()}
     </div>
   )
 }

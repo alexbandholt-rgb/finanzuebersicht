@@ -21,6 +21,7 @@ export function defaultStammdaten(): Stammdaten {
     versicherungen: makeDefaultItems(DEFAULT_ITEMS.versicherungen),
     jaehrliche_kosten: makeDefaultItems(DEFAULT_ITEMS.jaehrliche_kosten),
     lebenshaltung: makeDefaultItems(DEFAULT_ITEMS.lebenshaltung),
+    barvermoegen: makeDefaultItems(DEFAULT_ITEMS.barvermoegen),
   }
 }
 
@@ -36,6 +37,7 @@ export function createNewMonth(year: number, month: number, stammdaten: Stammdat
     versicherungen: copyItems(stammdaten.versicherungen),
     jaehrliche_kosten: copyItems(stammdaten.jaehrliche_kosten),
     lebenshaltung: copyItems(stammdaten.lebenshaltung ?? []),
+    barvermoegen: copyItems(stammdaten.barvermoegen ?? []),
     sparRate: stammdaten.sparRate ?? 10,
     sparRateActive: stammdaten.sparRateActive ?? false,
   }
