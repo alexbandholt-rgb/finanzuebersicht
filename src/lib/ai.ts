@@ -69,7 +69,7 @@ export async function bewerteFiananzen(summary: {
 Finanzdaten:
 - Einkünfte: ${summary.einkuenfte.toFixed(2)} €
 - Wohnungskosten: ${summary.wohnungskosten.toFixed(2)} € (${wohnquote}% des Einkommens)
-- Auto: ${summary.auto.toFixed(2)} €
+- Fahrzeuge: ${summary.auto.toFixed(2)} €
 - Fixkosten: ${summary.fixkosten.toFixed(2)} €
 - Sparen: ${summary.sparen.toFixed(2)} € (${sparquote}% Sparquote)
 - Versicherungen: ${summary.versicherungen.toFixed(2)} €
