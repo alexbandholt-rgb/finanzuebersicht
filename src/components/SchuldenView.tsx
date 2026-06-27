@@ -231,6 +231,11 @@ export default function SchuldenView({ schulden, onChange }: Props) {
                           {s.monatlicheRate ? <><br />Restlaufzeit: <b style={{ color: '#8b5cf6' }}>{restlaufzeit(s.amount ?? 0, s.monatlicheRate, s.zinssatz ?? 0)}</b></> : ''}
                         </p>
                       )}
+                      {s.aktiv && !s.monatlicheRate && (
+                        <p style={{ fontSize: '11px', color: '#f97316', marginTop: '3px' }}>
+                          Keine Rate angegeben — Betrag sinkt nicht automatisch.
+                        </p>
+                      )}
                       {zinsenM > 0 && (
                         <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '1px' }}>
                           Zinsen/M: <span style={{ color: '#f97316' }}>{fmt(zinsenM)}</span>

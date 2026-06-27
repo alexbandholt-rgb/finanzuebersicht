@@ -39,25 +39,30 @@ export default function BarvermoegenView({ allMonths }: Props) {
   }
 
   const eintraege = monthData
-    .filter(d => (d.barvermoegen ?? []).length > 0)
+    .filter(d => (d.barvermoegen ?? []).length > 0 || (d.sachwerte ?? []).length > 0)
     .sort((a, b) => a.year * 12 + a.month - (b.year * 12 + b.month))
     .map(d => ({
       label: `${MONTH_NAMES[d.month - 1]} ${d.year}`,
       items: (d.barvermoegen ?? []).filter(i => i.amount && i.amount > 0),
-      total: (d.barvermoegen ?? []).reduce((acc, i) => acc + (i.amount ?? 0), 0),
+      sachItems: (d.sachwerte ?? []).filter(i => i.amount && i.amount > 0),
+      barTotal: (d.barvermoegen ?? []).reduce((acc, i) => acc + (i.amount ?? 0), 0),
+      sachTotal: (d.sachwerte ?? []).reduce((acc, i) => acc + (i.amount ?? 0), 0),
+      total: (d.barvermoegen ?? []).reduce((acc, i) => acc + (i.amount ?? 0), 0)
+            + (d.sachwerte ?? []).reduce((acc, i) => acc + (i.amount ?? 0), 0),
     }))
 
   if (eintraege.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-slate-400">
         <p className="text-sm">Noch kein Vermögen eingetragen.</p>
-        <p className="text-xs mt-1">Trage es in der Monatsübersicht unter "Vermögen" ein.</p>
+        <p className="text-xs mt-1">Trage es in der Monatsübersicht unter "Vermögen" oder "Sachwerte" ein.</p>
       </div>
     )
   }
 
   // Sammle alle vorkommenden Labels für Kategorien
   const alleLabels = Array.from(new Set(eintraege.flatMap(e => e.items.map(i => i.label))))
+  const alleSachLabels = Array.from(new Set(eintraege.flatMap(e => e.sachItems.map(i => i.label))))
 
   return (
     <div className="flex flex-col gap-6">
@@ -110,6 +115,28 @@ export default function BarvermoegenView({ allMonths }: Props) {
                   })}
                 </tr>
               ))}
+              {alleSachLabels.length > 0 && (
+                <>
+                  <tr style={{ background: '#ecfeff' }}>
+                    <td colSpan={eintraege.length + 1} style={{ padding: '6px 16px', fontSize: '11px', fontWeight: 700, color: '#0891b2', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Sachwerte
+                    </td>
+                  </tr>
+                  {alleSachLabels.map((label, rowIdx) => (
+                    <tr key={'s-' + label} style={{ borderBottom: '1px solid #f8fafc', background: rowIdx % 2 === 0 ? 'white' : '#f0fdfe' }}>
+                      <td style={{ padding: '8px 16px', color: '#475569' }}>{label}</td>
+                      {eintraege.map(e => {
+                        const item = e.sachItems.find(i => i.label === label)
+                        return (
+                          <td key={e.label} style={{ textAlign: 'right', padding: '8px 16px', fontFamily: 'monospace', color: item ? '#0891b2' : '#cbd5e1' }}>
+                            {item ? fmt(item.amount ?? 0) : '—'}
+                          </td>
+                        )
+                      })}
+                    </tr>
+                  ))}
+                </>
+              )}
               <tr style={{ borderTop: '2px solid #e2e8f0', background: '#f5f3ff' }}>
                 <td style={{ padding: '10px 16px', fontWeight: 700, color: '#4c1d95' }}>Gesamt</td>
                 {eintraege.map((e, idx) => {
