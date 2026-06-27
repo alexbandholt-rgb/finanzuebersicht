@@ -12,7 +12,10 @@ export function calcSummary(data: MonthData) {
   const einkuenfte = sum(data.einkuenfte)
   const wohnungskosten = sum(data.wohnungskosten)
   const auto = sum(data.auto.filter(i => !i.isAnnual))
-  const fixkosten = sum(data.fixkosten)
+  const schuldenRaten = (data.schulden ?? [])
+    .filter(s => s.inkludiereInFixkosten && (s.monatlicheRate ?? 0) > 0)
+    .reduce((acc, s) => acc + (s.monatlicheRate ?? 0), 0)
+  const fixkosten = sum(data.fixkosten) + schuldenRaten
   const sparRateBetrag = data.sparRate && data.sparRateActive === true && einkuenfte > 0 ? (einkuenfte * data.sparRate) / 100 : 0
   const sparen = sum(data.sparen) + sparRateBetrag
   const versicherungen = sum(data.versicherungen.filter(i => !i.isAnnual))

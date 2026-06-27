@@ -262,8 +262,11 @@ export default function Summary({ data, onChange }: Props) {
 
       {/* Barvermögen */}
       {(data.barvermoegen ?? []).length > 0 && (() => {
-        const total = (data.barvermoegen ?? []).reduce((acc, i) => acc + (i.amount ?? 0), 0)
         const sichtbar = data.barvermoegenSichtbar !== false
+        const aktivSchulden = (data.schulden ?? []).filter(s => (s.amount ?? 0) > 0)
+        const schuldenTotal = aktivSchulden.reduce((acc, s) => acc + (s.amount ?? 0), 0)
+        const vermoegenTotal = (data.barvermoegen ?? []).reduce((acc, i) => acc + (i.amount ?? 0), 0)
+        const nettovermoegen = vermoegenTotal - schuldenTotal
         return (
           <div className="rounded-2xl border border-indigo-200 bg-indigo-50 shadow-sm overflow-hidden">
             <div
@@ -280,7 +283,12 @@ export default function Summary({ data, onChange }: Props) {
                 />
                 <p className="text-xs font-semibold uppercase tracking-wider text-indigo-500">Vermögen</p>
               </div>
-              {sichtbar && <span className="text-lg font-mono font-bold text-indigo-600">{fmt(total)}</span>}
+              {sichtbar && (
+                <div style={{ textAlign: 'right' }}>
+                  <span className="text-lg font-mono font-bold" style={{ color: nettovermoegen >= 0 ? '#4f46e5' : '#f43f5e' }}>{fmt(nettovermoegen)}</span>
+                  {schuldenTotal > 0 && <p style={{ fontSize: '10px', color: '#94a3b8', marginTop: '1px' }}>Nettovermögen</p>}
+                </div>
+              )}
             </div>
             {sichtbar && (
               <div className="flex flex-col gap-0.5" style={{ padding: '0 20px 16px' }}>
@@ -290,8 +298,46 @@ export default function Summary({ data, onChange }: Props) {
                     <span className="font-mono text-indigo-500">{fmt(i.amount ?? 0)}</span>
                   </div>
                 ))}
+                {schuldenTotal > 0 && (
+                  <>
+                    <div style={{ height: '1px', background: '#c7d2fe', margin: '6px 0' }} />
+                    <div className="flex items-center justify-between text-xs">
+                      <span style={{ color: '#f43f5e', fontWeight: 600 }}>Schulden</span>
+                      <span className="font-mono" style={{ color: '#f43f5e' }}>− {fmt(schuldenTotal)}</span>
+                    </div>
+                    {aktivSchulden.map(s => (
+                      <div key={s.id} className="flex items-center justify-between text-xs" style={{ paddingLeft: '8px' }}>
+                        <span style={{ color: '#fca5a5' }}>{s.label || 'Unbenannt'}</span>
+                        <span className="font-mono" style={{ color: '#fca5a5' }}>{fmt(s.amount ?? 0)}</span>
+                      </div>
+                    ))}
+                  </>
+                )}
               </div>
             )}
+          </div>
+        )
+      })()}
+
+      {/* Schulden (nur wenn kein Barvermögen vorhanden, damit Schulden immer sichtbar sind) */}
+      {(data.barvermoegen ?? []).length === 0 && (() => {
+        const aktivSchulden = (data.schulden ?? []).filter(s => (s.amount ?? 0) > 0)
+        if (aktivSchulden.length === 0) return null
+        const schuldenTotal = aktivSchulden.reduce((acc, s) => acc + (s.amount ?? 0), 0)
+        return (
+          <div className="rounded-2xl border border-rose-200 bg-rose-50 shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between" style={{ padding: '16px 20px' }}>
+              <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#f43f5e' }}>Schulden</p>
+              <span className="text-lg font-mono font-bold" style={{ color: '#f43f5e' }}>{fmt(schuldenTotal)}</span>
+            </div>
+            <div className="flex flex-col gap-0.5" style={{ padding: '0 20px 16px' }}>
+              {aktivSchulden.map(s => (
+                <div key={s.id} className="flex items-center justify-between text-xs">
+                  <span style={{ color: '#fca5a5' }}>{s.label || 'Unbenannt'}</span>
+                  <span className="font-mono" style={{ color: '#f43f5e' }}>{fmt(s.amount ?? 0)}</span>
+                </div>
+              ))}
+            </div>
           </div>
         )
       })()}

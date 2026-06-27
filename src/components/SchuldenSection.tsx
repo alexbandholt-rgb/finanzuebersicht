@@ -30,6 +30,10 @@ export default function SchuldenSection({ items, onChange }: Props) {
     }))
   }
 
+  const toggleFixkosten = (id: string, checked: boolean) => {
+    onChange(items.map(item => item.id !== id ? item : { ...item, inkludiereInFixkosten: checked }))
+  }
+
   const remove = (id: string) => onChange(items.filter(i => i.id !== id))
   const add = () => onChange([...items, newDebt()])
 
@@ -100,6 +104,18 @@ export default function SchuldenSection({ items, onChange }: Props) {
                     </div>
                   </label>
                 </div>
+
+                {(item.monatlicheRate ?? 0) > 0 && (
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '7px', cursor: 'pointer', userSelect: 'none' }}>
+                    <input
+                      type="checkbox"
+                      checked={item.inkludiereInFixkosten ?? false}
+                      onChange={e => toggleFixkosten(item.id, e.target.checked)}
+                      style={{ width: '14px', height: '14px', accentColor: '#8b5cf6', cursor: 'pointer', flexShrink: 0 }}
+                    />
+                    <span style={{ fontSize: '11px', color: '#64748b' }}>Rate zu Fixkosten hinzufügen</span>
+                  </label>
+                )}
 
                 {progress !== null && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>

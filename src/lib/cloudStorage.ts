@@ -24,13 +24,15 @@ export async function cloudLoadMonth(year: number, month: number): Promise<Month
 export async function cloudSaveMonth(monthData: MonthData): Promise<void> {
   const uid = await getUserId()
   if (!uid) return
-  await supabase
+  // Delete + insert als atomares Muster (Supabase unterstützt kein upsert ohne unique constraint)
+  const { error: delErr } = await supabase
     .from('month_data')
     .delete()
     .eq('user_id', uid)
     .eq('year', monthData.year)
     .eq('month', monthData.month)
-  await supabase
+  if (delErr) console.error('cloudSaveMonth delete error:', delErr)
+  const { error: insErr } = await supabase
     .from('month_data')
     .insert({
       user_id: uid,
@@ -39,6 +41,7 @@ export async function cloudSaveMonth(monthData: MonthData): Promise<void> {
       data: monthData,
       updated_at: new Date().toISOString(),
     })
+  if (insErr) console.error('cloudSaveMonth insert error:', insErr)
 }
 
 export async function cloudDeleteMonth(year: number, month: number): Promise<void> {

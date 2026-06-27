@@ -10,6 +10,7 @@ export interface LineItem {
   gesamtbetrag?: number
   monatlicheRate?: number
   startDatum?: string
+  inkludiereInFixkosten?: boolean
 }
 
 export interface Category {

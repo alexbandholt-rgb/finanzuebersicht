@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Check, Trash2, CalendarDays, LogOut, UserCircle, PiggyBank, ScrollText, TrendingUp, Landmark } from 'lucide-react'
 import { useIsMobile } from './hooks/useIsMobile'
 import type { MonthData } from './types'
@@ -54,6 +54,8 @@ export default function App() {
   const [allMonths, setAllMonths] = useState<{ year: number; month: number }[]>([])
   const [saved, setSaved] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
+  const isDirtyRef = useRef(false)
+  const dataRef = useRef(data)
   const [comparePickerOpen, setComparePickerOpen] = useState(false)
   const [selectedForCompare, setSelectedForCompare] = useState<string[]>([])
   const [futureLimit, setFutureLimit] = useState(0)
@@ -108,11 +110,19 @@ export default function App() {
     init()
   }, [user])
 
-  // Monat wechseln → aus Cloud laden
+  // Refs für aktuelle Werte (verhindert stale-closure-Probleme beim Monatwechsel)
+  useEffect(() => { isDirtyRef.current = isDirty }, [isDirty])
+  useEffect(() => { dataRef.current = data }, [data])
+
+  // Monat wechseln → vorher speichern falls nötig, dann aus Cloud laden
   useEffect(() => {
     if (!user) return
-    setIsDirty(false)
     const load = async () => {
+      if (isDirtyRef.current) {
+        await cloudSaveMonth(dataRef.current)
+      }
+      setIsDirty(false)
+      isDirtyRef.current = false
       const d = await cloudLoadMonth(year, month)
       if (d) { setData(migrateMonthData(d)); return }
       const all = await cloudGetAllMonths()
