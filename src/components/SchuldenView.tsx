@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useIsMobile } from '../hooks/useIsMobile'
 import { Plus, Trash2, Pencil, Check, X } from 'lucide-react'
 import type { LineItem } from '../types'
 
@@ -33,6 +34,7 @@ function monatlZinsen(betrag: number, zinssatz: number) {
 }
 
 export default function SchuldenView({ schulden, onChange }: Props) {
+  const isMobile = useIsMobile()
   const [label, setLabel] = useState('')
   const [betrag, setBetrag] = useState('')
   const [rate, setRate] = useState('')
@@ -93,24 +95,24 @@ export default function SchuldenView({ schulden, onChange }: Props) {
     acc + (s.zinssatz && s.amount ? monatlZinsen(s.amount, s.zinssatz) : 0), 0)
 
   return (
-    <div style={{ maxWidth: '680px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ maxWidth: '680px', display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '24px' }}>
 
       {/* Übersicht-Kacheln */}
       {schulden.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: '10px' }}>
           <Kachel label="Gesamtrestschuld" value={fmt(totalRest)} color="#f43f5e" />
           <Kachel label="Monatl. Raten" value={totalRate > 0 ? fmt(totalRate) : '—'} color="#f97316"
             sub={totalZinsen > 0 ? `davon ${fmt(totalZinsen)} Zinsen` : undefined} />
-          <Kachel label="Restlaufzeit (ges.)" value={
+          <Kachel label="Restlaufzeit" value={
             totalRate > 0
               ? restlaufzeit(totalRest, totalRate, totalZinsen > 0 ? (totalZinsen / totalRest * 100 * 12) : 0)
               : '—'
-          } color="#8b5cf6" />
+          } color="#8b5cf6" style={isMobile ? { gridColumn: '1 / -1' } : {}} />
         </div>
       )}
 
       {/* Neue Schuld anlegen */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: '24px' }}>
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: isMobile ? '16px' : '24px' }}>
         <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '16px' }}>
           Schuld anlegen
         </h3>
@@ -199,23 +201,34 @@ export default function SchuldenView({ schulden, onChange }: Props) {
               }
 
               return (
-                <div key={s.id} style={{ padding: '16px 24px', borderBottom: '1px solid #f8fafc' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div key={s.id} style={{ padding: isMobile ? '12px 16px' : '16px 24px', borderBottom: '1px solid #f8fafc' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
                     {/* Aktiv-Toggle */}
-                    <label title="Wird gerade abgezahlt" style={{ cursor: 'pointer', flexShrink: 0 }}>
+                    <label title="Wird gerade abgezahlt" style={{ cursor: 'pointer', flexShrink: 0, paddingTop: '2px' }}>
                       <input type="checkbox" checked={s.aktiv ?? false} onChange={e => toggleAktiv(s.id, e.target.checked)}
                         style={{ width: '15px', height: '15px', accentColor: '#10b981', cursor: 'pointer' }} />
                     </label>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                        <p style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>{s.label}</p>
-                        {s.aktiv && <span style={{ fontSize: '10px', color: '#10b981', fontWeight: 600, background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '4px', padding: '1px 6px' }}>aktiv</span>}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', minWidth: 0 }}>
+                          <p style={{ fontSize: '14px', fontWeight: 600, color: '#334155', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.label}</p>
+                          {s.aktiv && <span style={{ fontSize: '10px', color: '#10b981', fontWeight: 600, background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '4px', padding: '1px 6px', flexShrink: 0 }}>aktiv</span>}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                          <span style={{ fontSize: '15px', fontWeight: 800, color: '#f43f5e', fontFamily: 'monospace' }}>{fmt(s.amount ?? 0)}</span>
+                          <button onClick={() => startEdit(s)} style={{ padding: '5px', borderRadius: '7px', border: 'none', background: '#f1f5f9', color: '#64748b', cursor: 'pointer', display: 'flex' }}>
+                            <Pencil size={12} />
+                          </button>
+                          <button onClick={() => remove(s.id)} style={{ padding: '5px', borderRadius: '7px', border: 'none', background: '#fff1f2', color: '#f43f5e', cursor: 'pointer', display: 'flex' }}>
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
                       </div>
                       {(s.monatlicheRate || s.zinssatz) && (
-                        <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>
+                        <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '3px', lineHeight: '1.6' }}>
                           {s.monatlicheRate ? `${fmt(s.monatlicheRate)}/Monat` : ''}
-                          {s.zinssatz ? ` · ${s.zinssatz}% Zinsen` : ''}
-                          {s.monatlicheRate && ` · ${restlaufzeit(s.amount ?? 0, s.monatlicheRate, s.zinssatz ?? 0)} verbleibend`}
+                          {s.zinssatz ? ` · ${s.zinssatz}% p.a.` : ''}
+                          {s.monatlicheRate ? <><br />Restlaufzeit: <b style={{ color: '#8b5cf6' }}>{restlaufzeit(s.amount ?? 0, s.monatlicheRate, s.zinssatz ?? 0)}</b></> : ''}
                         </p>
                       )}
                       {zinsenM > 0 && (
@@ -224,15 +237,6 @@ export default function SchuldenView({ schulden, onChange }: Props) {
                           {' · '}Tilgung/M: <span style={{ color: '#10b981' }}>{fmt(tilgungM)}</span>
                         </p>
                       )}
-                    </div>
-                    <span style={{ fontSize: '16px', fontWeight: 800, color: '#f43f5e', fontFamily: 'monospace', flexShrink: 0 }}>{fmt(s.amount ?? 0)}</span>
-                    <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
-                      <button onClick={() => startEdit(s)} style={{ padding: '6px', borderRadius: '8px', border: 'none', background: '#f1f5f9', color: '#64748b', cursor: 'pointer' }}>
-                        <Pencil size={13} />
-                      </button>
-                      <button onClick={() => remove(s.id)} style={{ padding: '6px', borderRadius: '8px', border: 'none', background: '#fff1f2', color: '#f43f5e', cursor: 'pointer' }}>
-                        <Trash2 size={13} />
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -267,9 +271,9 @@ function Field({ label, value, onChange, suffix, onEnter, placeholder, small }: 
   )
 }
 
-function Kachel({ label, value, color, sub }: { label: string; value: string; color: string; sub?: string }) {
+function Kachel({ label, value, color, sub, style }: { label: string; value: string; color: string; sub?: string; style?: React.CSSProperties }) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: '16px 20px' }}>
+    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: '14px 16px', ...style }}>
       <p style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>{label}</p>
       <p style={{ fontSize: '18px', fontWeight: 800, color, fontFamily: 'monospace' }}>{value}</p>
       {sub && <p style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>{sub}</p>}
