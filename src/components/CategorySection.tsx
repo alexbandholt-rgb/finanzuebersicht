@@ -38,7 +38,7 @@ const CATEGORY_INFO: Record<string, string> = {
   'Wohnungskosten': 'Fixe Kosten für deine Unterkunft: Miete, Nebenkosten, Strom, Internet.',
   'Fahrzeuge': 'Laufende Kosten für Autos, Motorräder etc. Jährliche Kosten (z.B. Steuer) werden automatisch ÷ 12 gerechnet.',
   'Fixkosten': 'Regelmäßige monatliche Ausgaben: Abos, Mitgliedschaften, Gebühren.',
-  'Sparen': 'Was du monatlich zurücklegst oder investierst — ETFs, Aktien, Tagesgeld etc. Wird vom verfügbaren Budget abgezogen.',
+  'Sparen & Investieren': 'Was du monatlich zurücklegst oder investierst — ETFs, Aktien, Tagesgeld etc. Wird vom verfügbaren Budget abgezogen.',
   'Versicherungen': 'Monatliche oder jährliche Versicherungsbeiträge. Jährliche Beträge werden ÷ 12 gerechnet.',
   'Jährliche Kosten': 'Einmalige Jahresausgaben wie Urlaub, Mitgliedsbeiträge oder Abonnements — werden automatisch auf den Monat umgerechnet.',
   'Lebenshaltung': 'Variable monatliche Ausgaben: Lebensmittel, Restaurants, Shopping, Freizeit.',

@@ -67,7 +67,7 @@ export default function MonthView({ data, onChange }: Props) {
       <div id="section-auto"><CategorySection title="Fahrzeuge" color={COLORS.auto} items={data.auto} onChange={update('auto')} showAnnualToggle /></div>
       <div id="section-fixkosten"><CategorySection title="Fixkosten" color={COLORS.fixkosten} items={data.fixkosten} onChange={update('fixkosten')} /></div>
       <div id="section-sparen"><CategorySection
-        title="Sparen"
+        title="Sparen & Investieren"
         color={COLORS.sparen}
         items={data.sparen}
         onChange={update('sparen')}
