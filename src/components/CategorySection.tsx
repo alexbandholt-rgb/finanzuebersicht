@@ -12,6 +12,7 @@ interface Props {
   onChange: (items: LineItem[]) => void
   annualMode?: boolean
   showAnnualToggle?: boolean
+  hideShare?: boolean
   sparRate?: number
   sparRateActive?: boolean
   onSparRateChange?: (rate: number | undefined, active: boolean) => void
@@ -22,7 +23,7 @@ function newItem(): LineItem {
   return { id: crypto.randomUUID(), label: '', amount: null }
 }
 
-export default function CategorySection({ title, color, items, onChange, annualMode, showAnnualToggle, sparRate, sparRateActive, onSparRateChange, einkuenfte }: Props) {
+export default function CategorySection({ title, color, items, onChange, annualMode, showAnnualToggle, hideShare, sparRate, sparRateActive, onSparRateChange, einkuenfte }: Props) {
   const updateField = (id: string, field: keyof LineItem, value: string) => {
     onChange(items.map(item => {
       if (item.id !== id) return item
@@ -131,18 +132,20 @@ export default function CategorySection({ title, color, items, onChange, annualM
                   />
                   <span className="pr-3 text-slate-400 text-xs select-none">€</span>
                 </div>
-                <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden" style={{ width: '52px' }}>
-                  <input
-                    type="number"
-                    value={item.share ?? ''}
-                    onChange={e => updateField(item.id, 'share', e.target.value)}
-                    placeholder="1"
-                    step="0.1"
-                    min="0"
-                    max="1"
-                    className="w-full bg-transparent px-2 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none text-right"
-                  />
-                </div>
+                {!hideShare && (
+                  <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden" style={{ width: '52px' }}>
+                    <input
+                      type="number"
+                      value={item.share ?? ''}
+                      onChange={e => updateField(item.id, 'share', e.target.value)}
+                      placeholder="1"
+                      step="0.1"
+                      min="0"
+                      max="1"
+                      className="w-full bg-transparent px-2 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none text-right"
+                    />
+                  </div>
+                )}
                 <div style={{ width: '30px', display: 'flex', justifyContent: 'center' }}>
                   {showAnnualToggle ? (
                     <button
