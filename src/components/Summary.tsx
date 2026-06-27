@@ -224,7 +224,7 @@ export default function Summary({ data, onChange }: Props) {
                   <span className="text-[11px] font-mono font-bold text-slate-700">{fmt(val)}</span>
                   {budget && (
                     <span className="text-[9px] font-mono shrink-0" style={{ color: barColor }}>
-                      {pct.toFixed(0)}/{budget}%
+                      {pct.toFixed(1)}/{budget}%
                     </span>
                   )}
                 </div>
