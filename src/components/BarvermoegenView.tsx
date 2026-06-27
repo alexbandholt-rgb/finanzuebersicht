@@ -72,6 +72,7 @@ export default function BarvermoegenView({ allMonths }: Props) {
         {eintraege.map((e, idx) => {
           const prev = eintraege[idx - 1]
           const delta = prev ? e.total - prev.total : null
+          const hasBoth = e.barTotal > 0 && e.sachTotal > 0
           return (
             <div key={e.label} className="bg-white rounded-2xl border border-indigo-100 shadow-sm" style={{ padding: isMobile ? '10px 12px' : '1rem' }}>
               <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wide mb-1">{e.label}</p>
@@ -80,6 +81,18 @@ export default function BarvermoegenView({ allMonths }: Props) {
                 <p className="text-xs font-mono mt-0.5" style={{ color: delta >= 0 ? '#10b981' : '#ef4444' }}>
                   {fmtDelta(delta)}
                 </p>
+              )}
+              {hasBoth && (
+                <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #e0e7ff', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                    <span style={{ color: '#94a3b8' }}>Vermögen</span>
+                    <span style={{ fontFamily: 'monospace', color: '#6366f1' }}>{fmt(e.barTotal)}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                    <span style={{ color: '#94a3b8' }}>Sachwerte</span>
+                    <span style={{ fontFamily: 'monospace', color: '#0891b2' }}>{fmt(e.sachTotal)}</span>
+                  </div>
+                </div>
               )}
             </div>
           )
