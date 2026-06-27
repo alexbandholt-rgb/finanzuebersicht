@@ -179,17 +179,15 @@ export default function CategorySection({ title, color, items, onChange, annualM
           return (
             <div key={item.id} className="flex flex-col gap-1.5">
 
-              <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'stretch' : 'center', gap: '6px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '4px' : '8px' }}>
 
                 {item.coinId ? (
                   /* ── Krypto-Zeile ── */
                   <>
-                    {/* Badge + Menge zusammen im flex:1 Bereich */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: 1, minWidth: 0 }}>
                     <div style={{ position: 'relative', flexShrink: 0 }}>
                       <button
                         onClick={() => setCoinPickerOpen(coinPickerOpen === item.id ? null : item.id)}
-                        style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: '1px solid #a5b4fc', background: '#eef2ff', color: '#6366f1', width: '100%' }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: isMobile ? '6px 8px' : '8px 12px', borderRadius: '10px', fontSize: isMobile ? '12px' : '13px', fontWeight: 700, cursor: 'pointer', border: '1px solid #a5b4fc', background: '#eef2ff', color: '#6366f1' }}
                       >
                         {COMMON_COINS.find(c => c.id === item.coinId)?.symbol}
                         <span style={{ fontSize: '9px', opacity: 0.6 }}>▾</span>
@@ -208,27 +206,22 @@ export default function CategorySection({ title, color, items, onChange, annualM
                         </div>
                       )}
                     </div>
-                      {/* Mengenfeld im flex:1 Bereich */}
-                      <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', flex: 1, minWidth: 0 }}>
-                        <input
-                          type="number"
-                          value={item.coinQuantity ?? ''}
-                          onChange={e => updateCoinQuantity(item.id, e.target.value === '' ? null : parseFloat(e.target.value))}
-                          placeholder="Menge"
-                          step="any"
-                          style={{ flex: 1, background: 'transparent', border: 'none', padding: '8px 8px', fontSize: '13px', color: '#334155', outline: 'none', textAlign: 'right', minWidth: 0 }}
-                        />
-                        <span style={{ paddingRight: '10px', fontSize: '11px', color: '#94a3b8', flexShrink: 0 }}>{COMMON_COINS.find(c => c.id === item.coinId)?.symbol}</span>
-                      </div>
+                    <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', flex: 1, minWidth: 0 }}>
+                      <input
+                        type="number"
+                        value={item.coinQuantity ?? ''}
+                        onChange={e => updateCoinQuantity(item.id, e.target.value === '' ? null : parseFloat(e.target.value))}
+                        placeholder="Menge"
+                        step="any"
+                        style={{ flex: 1, background: 'transparent', border: 'none', padding: isMobile ? '6px 4px' : '8px 8px', fontSize: isMobile ? '12px' : '13px', color: '#334155', outline: 'none', textAlign: 'right', minWidth: 0 }}
+                      />
+                      <span style={{ paddingRight: isMobile ? '6px' : '10px', fontSize: '11px', color: '#94a3b8', flexShrink: 0 }}>{COMMON_COINS.find(c => c.id === item.coinId)?.symbol}</span>
                     </div>
-
-                    {/* EUR-Wert readonly — fluchtet mit Betragsfeld normaler Zeilen */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '8px 10px', width: '120px', flexShrink: 0 }}>
-                      <span style={{ fontSize: '13px', fontWeight: 600, color: '#16a34a', fontFamily: 'monospace' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: isMobile ? '6px 8px' : '8px 10px', width: isMobile ? '90px' : '120px', flexShrink: 0 }}>
+                      <span style={{ fontSize: isMobile ? '12px' : '13px', fontWeight: 600, color: '#16a34a', fontFamily: 'monospace' }}>
                         {item.amount !== null ? fmt(item.amount) : '—'}
                       </span>
                     </div>
-
                   </>
                 ) : (
                   /* ── Normale Zeile ── */
@@ -238,121 +231,70 @@ export default function CategorySection({ title, color, items, onChange, annualM
                       value={item.label}
                       onChange={e => updateField(item.id, 'label', e.target.value)}
                       placeholder="Position"
-                      style={{ flex: 1, background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px 12px', fontSize: '13px', color: '#334155', outline: 'none', fontFamily: 'inherit', minWidth: 0 }}
+                      style={{ flex: 1, background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: isMobile ? '6px 8px' : '8px 12px', fontSize: isMobile ? '12px' : '13px', color: '#334155', outline: 'none', fontFamily: 'inherit', minWidth: 0 }}
                     />
-                    {!isMobile && (
-                      <>
-                        <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', width: '120px', flexShrink: 0 }}>
-                          <input
-                            type="number"
-                            value={item.amount ?? ''}
-                            onChange={e => updateField(item.id, 'amount', e.target.value)}
-                            placeholder="0"
-                            step="0.01"
-                            style={{ flex: 1, background: 'transparent', border: 'none', padding: '8px 6px', fontSize: '13px', color: '#334155', outline: 'none', textAlign: 'right', minWidth: 0 }}
-                          />
-                          <span style={{ paddingRight: '8px', fontSize: '11px', color: '#94a3b8' }}>€</span>
-                        </div>
-                        {!hideShare && (
-                          <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', width: '52px' }}>
-                            <input
-                              type="number"
-                              value={item.share ?? ''}
-                              onChange={e => updateField(item.id, 'share', e.target.value)}
-                              placeholder="1"
-                              step="0.1"
-                              min="0"
-                              max="1"
-                              style={{ width: '100%', background: 'transparent', border: 'none', padding: '8px 6px', fontSize: '13px', color: '#334155', outline: 'none', textAlign: 'right' }}
-                            />
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </>
-                )}
-
-                {/* Zweite Zeile auf Mobile: Betrag + Buttons */}
-                {isMobile && !item.coinId && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', width: isMobile ? '80px' : '120px', flexShrink: 0 }}>
                       <input
                         type="number"
                         value={item.amount ?? ''}
                         onChange={e => updateField(item.id, 'amount', e.target.value)}
                         placeholder="0"
                         step="0.01"
-                        style={{ flex: 1, background: 'transparent', border: 'none', padding: '8px 6px', fontSize: '13px', color: '#334155', outline: 'none', textAlign: 'right', minWidth: 0 }}
+                        style={{ flex: 1, background: 'transparent', border: 'none', padding: isMobile ? '6px 4px' : '8px 6px', fontSize: isMobile ? '12px' : '13px', color: '#334155', outline: 'none', textAlign: 'right', minWidth: 0 }}
                       />
-                      <span style={{ paddingRight: '8px', fontSize: '11px', color: '#94a3b8' }}>€</span>
+                      <span style={{ paddingRight: isMobile ? '6px' : '8px', fontSize: '11px', color: '#94a3b8' }}>€</span>
                     </div>
-                    {showCrypto && (
-                      <button
-                        onClick={() => toggleCrypto(item.id)}
-                        title="Als Krypto eintragen"
-                        style={{ padding: '6px 8px', borderRadius: '8px', border: 'none', background: 'transparent', color: '#cbd5e1', fontSize: '13px', fontWeight: 700, cursor: 'pointer', flexShrink: 0 }}
-                      >
-                        ₿
-                      </button>
+                    {!hideShare && !isMobile && (
+                      <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', width: '52px' }}>
+                        <input
+                          type="number"
+                          value={item.share ?? ''}
+                          onChange={e => updateField(item.id, 'share', e.target.value)}
+                          placeholder="1"
+                          step="0.1"
+                          min="0"
+                          max="1"
+                          style={{ width: '100%', background: 'transparent', border: 'none', padding: '8px 6px', fontSize: '13px', color: '#334155', outline: 'none', textAlign: 'right' }}
+                        />
+                      </div>
                     )}
-                    {showAnnualToggle && (
-                      <button
-                        onClick={() => toggleAnnual(item.id)}
-                        style={{ padding: '8px', borderRadius: '8px', border: 'none', background: item.isAnnual ? '#fff7ed' : 'transparent', color: item.isAnnual ? '#f97316' : '#cbd5e1', cursor: 'pointer', flexShrink: 0 }}
-                      >
-                        <CalendarClock size={14} />
-                      </button>
-                    )}
-                    <button
-                      onClick={() => remove(item.id)}
-                      style={{ padding: '8px', borderRadius: '8px', border: 'none', background: 'transparent', color: '#cbd5e1', cursor: 'pointer', flexShrink: 0 }}
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                )}
-
-                {/* Desktop: Krypto-Toggle + Annual + Delete */}
-                {!isMobile && (
-                  <>
-                    {showCrypto && (
-                      <button
-                        onClick={() => toggleCrypto(item.id)}
-                        title={item.coinId ? 'Krypto-Modus deaktivieren' : 'Als Krypto eintragen'}
-                        style={{ padding: '6px 8px', borderRadius: '8px', border: `1px solid ${item.coinId ? '#a5b4fc' : 'transparent'}`, background: item.coinId ? '#eef2ff' : 'transparent', color: item.coinId ? '#6366f1' : '#cbd5e1', fontSize: '13px', fontWeight: 700, cursor: 'pointer', flexShrink: 0 }}
-                      >
-                        ₿
-                      </button>
-                    )}
-                    <div style={{ width: '30px', display: 'flex', justifyContent: 'center' }}>
-                      {showAnnualToggle ? (
-                        <button
-                          onClick={() => toggleAnnual(item.id)}
-                          onMouseEnter={e => {
-                            const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-                            const cardRect = cardRef.current?.getBoundingClientRect()
-                            if (cardRect) setAnnualTooltip({ id: item.id, x: rect.left - cardRect.left + rect.width / 2, y: rect.top - cardRect.top - 8, isAnnual: !!item.isAnnual })
-                          }}
-                          onMouseLeave={() => setAnnualTooltip(null)}
-                          className={`p-2 rounded-lg transition-all ${
-                            item.isAnnual
-                              ? 'text-orange-500 bg-orange-50 border border-orange-200'
-                              : 'text-slate-300 hover:text-orange-400 hover:bg-orange-50 border border-transparent'
-                          }`}
-                        >
-                          <CalendarClock size={14} />
-                        </button>
-                      ) : null}
-                    </div>
-                    <button
-                      onClick={() => remove(item.id)}
-                      className="p-2 text-slate-300 hover:text-red-400 transition-colors rounded-lg hover:bg-red-50"
-                      style={{ width: '30px' }}
-                    >
-                      <Trash2 size={14} />
-                    </button>
                   </>
                 )}
+
+                {/* Krypto-Toggle */}
+                {showCrypto && (
+                  <button
+                    onClick={() => toggleCrypto(item.id)}
+                    title={item.coinId ? 'Krypto-Modus deaktivieren' : 'Als Krypto eintragen'}
+                    style={{ padding: isMobile ? '4px 6px' : '6px 8px', borderRadius: '8px', border: `1px solid ${item.coinId ? '#a5b4fc' : 'transparent'}`, background: item.coinId ? '#eef2ff' : 'transparent', color: item.coinId ? '#6366f1' : '#cbd5e1', fontSize: isMobile ? '12px' : '13px', fontWeight: 700, cursor: 'pointer', flexShrink: 0 }}
+                  >
+                    ₿
+                  </button>
+                )}
+
+                <div style={{ width: isMobile ? '24px' : '30px', display: 'flex', justifyContent: 'center' }}>
+                  {showAnnualToggle ? (
+                    <button
+                      onClick={() => toggleAnnual(item.id)}
+                      onMouseEnter={e => {
+                        if (isMobile) return
+                        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+                        const cardRect = cardRef.current?.getBoundingClientRect()
+                        if (cardRect) setAnnualTooltip({ id: item.id, x: rect.left - cardRect.left + rect.width / 2, y: rect.top - cardRect.top - 8, isAnnual: !!item.isAnnual })
+                      }}
+                      onMouseLeave={() => setAnnualTooltip(null)}
+                      style={{ padding: isMobile ? '4px' : '8px', borderRadius: '8px', border: item.isAnnual ? '1px solid #fed7aa' : '1px solid transparent', background: item.isAnnual ? '#fff7ed' : 'transparent', color: item.isAnnual ? '#f97316' : '#cbd5e1', cursor: 'pointer' }}
+                    >
+                      <CalendarClock size={isMobile ? 13 : 14} />
+                    </button>
+                  ) : null}
+                </div>
+                <button
+                  onClick={() => remove(item.id)}
+                  style={{ padding: isMobile ? '4px' : '8px', borderRadius: '8px', border: 'none', background: 'transparent', color: '#cbd5e1', cursor: 'pointer', width: isMobile ? '24px' : '30px', flexShrink: 0 }}
+                >
+                  <Trash2 size={isMobile ? 13 : 14} />
+                </button>
               </div>
 
               {showShare && item.amount !== null && !isMobile && (
