@@ -9,10 +9,14 @@ interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
   {
     date: '2026-06-27',
-    title: 'Schulden & Konto',
+    title: 'Sachwerte, Export & mehr',
     items: [
+      'Sachwerte (Uhren, Autos etc.) können unter Vermögen eingetragen werden',
+      'Eigene Daten als JSON exportieren — im Konto-Tab unter Einstellungen',
+      'Schulden ohne Rate zeigen jetzt einen Hinweis, dass der Betrag nicht sinkt',
+      'Neuigkeiten-Fenster: jederzeit im Konto-Tab wieder abrufbar',
+      'Letzter Login wird im Konto-Tab angezeigt',
       'Schulden-Reiter: Restbetrag sinkt automatisch jeden Monat mit Tilgung & Zinsen',
-      'Letzter Login wird jetzt im Konto-Tab angezeigt',
     ],
   },
   {
