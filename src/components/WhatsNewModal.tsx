@@ -13,7 +13,6 @@ export const CHANGELOG: ChangelogEntry[] = [
     items: [
       'Schulden-Reiter: Restbetrag sinkt automatisch jeden Monat mit Tilgung & Zinsen',
       'Letzter Login wird jetzt im Konto-Tab angezeigt',
-      'Admin sieht Loginzeit aller Nutzer',
     ],
   },
   {
