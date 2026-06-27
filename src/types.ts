@@ -4,6 +4,8 @@ export interface LineItem {
   amount: number | null
   share?: number
   isAnnual?: boolean
+  coinId?: string
+  coinQuantity?: number
 }
 
 export interface Category {

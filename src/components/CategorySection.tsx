@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Plus, Trash2, CalendarClock, ChevronDown, ChevronUp } from 'lucide-react'
 import type { LineItem } from '../types'
+import { COMMON_COINS, fetchCryptoPrices } from '../lib/crypto'
 
 const fmt = (n: number) =>
   n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
@@ -14,6 +15,7 @@ interface Props {
   annualMode?: boolean
   showAnnualToggle?: boolean
   hideShare?: boolean
+  showCrypto?: boolean
   sparRate?: number
   sparRateActive?: boolean
   onSparRateChange?: (rate: number | undefined, active: boolean) => void
@@ -24,10 +26,44 @@ function newItem(): LineItem {
   return { id: crypto.randomUUID(), label: '', amount: null }
 }
 
-export default function CategorySection({ title, color, items, onChange, annualMode, showAnnualToggle, hideShare, sparRate, sparRateActive, onSparRateChange, einkuenfte }: Props) {
+export default function CategorySection({ title, color, items, onChange, annualMode, showAnnualToggle, hideShare, showCrypto, sparRate, sparRateActive, onSparRateChange, einkuenfte }: Props) {
   const [collapsed, setCollapsed] = useState(false)
   const [annualTooltip, setAnnualTooltip] = useState<{ id: string; x: number; y: number; isAnnual: boolean } | null>(null)
+  const [cryptoPrices, setCryptoPrices] = useState<Record<string, number>>({})
   const cardRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!showCrypto) return
+    const coinIds = items.map(i => i.coinId).filter(Boolean) as string[]
+    if (coinIds.length === 0) return
+    fetchCryptoPrices(coinIds).then(prices => {
+      setCryptoPrices(prices)
+      // Auto-update amounts
+      const updated = items.map(item => {
+        if (!item.coinId || !item.coinQuantity || !prices[item.coinId]) return item
+        return { ...item, amount: Math.round(prices[item.coinId] * item.coinQuantity * 100) / 100 }
+      })
+      onChange(updated)
+    })
+  }, [showCrypto, items.map(i => (i.coinId ?? '') + (i.coinQuantity ?? '')).join(',')])
+
+  const toggleCrypto = (id: string) => {
+    onChange(items.map(item =>
+      item.id === id
+        ? { ...item, coinId: item.coinId ? undefined : COMMON_COINS[0].id, coinQuantity: item.coinId ? undefined : undefined, amount: item.coinId ? item.amount : null }
+        : item
+    ))
+  }
+
+  const updateCoin = (id: string, coinId: string) => {
+    onChange(items.map(item => item.id === id ? { ...item, coinId, label: COMMON_COINS.find(c => c.id === coinId)?.symbol ?? item.label } : item))
+  }
+
+  const updateCoinQuantity = (id: string, qty: number | null) => {
+    const price = items.find(i => i.id === id)?.coinId ? cryptoPrices[items.find(i => i.id === id)!.coinId!] : null
+    const amount = qty && price ? Math.round(price * qty * 100) / 100 : null
+    onChange(items.map(item => item.id === id ? { ...item, coinQuantity: qty ?? undefined, amount } : item))
+  }
   const updateField = (id: string, field: keyof LineItem, value: string) => {
     onChange(items.map(item => {
       if (item.id !== id) return item
@@ -140,26 +176,65 @@ export default function CategorySection({ title, color, items, onChange, annualM
           return (
             <div key={item.id} className="flex flex-col gap-0.5">
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <input
-                  type="text"
-                  value={item.label}
-                  onChange={e => updateField(item.id, 'label', e.target.value)}
-                  placeholder="Position"
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none focus:border-slate-400 transition-colors"
-                  style={{ flex: 1 }}
-                />
-                <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden" style={{ width: '120px' }}>
+                {/* Label oder Coin-Dropdown */}
+                {item.coinId ? (
+                  <select
+                    value={item.coinId}
+                    onChange={e => updateCoin(item.id, e.target.value)}
+                    className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 focus:outline-none"
+                    style={{ flex: 1 }}
+                  >
+                    {COMMON_COINS.map(c => (
+                      <option key={c.id} value={c.id}>{c.symbol} — {c.name}</option>
+                    ))}
+                  </select>
+                ) : (
                   <input
-                    type="number"
-                    value={item.amount ?? ''}
-                    onChange={e => updateField(item.id, 'amount', e.target.value)}
-                    placeholder="0"
-                    step="0.01"
-                    className="flex-1 bg-transparent px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none text-right min-w-0"
+                    type="text"
+                    value={item.label}
+                    onChange={e => updateField(item.id, 'label', e.target.value)}
+                    placeholder="Position"
+                    className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none focus:border-slate-400 transition-colors"
+                    style={{ flex: 1 }}
                   />
-                  <span className="pr-3 text-slate-400 text-xs select-none">€</span>
-                </div>
-                {!hideShare && (
+                )}
+
+                {/* Menge (Krypto) oder Betrag (normal) */}
+                {item.coinId ? (
+                  <div className="flex flex-col gap-0.5" style={{ width: '140px' }}>
+                    <div className="flex items-center bg-slate-50 border border-indigo-200 rounded-xl overflow-hidden">
+                      <input
+                        type="number"
+                        value={item.coinQuantity ?? ''}
+                        onChange={e => updateCoinQuantity(item.id, e.target.value === '' ? null : parseFloat(e.target.value))}
+                        placeholder="Menge"
+                        step="any"
+                        className="flex-1 bg-transparent px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none text-right min-w-0"
+                      />
+                      <span className="pr-2 text-indigo-400 text-xs select-none">{COMMON_COINS.find(c => c.id === item.coinId)?.symbol ?? ''}</span>
+                    </div>
+                    {item.amount !== null && (
+                      <span className="text-xs font-mono text-indigo-500 text-right pr-1">≈ {fmt(item.amount)}</span>
+                    )}
+                    {item.coinId && cryptoPrices[item.coinId] && (
+                      <span className="text-xs text-slate-400 text-right pr-1">{fmt(cryptoPrices[item.coinId])} / Stk.</span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden" style={{ width: '120px' }}>
+                    <input
+                      type="number"
+                      value={item.amount ?? ''}
+                      onChange={e => updateField(item.id, 'amount', e.target.value)}
+                      placeholder="0"
+                      step="0.01"
+                      className="flex-1 bg-transparent px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none text-right min-w-0"
+                    />
+                    <span className="pr-3 text-slate-400 text-xs select-none">€</span>
+                  </div>
+                )}
+
+                {!hideShare && !item.coinId && (
                   <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden" style={{ width: '52px' }}>
                     <input
                       type="number"
@@ -173,6 +248,18 @@ export default function CategorySection({ title, color, items, onChange, annualM
                     />
                   </div>
                 )}
+
+                {/* Krypto-Toggle */}
+                {showCrypto && (
+                  <button
+                    onClick={() => toggleCrypto(item.id)}
+                    title={item.coinId ? 'Krypto-Modus deaktivieren' : 'Als Krypto eintragen'}
+                    style={{ padding: '6px', borderRadius: '8px', border: `1px solid ${item.coinId ? '#a5b4fc' : 'transparent'}`, background: item.coinId ? '#eef2ff' : 'transparent', color: item.coinId ? '#6366f1' : '#cbd5e1', fontSize: '13px', cursor: 'pointer', flexShrink: 0 }}
+                  >
+                    ₿
+                  </button>
+                )}
+
                 <div style={{ width: '30px', display: 'flex', justifyContent: 'center' }}>
                   {showAnnualToggle ? (
                     <button
