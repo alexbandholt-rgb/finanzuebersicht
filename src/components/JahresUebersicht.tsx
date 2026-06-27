@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { MONTH_NAMES } from '../types'
 import { useIsMobile } from '../hooks/useIsMobile'
 import type { MonthData } from '../types'
 import { calcSummary } from '../lib/calc'
 import { cloudLoadMonth } from '../lib/cloudStorage'
-import { FileText } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LabelList
 } from 'recharts'
@@ -54,32 +53,26 @@ const SparquoteLabel = ({ x, y, width, index, data }: any) => {
   )
 }
 
-function NoteChip({ name, notes }: { name: string; notes: string }) {
-  const [visible, setVisible] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
+const CustomXTick = ({ x, y, payload, data }: any) => {
+  const m = data?.find((d: any) => d.name === payload.value)
+  const note = m?.notes?.trim()
   return (
-    <div ref={ref} style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-      <span style={{ fontSize: '11px', color: '#94a3b8' }}>{name}</span>
-      <div
-        onMouseEnter={() => setVisible(true)}
-        onMouseLeave={() => setVisible(false)}
-        style={{ width: '22px', height: '22px', borderRadius: '6px', background: '#fef3c7', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'default' }}
-      >
-        <FileText size={12} style={{ color: '#f59e0b', flexShrink: 0 }} />
-      </div>
-      {visible && (
-        <div style={{
-          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
-          marginTop: '6px', background: '#1e293b', color: '#f8fafc',
-          borderRadius: '10px', padding: '8px 12px', fontSize: '12px', lineHeight: '1.5',
-          whiteSpace: 'pre-wrap', maxWidth: '200px', zIndex: 50, boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
-          pointerEvents: 'none',
-        }}>
-          {notes}
-        </div>
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={0} dy={12} textAnchor="middle" fontSize={12} fill="#94a3b8">{payload.value}</text>
+      {note && (
+        <g transform="translate(-7, 18)" style={{ cursor: 'default' }}>
+          <title>{note}</title>
+          {/* document body */}
+          <rect x={0} y={0} width={10} height={13} rx={1.5} fill="#fef3c7" stroke="#fde68a" strokeWidth={0.8} />
+          {/* folded corner */}
+          <path d="M7 0 L10 3 L7 3 Z" fill="#fde68a" />
+          {/* text lines */}
+          <line x1={2} y1={5.5} x2={8} y2={5.5} stroke="#f59e0b" strokeWidth={1} strokeLinecap="round" />
+          <line x1={2} y1={8} x2={8} y2={8} stroke="#f59e0b" strokeWidth={1} strokeLinecap="round" />
+          <line x1={2} y1={10.5} x2={6} y2={10.5} stroke="#f59e0b" strokeWidth={1} strokeLinecap="round" />
+        </g>
       )}
-    </div>
+    </g>
   )
 }
 
@@ -164,9 +157,10 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
             <XAxis
               dataKey="name"
-              tick={{ fill: '#94a3b8', fontSize: 12 }}
+              tick={(props: any) => <CustomXTick {...props} data={monate} />}
               axisLine={false}
               tickLine={false}
+              height={50}
             />
             <YAxis
               tick={{ fill: '#94a3b8', fontSize: 11 }}
@@ -190,13 +184,6 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
           <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-sm bg-violet-500" /><span className="text-xs text-slate-400">Sparen (% = Sparquote)</span></div>
         </div>
 
-        {monate.some(m => m.notes.trim()) && (
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
-            {monate.filter(m => m.notes.trim()).map((m, i) => (
-              <NoteChip key={i} name={m.name} notes={m.notes} />
-            ))}
-          </div>
-        )}
       </div>
     </div>
   )
