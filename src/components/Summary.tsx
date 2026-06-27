@@ -96,8 +96,8 @@ export default function Summary({ data, onChange }: Props) {
       if (ratio >= 0.75) return '#f59e0b'
       return '#ef4444'
     }
-    if (ratio > 1.03) return '#ef4444'
-    if (ratio > 1.00) return '#f59e0b'
+    if (ratio > 1.05) return '#ef4444'
+    if (ratio > 1.02) return '#f59e0b'
     return '#10b981'
   }
 
