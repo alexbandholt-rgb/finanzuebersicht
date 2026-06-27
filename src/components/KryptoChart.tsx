@@ -71,8 +71,8 @@ export default function KryptoChart({ monthData }: Props) {
 
   // Chart-Dimensionen
   const W = 600
-  const H = 220
-  const PAD = { top: 16, right: 16, bottom: 44, left: 60 }
+  const H = 200
+  const PAD = { top: 16, right: 16, bottom: 16, left: 60 }
   const CW = W - PAD.left - PAD.right
   const CH = H - PAD.top - PAD.bottom
 
@@ -132,6 +132,7 @@ export default function KryptoChart({ monthData }: Props) {
         </div>
       </div>
 
+      <div style={{ position: 'relative' }}>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
         {/* Grid-Linien */}
         {yTicks.map(t => (
@@ -143,10 +144,6 @@ export default function KryptoChart({ monthData }: Props) {
           </g>
         ))}
 
-        {/* X-Achse Labels */}
-        {monthLabels.map((m, i) => (
-          <text key={i} x={Math.max(PAD.left + 24, Math.min(W - PAD.right - 24, m.x))} y={H - 10} textAnchor="middle" fontSize="11" fill="#64748b" fontWeight="500">{m.label}</text>
-        ))}
 
         {/* Linien */}
         {displayLines.map(l => (
@@ -176,6 +173,27 @@ export default function KryptoChart({ monthData }: Props) {
           </g>
         ))}
       </svg>
+
+      {/* X-Achse Labels als HTML — schärfer als SVG-Text */}
+      <div style={{ position: 'relative', height: '20px', marginLeft: `${(PAD.left / W * 100).toFixed(2)}%`, marginRight: `${(PAD.right / W * 100).toFixed(2)}%` }}>
+        {monthLabels.map((m, i) => {
+          const pct = ((m.x - PAD.left) / (W - PAD.left - PAD.right) * 100)
+          const clamped = Math.max(0, Math.min(100, pct))
+          return (
+            <span key={i} style={{
+              position: 'absolute',
+              left: `${clamped}%`,
+              transform: 'translateX(-50%)',
+              fontSize: '11px',
+              fontWeight: 500,
+              color: '#64748b',
+              whiteSpace: 'nowrap',
+              lineHeight: '20px',
+            }}>{m.label}</span>
+          )
+        })}
+      </div>
+      </div>
 
       {/* Legende mit aktuellem Wert */}
       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
