@@ -159,6 +159,23 @@ export default function App() {
     init()
   }, [user])
 
+  // Tab wird wieder sichtbar → aktuellen Monat aus Cloud neu laden (Sync zwischen Geräten)
+  useEffect(() => {
+    if (!user) return
+    const handleVisibility = async () => {
+      if (document.visibilityState !== 'visible') return
+      if (isDirtyRef.current) return // eigene ungespeicherte Änderungen nicht überschreiben
+      const d = await cloudLoadMonth(year, month)
+      if (d) {
+        setData(migrateMonthData(d))
+        const updated = await cloudGetAllMonths()
+        setAllMonths(updated)
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => document.removeEventListener('visibilitychange', handleVisibility)
+  }, [user, year, month])
+
   // Monat wechseln → vorher speichern falls nötig, dann aus Cloud laden
   useEffect(() => {
     if (!user) return
