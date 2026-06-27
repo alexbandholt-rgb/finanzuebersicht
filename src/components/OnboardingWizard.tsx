@@ -13,10 +13,11 @@ const BUDGET_ITEMS = [
 
 interface Props {
   onComplete: (budgets: Record<string, number>, name: string) => void
+  initialStep?: number
 }
 
-export default function OnboardingWizard({ onComplete }: Props) {
-  const [step, setStep] = useState(0)
+export default function OnboardingWizard({ onComplete, initialStep = 0 }: Props) {
+  const [step, setStep] = useState(initialStep)
   const [name, setName] = useState('')
   const [budgets, setBudgets] = useState<Record<string, number>>(
     Object.fromEntries(BUDGET_ITEMS.map(i => [i.key, i.default]))

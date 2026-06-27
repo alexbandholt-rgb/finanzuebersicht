@@ -57,6 +57,7 @@ export default function App() {
   const [pastLimit, setPastLimit] = useState(0)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
+  const [showBudgetEditor, setShowBudgetEditor] = useState(false)
 
   const maxFuture = addMonths(THIS_YEAR, THIS_MONTH, futureLimit)
   const minPast = addMonths(THIS_YEAR, THIS_MONTH, -pastLimit)
@@ -346,6 +347,11 @@ return (
                   }} title="Nächsten Monat hinzufügen" style={{ padding: '6px 10px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>
                     +
                   </button>
+                  {/* Löschen */}
+                  <button onClick={() => setDeleteConfirmOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 500, background: '#fff1f2', color: '#ef4444', border: '1px solid #fecdd3', cursor: 'pointer', marginLeft: '4px' }}>
+                    <Trash2 size={13} />
+                    Löschen
+                  </button>
                 </div>
               )
             )}
@@ -355,17 +361,17 @@ return (
                 <Check size={13} /> {!isMobile && 'Gespeichert'}
               </span>
             )}
-            {tab === 'monat' && !isMobile && (
-              <button onClick={() => setDeleteConfirmOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 500, background: '#fff1f2', color: '#ef4444', border: '1px solid #fecdd3', cursor: 'pointer' }}>
-                <Trash2 size={13} />
-                Löschen
-              </button>
-            )}
             {!isMobile && (
-              <button onClick={() => supabase.auth.signOut()} style={{ marginLeft: '8px', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 500, color: '#94a3b8', border: '1px solid #e2e8f0', background: 'white', cursor: 'pointer' }}>
-                <LogOut size={14} />
-                Abmelden
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button onClick={() => setShowBudgetEditor(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 500, color: '#7c3aed', border: '1px solid #ddd6fe', background: '#f5f3ff', cursor: 'pointer' }}>
+                  <BarChart2 size={13} />
+                  Budget
+                </button>
+                <button onClick={() => supabase.auth.signOut()} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 500, color: '#94a3b8', border: '1px solid #e2e8f0', background: 'white', cursor: 'pointer' }}>
+                  <LogOut size={14} />
+                  Abmelden
+                </button>
+              </div>
             )}
           </div>
         </header>
@@ -421,6 +427,19 @@ return (
 
       {/* Onboarding */}
       {showOnboarding && <OnboardingWizard onComplete={handleOnboardingComplete} />}
+
+      {/* Budget Editor */}
+      {showBudgetEditor && (
+        <OnboardingWizard
+          initialStep={1}
+          onComplete={(budgets) => {
+            const updated = { ...data, budgets }
+            setData(updated)
+            cloudSaveMonth(updated)
+            setShowBudgetEditor(false)
+          }}
+        />
+      )}
 
       {/* Month Picker Modal (Mobile) */}
       {monthPickerOpen && (
