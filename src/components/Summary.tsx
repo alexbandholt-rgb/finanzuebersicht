@@ -114,7 +114,7 @@ export default function Summary({ data, onChange }: Props) {
 
       {/* Pie chart */}
       {pieData.length > 0 && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100" style={{ padding: '20px' }}>
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Verteilung</p>
           <div className="flex items-center gap-3">
             <div className="w-32 h-32 shrink-0">
@@ -150,7 +150,7 @@ export default function Summary({ data, onChange }: Props) {
 
       {/* Sparquote */}
       {s.einkuenfte > 0 && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 flex items-center justify-between gap-3">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between gap-3" style={{ padding: '20px' }}>
           <div>
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Sparquote</p>
             <p className="text-2xl font-mono font-bold mt-0.5" style={{ color: sparquoteColor }}>
@@ -237,16 +237,16 @@ export default function Summary({ data, onChange }: Props) {
           )
         })}
 
-        <div style={{ gridColumn: '1 / -1' }} className="rounded-2xl px-5 py-4 bg-slate-50 border border-slate-200 flex items-center justify-between shadow-sm">
+        <div style={{ gridColumn: '1 / -1', padding: '16px 20px' }} className="rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between shadow-sm">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Gesamtausgaben</span>
           <span className="text-sm font-mono font-semibold text-slate-700">{fmt(s.gesamtAusgaben)}</span>
         </div>
       </div>
 
       {/* Verbleibend */}
-      <div className={`rounded-2xl px-5 py-4 border flex items-center justify-between shadow-sm ${
+      <div className={`rounded-2xl border flex items-center justify-between shadow-sm ${
         isPositive ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'
-      }`}>
+      }`} style={{ padding: '16px 20px' }}>
         <div>
           <p className={`text-xs font-semibold uppercase tracking-wider ${isPositive ? 'text-emerald-600' : 'text-red-500'}`}>
             Verbleibend
@@ -267,7 +267,7 @@ export default function Summary({ data, onChange }: Props) {
         return (
           <div className="rounded-2xl border border-indigo-200 bg-indigo-50 shadow-sm overflow-hidden">
             <div
-              className="flex items-center justify-between px-5 py-4 cursor-pointer"
+              className="flex items-center justify-between cursor-pointer" style={{ padding: '16px 20px' }}
               onClick={() => scrollToSection('section-barvermoegen', '#6366f1')}
             >
               <div className="flex items-center gap-2">
@@ -283,7 +283,7 @@ export default function Summary({ data, onChange }: Props) {
               {sichtbar && <span className="text-lg font-mono font-bold text-indigo-600">{fmt(total)}</span>}
             </div>
             {sichtbar && (
-              <div className="flex flex-col gap-0.5 px-5 pb-4">
+              <div className="flex flex-col gap-0.5" style={{ padding: '0 20px 16px' }}>
                 {(data.barvermoegen ?? []).filter(i => i.amount && i.amount > 0).map(i => (
                   <div key={i.id} className="flex items-center justify-between text-xs">
                     <span className="text-indigo-400">{i.label}</span>
