@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Check, Trash2, CalendarDays, LogOut, UserCircle, PiggyBank } from 'lucide-react'
+import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Check, Trash2, CalendarDays, LogOut, UserCircle, PiggyBank, ScrollText } from 'lucide-react'
 import { useIsMobile } from './hooks/useIsMobile'
 import type { MonthData } from './types'
 import { MONTH_NAMES } from './types'
@@ -14,6 +14,7 @@ import BarvermoegenView from './components/BarvermoegenView'
 import AuthScreen from './components/AuthScreen'
 import AccountView from './components/AccountView'
 import NutzerView from './components/NutzerView'
+import LegalView from './components/LegalView'
 import NameSetupScreen from './components/NameSetupScreen'
 import NewPasswordScreen from './components/NewPasswordScreen'
 import OnboardingWizard from './components/OnboardingWizard'
@@ -34,7 +35,7 @@ function compareYM(y1: number, m1: number, y2: number, m2: number) {
   return y1 * 12 + m1 - (y2 * 12 + m2)
 }
 
-type Tab = 'monat' | 'jahresuebersicht' | 'barvermoegen' | 'compare' | 'konto' | 'nutzer'
+type Tab = 'monat' | 'jahresuebersicht' | 'barvermoegen' | 'compare' | 'konto' | 'nutzer' | 'legal'
 
 export default function App() {
   const isMobile = useIsMobile()
@@ -272,6 +273,18 @@ return (
 
           <div className="mt-2 pt-2 border-t border-slate-100">
             <button
+              onClick={() => setTab('legal')}
+              style={{ padding: '10px 14px' }}
+              className={`flex items-center gap-3 rounded-xl text-sm font-medium transition-all w-full text-left ${
+                tab === 'legal'
+                  ? 'bg-violet-50 text-violet-700 border border-violet-200'
+                  : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              <span className={tab === 'legal' ? 'text-violet-500' : 'text-slate-400'}><ScrollText size={16} /></span>
+              Rechtliches
+            </button>
+            <button
               onClick={() => tab === 'compare' ? setTab('monat') : setComparePickerOpen(true)}
               style={{ padding: '10px 14px' }}
               className={`flex items-center gap-3 rounded-xl text-sm font-medium transition-all w-full text-left ${
@@ -394,6 +407,7 @@ return (
           {tab === 'compare' && <CompareView months={compareMonths} />}
           {tab === 'konto' && <AccountView email={user.email ?? ''} />}
           {tab === 'nutzer' && <NutzerView />}
+          {tab === 'legal' && <LegalView />}
         </main>
       </div>
 

@@ -63,6 +63,14 @@ export default function PrivacyConsentScreen({ onAccept }: Props) {
           </span>
         </label>
 
+        <p style={{ fontSize: '12px', color: '#94a3b8', textAlign: 'center', marginBottom: '12px' }}>
+          Die vollständige{' '}
+          <a href="#datenschutz" style={{ color: '#7c3aed' }} onClick={e => { e.preventDefault(); window.open('?legal=datenschutz', '_blank') }}>Datenschutzerklärung</a>
+          {' '}und die{' '}
+          <a href="#agb" style={{ color: '#7c3aed' }} onClick={e => { e.preventDefault(); window.open('?legal=agb', '_blank') }}>AGB</a>
+          {' '}findest du nach dem Login unter „Rechtliches".
+        </p>
+
         <button
           onClick={() => { if (checked) onAccept() }}
           disabled={!checked}
