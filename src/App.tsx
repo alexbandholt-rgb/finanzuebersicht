@@ -269,15 +269,35 @@ return (
           <div className="flex items-center gap-2">
             {tab === 'monat' && (
               isMobile ? (
-                <select
-                  value={`${year}-${month}`}
-                  onChange={e => { const [y, m] = e.target.value.split('-').map(Number); setYear(y); setMonth(m) }}
-                  style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px 12px', fontSize: '14px', fontWeight: 600, color: '#334155', background: 'white', outline: 'none', flex: 1 }}
-                >
-                  {allMonths.map(({ year: y, month: m }) => (
-                    <option key={`${y}-${m}`} value={`${y}-${m}`}>{MONTH_NAMES[m - 1]} {y}</option>
-                  ))}
-                </select>
+                <div style={{ display: 'flex', alignItems: 'center', flex: 1, gap: '4px' }}>
+                  <button onClick={prevMonth} disabled={isAtMin} style={{ padding: '8px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: isAtMin ? '#cbd5e1' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <ChevronLeft size={16} />
+                  </button>
+                  <span style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: '15px', color: '#334155' }}>
+                    {MONTH_NAMES[month - 1]} {year}
+                  </span>
+                  {isAtMax ? (
+                    <button onClick={async () => {
+                      setFutureLimit(l => l + 1)
+                      const p = addMonths(year, month, 1)
+                      const newMonth = createNewMonth(p.year, p.month, data)
+                      await cloudSaveMonth(newMonth)
+                      const updated = await cloudGetAllMonths()
+                      setAllMonths(updated)
+                      setData(newMonth)
+                      setYear(p.year); setMonth(p.month)
+                    }} style={{ padding: '8px', borderRadius: '10px', border: '1px solid #ddd6fe', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ChevronRight size={16} />
+                    </button>
+                  ) : (
+                    <button onClick={nextMonth} style={{ padding: '8px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ChevronRight size={16} />
+                    </button>
+                  )}
+                  <button onClick={() => setPastLimit(l => l + 1)} style={{ padding: '8px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', fontSize: '13px', fontWeight: 600, lineHeight: 1 }} title="Vergangenen Monat laden">
+                    ←+
+                  </button>
+                </div>
               ) : (
                 <div className="flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
                   <button onClick={prevMonth} disabled={isAtMin} className="px-3 py-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
@@ -312,8 +332,8 @@ return (
             )}
           </div>
 
-          {/* Zweite Zeile: Vergangener/Zukünftiger Monat */}
-          {tab === 'monat' && (
+          {/* Zweite Zeile: Vergangener/Zukünftiger Monat (nur Desktop) */}
+          {tab === 'monat' && !isMobile && (
             <div className="flex items-center gap-2 mt-2">
               <button onClick={() => setPastLimit(l => l + 1)} className="text-xs text-slate-500 hover:text-violet-600 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-violet-300 bg-white">
                 + Vergangener Monat
