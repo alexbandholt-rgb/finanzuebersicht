@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Check, Trash2, Calend
 import { useIsMobile } from './hooks/useIsMobile'
 import type { MonthData } from './types'
 import { MONTH_NAMES } from './types'
-import { createNewMonth, defaultStammdaten } from './lib/storage'
+import { createNewMonth, defaultStammdaten, migrateMonthData } from './lib/storage'
 import { cloudLoadMonth, cloudSaveMonth, cloudDeleteMonth, cloudGetAllMonths } from './lib/cloudStorage'
 import { supabase } from './lib/supabase'
 import type { User } from '@supabase/supabase-js'
@@ -86,7 +86,7 @@ export default function App() {
         cloudLoadMonth(THIS_YEAR, THIS_MONTH),
       ])
       setAllMonths(cloudMonths)
-      if (cloudMonth) setData(cloudMonth)
+      if (cloudMonth) setData(migrateMonthData(cloudMonth))
       else {
         const prev = cloudMonths.filter(m => m.year * 12 + m.month < THIS_YEAR * 12 + THIS_MONTH).at(-1)
         const template = prev ? await cloudLoadMonth(prev.year, prev.month) : null
@@ -102,7 +102,7 @@ export default function App() {
     setIsDirty(false)
     const load = async () => {
       const d = await cloudLoadMonth(year, month)
-      if (d) { setData(d); return }
+      if (d) { setData(migrateMonthData(d)); return }
       const all = await cloudGetAllMonths()
       const prev = all.filter(m => m.year * 12 + m.month < year * 12 + month).at(-1)
       const template = prev ? await cloudLoadMonth(prev.year, prev.month) : null

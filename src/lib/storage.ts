@@ -25,6 +25,14 @@ export function defaultStammdaten(): Stammdaten {
   }
 }
 
+export function migrateMonthData(data: MonthData): MonthData {
+  return {
+    ...data,
+    lebenshaltung: data.lebenshaltung ?? makeDefaultItems(DEFAULT_ITEMS.lebenshaltung),
+    barvermoegen: data.barvermoegen ?? makeDefaultItems(DEFAULT_ITEMS.barvermoegen),
+  }
+}
+
 export function createNewMonth(year: number, month: number, stammdaten: Stammdaten): MonthData {
   return {
     year,
