@@ -280,7 +280,7 @@ export default function Summary({ data, onChange }: Props) {
                 />
                 <p className="text-xs font-semibold uppercase tracking-wider text-indigo-500">Barvermögen</p>
               </div>
-              <span className="text-lg font-mono font-bold text-indigo-600">{fmt(total)}</span>
+              {sichtbar && <span className="text-lg font-mono font-bold text-indigo-600">{fmt(total)}</span>}
             </div>
             {sichtbar && (
               <div className="flex flex-col gap-0.5 px-4 pb-3">
