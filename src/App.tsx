@@ -300,24 +300,38 @@ return (
                   )}
                 </div>
               ) : (
-                <div className="flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-                  <button onClick={prevMonth} disabled={isAtMin} className="px-3 py-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  {/* + Vergangener Monat */}
+                  <button onClick={() => setPastLimit(l => l + 1)} title="Vergangenen Monat hinzufügen" style={{ padding: '6px 10px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>
+                    +
+                  </button>
+                  {/* Pfeil links */}
+                  <button onClick={prevMonth} disabled={isAtMin} style={{ padding: '6px 8px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: isAtMin ? '#cbd5e1' : '#64748b', display: 'flex', alignItems: 'center', cursor: isAtMin ? 'not-allowed' : 'pointer' }}>
                     <ChevronLeft size={16} />
                   </button>
-                  <span className="px-3 py-2 text-sm font-semibold text-slate-700 text-center" style={{ minWidth: '140px' }}>
+                  {/* Monatsname klickbar */}
+                  <button onClick={() => setMonthPickerOpen(true)} style={{ padding: '6px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', fontWeight: 700, fontSize: '14px', color: '#334155', cursor: 'pointer', minWidth: '160px', textAlign: 'center' }}>
                     {MONTH_NAMES[month - 1]} {year}
-                  </span>
-                  <button onClick={nextMonth} disabled={isAtMax} className="px-3 py-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+                  </button>
+                  {/* Pfeil rechts */}
+                  <button onClick={nextMonth} disabled={isAtMax} style={{ padding: '6px 8px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: isAtMax ? '#cbd5e1' : '#64748b', display: 'flex', alignItems: 'center', cursor: isAtMax ? 'not-allowed' : 'pointer' }}>
                     <ChevronRight size={16} />
+                  </button>
+                  {/* + Zukünftiger Monat */}
+                  <button onClick={async () => {
+                    setFutureLimit(l => l + 1)
+                    const p = addMonths(year, month, 1)
+                    const newMonth = createNewMonth(p.year, p.month, data)
+                    await cloudSaveMonth(newMonth)
+                    const updated = await cloudGetAllMonths()
+                    setAllMonths(updated)
+                    setData(newMonth)
+                    setYear(p.year); setMonth(p.month)
+                  }} title="Nächsten Monat hinzufügen" style={{ padding: '6px 10px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>
+                    +
                   </button>
                 </div>
               )
-            )}
-            {tab === 'monat' && (
-              <button onClick={() => setDeleteConfirmOpen(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-red-50 text-red-500 border border-red-200 hover:bg-red-100 transition-all">
-                <Trash2 size={13} />
-                {!isMobile && 'Löschen'}
-              </button>
             )}
             <div style={{ flex: 1 }} />
             {tab === 'monat' && saved && (
@@ -325,36 +339,19 @@ return (
                 <Check size={13} /> {!isMobile && 'Gespeichert'}
               </span>
             )}
+            {tab === 'monat' && !isMobile && (
+              <button onClick={() => setDeleteConfirmOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 500, background: '#fff1f2', color: '#ef4444', border: '1px solid #fecdd3', cursor: 'pointer' }}>
+                <Trash2 size={13} />
+                Löschen
+              </button>
+            )}
             {!isMobile && (
-              <button onClick={() => supabase.auth.signOut()} style={{ marginLeft: '1rem' }} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-red-500 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all">
+              <button onClick={() => supabase.auth.signOut()} style={{ marginLeft: '8px', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 500, color: '#94a3b8', border: '1px solid #e2e8f0', background: 'white', cursor: 'pointer' }}>
                 <LogOut size={14} />
                 Abmelden
               </button>
             )}
           </div>
-
-          {/* Zweite Zeile: Vergangener/Zukünftiger Monat (nur Desktop) */}
-          {tab === 'monat' && !isMobile && (
-            <div className="flex items-center gap-2 mt-2">
-              <button onClick={() => setPastLimit(l => l + 1)} className="text-xs text-slate-500 hover:text-violet-600 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-violet-300 bg-white">
-                + Vergangener Monat
-              </button>
-              {isAtMax && (
-                <button onClick={async () => {
-                  setFutureLimit(l => l + 1)
-                  const p = addMonths(year, month, 1)
-                  const newMonth = createNewMonth(p.year, p.month, data)
-                  await cloudSaveMonth(newMonth)
-                  const updated = await cloudGetAllMonths()
-                  setAllMonths(updated)
-                  setData(newMonth)
-                  setYear(p.year); setMonth(p.month)
-                }} className="text-xs text-slate-500 hover:text-violet-600 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-violet-300 bg-white">
-                  + Zukünftiger Monat
-                </button>
-              )}
-            </div>
-          )}
         </header>
 
         {/* Content */}
