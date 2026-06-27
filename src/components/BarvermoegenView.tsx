@@ -3,7 +3,6 @@ import { MONTH_NAMES } from '../types'
 import { useIsMobile } from '../hooks/useIsMobile'
 import type { MonthData } from '../types'
 import { cloudLoadMonth } from '../lib/cloudStorage'
-import KryptoChart from './KryptoChart'
 
 interface Props {
   allMonths: { year: number; month: number }[]
@@ -62,9 +61,6 @@ export default function BarvermoegenView({ allMonths }: Props) {
 
   return (
     <div className="flex flex-col gap-6">
-
-      {/* Krypto-Chart */}
-      <KryptoChart monthData={monthData} />
 
       {/* Übersichts-Kacheln */}
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(3,1fr)', gap: '0.75rem' }}>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Check, Trash2, CalendarDays, LogOut, UserCircle, PiggyBank, ScrollText } from 'lucide-react'
+import { ChevronLeft, ChevronRight, GitCompare, BarChart2, Check, Trash2, CalendarDays, LogOut, UserCircle, PiggyBank, ScrollText, TrendingUp } from 'lucide-react'
 import { useIsMobile } from './hooks/useIsMobile'
 import type { MonthData } from './types'
 import { MONTH_NAMES } from './types'
@@ -11,6 +11,7 @@ import MonthView from './components/MonthView'
 import CompareView from './components/CompareView'
 import JahresUebersicht from './components/JahresUebersicht'
 import BarvermoegenView from './components/BarvermoegenView'
+import KryptoView from './components/KryptoView'
 import AuthScreen from './components/AuthScreen'
 import AccountView from './components/AccountView'
 import NutzerView from './components/NutzerView'
@@ -35,7 +36,7 @@ function compareYM(y1: number, m1: number, y2: number, m2: number) {
   return y1 * 12 + m1 - (y2 * 12 + m2)
 }
 
-type Tab = 'monat' | 'jahresuebersicht' | 'barvermoegen' | 'compare' | 'konto' | 'nutzer' | 'legal'
+type Tab = 'monat' | 'jahresuebersicht' | 'barvermoegen' | 'krypto' | 'compare' | 'konto' | 'nutzer' | 'legal'
 
 export default function App() {
   const isMobile = useIsMobile()
@@ -189,7 +190,7 @@ export default function App() {
 
   // allMonths beim Öffnen der Übersichten aktualisieren
   useEffect(() => {
-    if ((tab === 'jahresuebersicht' || tab === 'barvermoegen') && user) {
+    if ((tab === 'jahresuebersicht' || tab === 'barvermoegen' || tab === 'krypto') && user) {
       cloudGetAllMonths().then(setAllMonths)
     }
   }, [tab])
@@ -198,6 +199,7 @@ export default function App() {
     { id: 'monat' as Tab, label: 'Monatsübersicht', icon: <BarChart2 size={16} /> },
     { id: 'jahresuebersicht' as Tab, label: 'Jahresübersicht', icon: <CalendarDays size={16} /> },
     { id: 'barvermoegen' as Tab, label: 'Vermögen', icon: <PiggyBank size={16} /> },
+    { id: 'krypto' as Tab, label: 'Krypto', icon: <TrendingUp size={16} /> },
     { id: 'konto' as Tab, label: 'Konto', icon: <UserCircle size={16} /> },
   ]
 
@@ -406,6 +408,7 @@ return (
           {tab === 'monat' && <MonthView data={data} onChange={d => { setData(d); setIsDirty(true) }} />}
           {tab === 'jahresuebersicht' && <JahresUebersicht year={THIS_YEAR} allMonths={allMonths} />}
           {tab === 'barvermoegen' && <BarvermoegenView allMonths={allMonths} />}
+          {tab === 'krypto' && <KryptoView allMonths={allMonths} />}
           {tab === 'compare' && <CompareView months={compareMonths} />}
           {tab === 'konto' && <AccountView email={user.email ?? ''} />}
           {tab === 'nutzer' && <NutzerView />}
