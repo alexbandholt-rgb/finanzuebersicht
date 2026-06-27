@@ -86,8 +86,13 @@ export default function Summary({ data, onChange }: Props) {
     setEditingBudget(null)
   }
 
-  const budgetColor = (pct: number, budgetPct: number) => {
+  const budgetColor = (pct: number, budgetPct: number, invert = false) => {
     const ratio = pct / budgetPct
+    if (invert) {
+      if (ratio >= 1) return '#10b981'
+      if (ratio >= 0.75) return '#f59e0b'
+      return '#ef4444'
+    }
     if (ratio >= 1) return '#ef4444'
     if (ratio >= 0.85) return '#f59e0b'
     return '#10b981'
@@ -164,7 +169,7 @@ export default function Summary({ data, onChange }: Props) {
           const val = (s as any)[block.key] as number
           const pct = s.einkuenfte > 0 ? (val / s.einkuenfte) * 100 : 0
           const budget = budgets[block.key]
-          const barColor = budget ? budgetColor(pct, budget) : block.color
+          const barColor = budget ? budgetColor(pct, budget, block.key === 'sparen') : block.color
           const barWidth = budget ? Math.min(100, (pct / budget) * 100) : Math.min(100, pct)
           const isEditing = editingBudget === block.key
 
