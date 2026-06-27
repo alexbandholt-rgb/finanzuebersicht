@@ -71,8 +71,8 @@ export default function KryptoChart({ monthData }: Props) {
 
   // Chart-Dimensionen
   const W = 600
-  const H = 200
-  const PAD = { top: 16, right: 16, bottom: 32, left: 56 }
+  const H = 220
+  const PAD = { top: 16, right: 16, bottom: 44, left: 60 }
   const CW = W - PAD.left - PAD.right
   const CH = H - PAD.top - PAD.bottom
 
@@ -145,7 +145,7 @@ export default function KryptoChart({ monthData }: Props) {
 
         {/* X-Achse Labels */}
         {monthLabels.map((m, i) => (
-          <text key={i} x={m.x} y={H - 6} textAnchor="middle" fontSize="9" fill="#94a3b8">{m.label}</text>
+          <text key={i} x={Math.max(PAD.left + 24, Math.min(W - PAD.right - 24, m.x))} y={H - 10} textAnchor="middle" fontSize="11" fill="#64748b" fontWeight="500">{m.label}</text>
         ))}
 
         {/* Linien */}
