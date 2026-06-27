@@ -11,23 +11,26 @@ export async function cloudLoadMonth(year: number, month: number): Promise<Month
   const uid = await getUserId()
   if (!uid) return null
 
-  // ORDER BY updated_at DESC + LIMIT 1: funktioniert auch bei Duplikaten, nimmt immer den neuesten
   const { data, error } = await supabase
     .from('month_data')
-    .select('data')
+    .select('*')
     .eq('user_id', uid)
     .eq('year', year)
     .eq('month', month)
-    .order('updated_at', { ascending: false })
     .limit(1)
 
-  if (!error && data && data.length > 0) return (data[0] as any).data as MonthData
+  if (error) console.error('cloudLoadMonth error:', error)
+
+  if (!error && data && data.length > 0) {
+    return (data[0] as any).data as MonthData
+  }
 
   // Fallback: lokale Kopie wenn Cloud nicht erreichbar
   try {
     const raw = localStorage.getItem(`finanz_local_${year}_${month}`)
     if (raw) {
       const backup = JSON.parse(raw) as { data: MonthData; savedAt: number }
+      console.warn('cloudLoadMonth: using localStorage fallback')
       return backup.data
     }
   } catch {}
@@ -38,7 +41,7 @@ export async function cloudSaveMonth(monthData: MonthData): Promise<void> {
   const uid = await getUserId()
   if (!uid) return
 
-  // Sofort lokal sichern (kein Netzwerkrisiko)
+  // Sofort lokal sichern
   try {
     localStorage.setItem(
       `finanz_local_${monthData.year}_${monthData.month}`,
@@ -46,40 +49,42 @@ export async function cloudSaveMonth(monthData: MonthData): Promise<void> {
     )
   } catch {}
 
-  // Alle Zeilen für diesen Monat laden (kann Duplikate enthalten)
-  const { data: rows } = await supabase
+  // Alle Zeilen für diesen Monat laden
+  const { data: rows, error: selErr } = await supabase
     .from('month_data')
     .select('id')
     .eq('user_id', uid)
     .eq('year', monthData.year)
     .eq('month', monthData.month)
-    .order('updated_at', { ascending: false })
+
+  if (selErr) console.error('cloudSaveMonth select error:', selErr)
 
   const ids: string[] = (rows ?? []).map((r: any) => r.id)
 
   if (ids.length > 0) {
-    // Neueste Zeile updaten
-    const { error } = await supabase
+    // Erste Zeile updaten — nur die Felder die sicher existieren
+    const { error: upErr } = await supabase
       .from('month_data')
-      .update({ data: monthData, updated_at: new Date().toISOString() })
+      .update({ data: monthData })
       .eq('id', ids[0])
-    if (error) console.error('cloudSaveMonth update error:', error)
+    if (upErr) console.error('cloudSaveMonth update error:', upErr)
 
     // Duplikate löschen
     if (ids.length > 1) {
-      await supabase.from('month_data').delete().in('id', ids.slice(1))
+      const { error: delErr } = await supabase.from('month_data').delete().in('id', ids.slice(1))
+      if (delErr) console.error('cloudSaveMonth dedup error:', delErr)
     }
   } else {
-    const { error } = await supabase
+    // Neu einfügen — nur Pflichtfelder, kein updated_at
+    const { error: insErr } = await supabase
       .from('month_data')
       .insert({
         user_id: uid,
         year: monthData.year,
         month: monthData.month,
         data: monthData,
-        updated_at: new Date().toISOString(),
       })
-    if (error) console.error('cloudSaveMonth insert error:', error)
+    if (insErr) console.error('cloudSaveMonth insert error:', insErr)
   }
 }
 
