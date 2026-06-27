@@ -25,7 +25,7 @@ const DEFAULT_BUDGETS: Record<string, number> = {
 const BLOCKS = [
   { key: 'einkuenfte', label: 'Einkünfte', color: '#10b981', bg: '#f0fdf4', border: '#bbf7d0', sectionId: 'section-einkuenfte' },
   { key: 'wohnungskosten', label: 'Wohnung', color: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe', sectionId: 'section-wohnungskosten' },
-  { key: 'auto', label: 'Auto', color: '#f59e0b', bg: '#fffbeb', border: '#fde68a', sectionId: 'section-auto' },
+  { key: 'auto', label: 'Fahrzeuge', color: '#f59e0b', bg: '#fffbeb', border: '#fde68a', sectionId: 'section-auto' },
   { key: 'fixkosten', label: 'Fixkosten', color: '#8b5cf6', bg: '#f5f3ff', border: '#ddd6fe', sectionId: 'section-fixkosten' },
   { key: 'sparen', label: 'Sparen', color: '#ec4899', bg: '#fdf2f8', border: '#fbcfe8', sectionId: 'section-sparen' },
   { key: 'versicherungen', label: 'Versicherungen', color: '#0ea5e9', bg: '#f0f9ff', border: '#bae6fd', sectionId: 'section-versicherungen' },
@@ -50,7 +50,7 @@ function scrollToSection(sectionId: string, color: string) {
 
 const PIE_CATEGORIES = [
   { key: 'wohnungskosten', name: 'Wohnung', color: '#3b82f6' },
-  { key: 'auto', name: 'Auto', color: '#f59e0b' },
+  { key: 'auto', name: 'Fahrzeuge', color: '#f59e0b' },
   { key: 'fixkosten', name: 'Fixkosten', color: '#8b5cf6' },
   { key: 'sparen', name: 'Sparen', color: '#ec4899' },
   { key: 'versicherungen', name: 'Versicherungen', color: '#0ea5e9' },

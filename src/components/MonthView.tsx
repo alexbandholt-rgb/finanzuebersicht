@@ -61,7 +61,7 @@ export default function MonthView({ data, onChange }: Props) {
     <div className="flex flex-col gap-5">
       <div id="section-einkuenfte"><CategorySection title="Einkünfte" color={COLORS.einkuenfte} items={data.einkuenfte} onChange={update('einkuenfte')} /></div>
       <div id="section-wohnungskosten"><CategorySection title="Wohnungskosten" color={COLORS.wohnungskosten} items={data.wohnungskosten} onChange={update('wohnungskosten')} /></div>
-      <div id="section-auto"><CategorySection title="Auto" color={COLORS.auto} items={data.auto} onChange={update('auto')} /></div>
+      <div id="section-auto"><CategorySection title="Fahrzeuge" color={COLORS.auto} items={data.auto} onChange={update('auto')} /></div>
       <div id="section-fixkosten"><CategorySection title="Fixkosten" color={COLORS.fixkosten} items={data.fixkosten} onChange={update('fixkosten')} /></div>
       <div id="section-sparen"><CategorySection
         title="Sparen"

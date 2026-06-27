@@ -123,7 +123,7 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
 
   const KATEGORIE_CONFIG = [
     { key: 'wohnungskosten', label: 'Wohnung', color: '#3b82f6' },
-    { key: 'auto', label: 'Auto', color: '#f59e0b' },
+    { key: 'auto', label: 'Fahrzeuge', color: '#f59e0b' },
     { key: 'fixkosten', label: 'Fixkosten', color: '#8b5cf6' },
     { key: 'lebenshaltung', label: 'Lebenshaltung', color: '#14b8a6' },
     { key: 'sparen', label: 'Sparen', color: '#ec4899', invert: true },

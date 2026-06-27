@@ -46,7 +46,7 @@ export default function CompareView({ months }: Props) {
   const tableCategories = [
     { key: 'einkuenfte', label: 'Einkünfte' },
     { key: 'wohnungskosten', label: 'Wohnung' },
-    { key: 'auto', label: 'Auto' },
+    { key: 'auto', label: 'Fahrzeuge' },
     { key: 'fixkosten', label: 'Fixkosten' },
     { key: 'sparen', label: 'Sparen' },
     { key: 'versicherungen', label: 'Versicherungen' },
