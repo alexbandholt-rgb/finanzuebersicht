@@ -477,7 +477,15 @@ return (
           {tab === 'jahresuebersicht' && <JahresUebersicht year={THIS_YEAR} allMonths={allMonths} />}
           {tab === 'barvermoegen' && <BarvermoegenView allMonths={allMonths} />}
           {tab === 'krypto' && <KryptoView allMonths={allMonths} />}
-          {tab === 'schulden' && <SchuldenView allMonths={allMonths} />}
+          {tab === 'schulden' && <SchuldenView
+            schulden={data.schulden ?? []}
+            onChange={schulden => {
+              const d = { ...data, schulden }
+              setData(d)
+              setIsDirty(true)
+              try { localStorage.setItem(`finanz_local_${d.year}_${d.month}`, JSON.stringify({ data: d, savedAt: Date.now() })) } catch {}
+            }}
+          />}
           {tab === 'compare' && <CompareView months={compareMonths} />}
           {tab === 'konto' && <AccountView email={user.email ?? ''} />}
           {tab === 'nutzer' && <NutzerView />}
