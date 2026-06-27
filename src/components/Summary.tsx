@@ -18,6 +18,7 @@ const DEFAULT_BUDGETS: Record<string, number> = {
   fixkosten: 10,
   sparen: 20,
   versicherungen: 5,
+  jaehrlichProMonat: 5,
   lebenshaltung: 15,
 }
 
@@ -28,6 +29,7 @@ const BLOCKS = [
   { key: 'fixkosten', label: 'Fixkosten', color: '#8b5cf6', bg: '#f5f3ff', border: '#ddd6fe', sectionId: 'section-fixkosten' },
   { key: 'sparen', label: 'Sparen', color: '#ec4899', bg: '#fdf2f8', border: '#fbcfe8', sectionId: 'section-sparen' },
   { key: 'versicherungen', label: 'Versicherungen', color: '#0ea5e9', bg: '#f0f9ff', border: '#bae6fd', sectionId: 'section-versicherungen' },
+  { key: 'jaehrlichProMonat', label: 'Jährl. / Monat', color: '#f97316', bg: '#fff7ed', border: '#fed7aa', sectionId: '' },
   { key: 'lebenshaltung', label: 'Lebenshaltung', color: '#14b8a6', bg: '#f0fdfa', border: '#99f6e4', sectionId: 'section-lebenshaltung' },
 ]
 
@@ -52,6 +54,7 @@ const PIE_CATEGORIES = [
   { key: 'fixkosten', name: 'Fixkosten', color: '#8b5cf6' },
   { key: 'sparen', name: 'Sparen', color: '#ec4899' },
   { key: 'versicherungen', name: 'Versicherungen', color: '#0ea5e9' },
+  { key: 'jaehrlichProMonat', name: 'Jährl./Monat', color: '#f97316' },
   { key: 'lebenshaltung', name: 'Lebenshaltung', color: '#14b8a6' },
 ]
 
@@ -177,8 +180,8 @@ export default function Summary({ data, onChange }: Props) {
             <div
               key={block.key}
               className="rounded-lg border flex flex-col gap-1 shadow-sm group"
-              style={{ background: block.bg, borderColor: isEditing ? barColor : block.border, padding: '6px 8px', cursor: 'pointer', transition: 'border-color 0.15s' }}
-              onClick={() => { if (!isEditing) scrollToSection(block.sectionId, block.color) }}
+              style={{ background: block.bg, borderColor: isEditing ? barColor : block.border, padding: '6px 8px', cursor: block.sectionId ? 'pointer' : 'default', transition: 'border-color 0.15s' }}
+              onClick={() => { if (!isEditing && block.sectionId) scrollToSection(block.sectionId, block.color) }}
             >
               <div className="flex items-center justify-between gap-1">
                 <div className="flex items-center gap-1 min-w-0">
