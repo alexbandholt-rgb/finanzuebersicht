@@ -309,7 +309,7 @@ export default function Summary({ data, onChange }: Props) {
                     </div>
                     {(data.sachwerte ?? []).filter(i => i.amount && i.amount > 0).map(i => (
                       <div key={i.id} className="flex items-center justify-between text-xs" style={{ paddingLeft: '8px' }}>
-                        <span style={{ color: '#67e8f9' }}>{i.label}</span>
+                        <span style={{ color: '#0891b2' }}>{i.label}</span>
                         <span className="font-mono" style={{ color: '#0891b2' }}>{fmt(i.amount ?? 0)}</span>
                       </div>
                     ))}
