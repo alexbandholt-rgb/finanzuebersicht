@@ -44,7 +44,8 @@ export default function CategorySection({ title, color, items, onChange, annualM
 
   const monthlyTotal = items.filter(i => !i.isAnnual).reduce((acc, i) => acc + (i.amount ?? 0) * (i.share ?? 1), 0)
   const annualTotal = items.filter(i => i.isAnnual).reduce((acc, i) => acc + (i.amount ?? 0) * (i.share ?? 1), 0)
-  const total = showAnnualToggle ? monthlyTotal : items.reduce((acc, i) => acc + (i.amount ?? 0) * (i.share ?? 1), 0)
+  const sparRateBetrag = sparRateActive && sparRate && einkuenfte ? (einkuenfte * sparRate) / 100 : 0
+  const total = showAnnualToggle ? monthlyTotal : items.reduce((acc, i) => acc + (i.amount ?? 0) * (i.share ?? 1), 0) + sparRateBetrag
 
   return (
     <div
