@@ -186,18 +186,17 @@ export default function CategorySection({ title, color, items, onChange, annualM
                     <div style={{ position: 'relative', flex: 1 }}>
                       <button
                         onClick={() => setCoinPickerOpen(coinPickerOpen === item.id ? null : item.id)}
-                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: '1px solid #a5b4fc', background: '#eef2ff', color: '#6366f1', whiteSpace: 'nowrap', width: '100%' }}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: '1px solid #a5b4fc', background: '#eef2ff', color: '#6366f1', width: '100%' }}
                       >
-                        {COMMON_COINS.find(c => c.id === item.coinId)?.symbol}
-                        <span style={{ fontSize: '9px', opacity: 0.6 }}>▾</span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          {COMMON_COINS.find(c => c.id === item.coinId)?.symbol}
+                          <span style={{ fontSize: '9px', opacity: 0.6 }}>▾</span>
+                        </span>
+                        {item.amount !== null && (
+                          <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#16a34a', fontWeight: 600 }}>≈ {fmt(item.amount)}</span>
+                        )}
                       </button>
-                      {item.amount !== null && (
-                      <div style={{ fontSize: '11px', color: '#16a34a', fontFamily: 'monospace', marginTop: '2px', paddingLeft: '2px' }}>
-                        ≈ {fmt(item.amount)}
-                        {item.coinId && cryptoPrices[item.coinId] && <span style={{ color: '#94a3b8', marginLeft: '6px' }}>{fmt(cryptoPrices[item.coinId])}/Stk.</span>}
-                      </div>
-                    )}
-                    {coinPickerOpen === item.id && (
+                      {coinPickerOpen === item.id && (
                         <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: '4px', display: 'flex', gap: '4px', flexWrap: 'wrap', background: 'white', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', zIndex: 20, minWidth: '200px' }}>
                           {COMMON_COINS.map(c => (
                             <button
