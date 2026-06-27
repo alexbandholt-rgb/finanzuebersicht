@@ -88,6 +88,13 @@ export default function App() {
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
+      if (session?.user && !whatsNewShownRef.current) {
+        whatsNewShownRef.current = true
+        const key = `finanz_changelog_seen_${session.user.id}`
+        const seen = localStorage.getItem(key)
+        const entries = getNewEntries(seen)
+        if (entries.length > 0) setWhatsNewEntries(entries)
+      }
     })
     return () => subscription.unsubscribe()
   }, [])
