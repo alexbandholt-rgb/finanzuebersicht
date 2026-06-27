@@ -261,11 +261,13 @@ export default function Summary({ data, onChange }: Props) {
       </div>
 
       {/* Barvermögen */}
-      {(data.barvermoegen ?? []).length > 0 && (() => {
+      {((data.barvermoegen ?? []).length > 0 || (data.sachwerte ?? []).length > 0) && (() => {
         const sichtbar = data.barvermoegenSichtbar !== false
         const aktivSchulden = (data.schulden ?? []).filter(s => (s.amount ?? 0) > 0)
         const schuldenTotal = aktivSchulden.reduce((acc, s) => acc + (s.amount ?? 0), 0)
-        const vermoegenTotal = (data.barvermoegen ?? []).reduce((acc, i) => acc + (i.amount ?? 0), 0)
+        const barvermoegenTotal = (data.barvermoegen ?? []).reduce((acc, i) => acc + (i.amount ?? 0), 0)
+        const sachwerteTotal = (data.sachwerte ?? []).reduce((acc, i) => acc + (i.amount ?? 0), 0)
+        const vermoegenTotal = barvermoegenTotal + sachwerteTotal
         const nettovermoegen = vermoegenTotal - schuldenTotal
         return (
           <div className="rounded-2xl border border-indigo-200 bg-indigo-50 shadow-sm overflow-hidden">
@@ -298,6 +300,21 @@ export default function Summary({ data, onChange }: Props) {
                     <span className="font-mono text-indigo-500">{fmt(i.amount ?? 0)}</span>
                   </div>
                 ))}
+                {sachwerteTotal > 0 && (
+                  <>
+                    {barvermoegenTotal > 0 && <div style={{ height: '1px', background: '#c7d2fe', margin: '6px 0' }} />}
+                    <div className="flex items-center justify-between text-xs">
+                      <span style={{ color: '#0891b2', fontWeight: 600 }}>Sachwerte</span>
+                      <span className="font-mono" style={{ color: '#0891b2' }}>{fmt(sachwerteTotal)}</span>
+                    </div>
+                    {(data.sachwerte ?? []).filter(i => i.amount && i.amount > 0).map(i => (
+                      <div key={i.id} className="flex items-center justify-between text-xs" style={{ paddingLeft: '8px' }}>
+                        <span style={{ color: '#67e8f9' }}>{i.label}</span>
+                        <span className="font-mono" style={{ color: '#0891b2' }}>{fmt(i.amount ?? 0)}</span>
+                      </div>
+                    ))}
+                  </>
+                )}
                 {schuldenTotal > 0 && (
                   <>
                     <div style={{ height: '1px', background: '#c7d2fe', margin: '6px 0' }} />
@@ -319,8 +336,8 @@ export default function Summary({ data, onChange }: Props) {
         )
       })()}
 
-      {/* Schulden (nur wenn kein Barvermögen vorhanden, damit Schulden immer sichtbar sind) */}
-      {(data.barvermoegen ?? []).length === 0 && (() => {
+      {/* Schulden (nur wenn kein Vermögen vorhanden, damit Schulden immer sichtbar sind) */}
+      {(data.barvermoegen ?? []).length === 0 && (data.sachwerte ?? []).length === 0 && (() => {
         const aktivSchulden = (data.schulden ?? []).filter(s => (s.amount ?? 0) > 0)
         if (aktivSchulden.length === 0) return null
         const schuldenTotal = aktivSchulden.reduce((acc, s) => acc + (s.amount ?? 0), 0)

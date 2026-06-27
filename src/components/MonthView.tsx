@@ -20,7 +20,7 @@ interface Props {
   onChange: (data: MonthData) => void
 }
 
-type CategoryKey = 'einkuenfte' | 'wohnungskosten' | 'auto' | 'fixkosten' | 'sparen' | 'versicherungen' | 'jaehrliche_kosten' | 'lebenshaltung' | 'barvermoegen' | 'schulden'
+type CategoryKey = 'einkuenfte' | 'wohnungskosten' | 'auto' | 'fixkosten' | 'sparen' | 'versicherungen' | 'jaehrliche_kosten' | 'lebenshaltung' | 'barvermoegen' | 'sachwerte' | 'schulden'
 
 const now = new Date()
 
@@ -88,6 +88,7 @@ export default function MonthView({ data, onChange }: Props) {
       {data.barvermoegenSichtbar !== false && (
         <div id="section-barvermoegen"><CategorySection title="Vermögen" color="#6366f1" items={data.barvermoegen ?? []} onChange={update('barvermoegen')} hideShare showCrypto isCurrentMonth={isCurrentMonth} /></div>
       )}
+      <div id="section-sachwerte"><CategorySection title="Sachwerte" color="#0891b2" items={data.sachwerte ?? []} onChange={update('sachwerte')} hideShare isCurrentMonth={isCurrentMonth} /></div>
 
     </div>
   )

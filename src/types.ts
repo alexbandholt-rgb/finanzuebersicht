@@ -36,6 +36,7 @@ export interface MonthData {
   lebenshaltung: LineItem[]
   barvermoegen?: LineItem[]
   barvermoegenSichtbar?: boolean
+  sachwerte?: LineItem[]
   schulden?: LineItem[]
   sparRate?: number
   sparRateActive?: boolean

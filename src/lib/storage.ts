@@ -31,6 +31,7 @@ export function migrateMonthData(data: MonthData): MonthData {
     ...data,
     lebenshaltung: data.lebenshaltung ?? makeDefaultItems(DEFAULT_ITEMS.lebenshaltung),
     barvermoegen: barvermoegen.length > 0 ? barvermoegen : makeDefaultItems(DEFAULT_ITEMS.barvermoegen),
+    sachwerte: data.sachwerte ?? [],
     schulden: data.schulden ?? [],
   }
 }
@@ -48,6 +49,7 @@ export function createNewMonth(year: number, month: number, stammdaten: Stammdat
     jaehrliche_kosten: copyItems(stammdaten.jaehrliche_kosten),
     lebenshaltung: copyItems(stammdaten.lebenshaltung ?? []),
     barvermoegen: copyItems(stammdaten.barvermoegen ?? []),
+    sachwerte: copyItems(stammdaten.sachwerte ?? []),
     sparRate: stammdaten.sparRate ?? 10,
     sparRateActive: stammdaten.sparRateActive ?? false,
     budgets: stammdaten.budgets,
