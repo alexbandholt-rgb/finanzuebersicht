@@ -16,6 +16,7 @@ import AccountView from './components/AccountView'
 import NutzerView from './components/NutzerView'
 import NameSetupScreen from './components/NameSetupScreen'
 import NewPasswordScreen from './components/NewPasswordScreen'
+import OnboardingWizard from './components/OnboardingWizard'
 
 const ADMIN_EMAIL = 'alex.bandholt@web.de'
 
@@ -55,6 +56,7 @@ export default function App() {
   const [monthPickerOpen, setMonthPickerOpen] = useState(false)
   const [pastLimit, setPastLimit] = useState(0)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
+  const [showOnboarding, setShowOnboarding] = useState(false)
 
   const maxFuture = addMonths(THIS_YEAR, THIS_MONTH, futureLimit)
   const minPast = addMonths(THIS_YEAR, THIS_MONTH, -pastLimit)
@@ -92,6 +94,7 @@ export default function App() {
         const prev = cloudMonths.filter(m => m.year * 12 + m.month < THIS_YEAR * 12 + THIS_MONTH).at(-1)
         const template = prev ? await cloudLoadMonth(prev.year, prev.month) : null
         setData(createNewMonth(THIS_YEAR, THIS_MONTH, template ?? defaultStammdaten()))
+        if (cloudMonths.length === 0) setShowOnboarding(true)
       }
     }
     init()
@@ -125,6 +128,15 @@ export default function App() {
     }, 1000)
     return () => clearTimeout(timer)
   }, [data, isDirty])
+
+  const handleOnboardingComplete = async (budgets: Record<string, number>) => {
+    const newMonth = { ...data, budgets }
+    setData(newMonth)
+    await cloudSaveMonth(newMonth)
+    const updated = await cloudGetAllMonths()
+    setAllMonths(updated)
+    setShowOnboarding(false)
+  }
 
   const handleDelete = async () => {
     await cloudDeleteMonth(year, month)
@@ -402,6 +414,9 @@ return (
           </div>
         </div>
       )}
+
+      {/* Onboarding */}
+      {showOnboarding && <OnboardingWizard onComplete={handleOnboardingComplete} />}
 
       {/* Month Picker Modal (Mobile) */}
       {monthPickerOpen && (
