@@ -82,7 +82,9 @@ export default function MonthView({ data, onChange }: Props) {
         <div className="flex-1 h-px bg-slate-200" />
       </div>
 
-      <div id="section-barvermoegen"><CategorySection title="Barvermögen" color="#6366f1" items={data.barvermoegen ?? []} onChange={update('barvermoegen')} /></div>
+      {data.barvermoegenSichtbar !== false && (
+        <div id="section-barvermoegen"><CategorySection title="Barvermögen" color="#6366f1" items={data.barvermoegen ?? []} onChange={update('barvermoegen')} /></div>
+      )}
     </div>
   )
 
