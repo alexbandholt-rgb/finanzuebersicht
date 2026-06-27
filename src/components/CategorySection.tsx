@@ -1,4 +1,5 @@
-import { Plus, Trash2, CalendarClock } from 'lucide-react'
+import { useState } from 'react'
+import { Plus, Trash2, CalendarClock, ChevronDown, ChevronUp } from 'lucide-react'
 import type { LineItem } from '../types'
 
 const fmt = (n: number) =>
@@ -24,6 +25,7 @@ function newItem(): LineItem {
 }
 
 export default function CategorySection({ title, color, items, onChange, annualMode, showAnnualToggle, hideShare, sparRate, sparRateActive, onSparRateChange, einkuenfte }: Props) {
+  const [collapsed, setCollapsed] = useState(false)
   const updateField = (id: string, field: keyof LineItem, value: string) => {
     onChange(items.map(item => {
       if (item.id !== id) return item
@@ -54,19 +56,27 @@ export default function CategorySection({ title, color, items, onChange, annualM
       style={{ borderLeft: `4px solid ${color}`, maxWidth: '590px', padding: '24px' }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between cursor-pointer" onClick={() => setCollapsed(c => !c)}>
         <div className="flex items-center gap-2.5">
           <div className="w-3 h-3 rounded-full" style={{ background: color }} />
           <h2 className="text-sm font-bold tracking-wide text-slate-700">{title}</h2>
+          {collapsed && total > 0 && (
+            <span className="text-xs font-mono text-slate-400">{fmt(total)}</span>
+          )}
         </div>
         <div className="flex items-center gap-2">
-          {annualMode && (
+          {annualMode && !collapsed && (
             <span className="text-xs text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
               Jährlich ÷ 12
             </span>
           )}
+          <span className="text-slate-300">
+            {collapsed ? <ChevronDown size={15} /> : <ChevronUp size={15} />}
+          </span>
         </div>
       </div>
+
+      {collapsed ? null : (<>
 
       {/* Sparrate */}
       {onSparRateChange !== undefined && (
@@ -210,6 +220,7 @@ export default function CategorySection({ title, color, items, onChange, annualM
           )}
         </div>
       )}
+      </>)}
     </div>
   )
 }
