@@ -49,8 +49,8 @@ export default function CategorySection({ title, color, items, onChange, annualM
 
   return (
     <div
-      className="rounded-2xl p-5 flex flex-col gap-4 bg-white shadow-sm"
-      style={{ borderLeft: `4px solid ${color}`, maxWidth: '590px' }}
+      className="rounded-2xl flex flex-col gap-4 bg-white shadow-sm"
+      style={{ borderLeft: `4px solid ${color}`, maxWidth: '590px', padding: '24px' }}
     >
       {/* Header */}
       <div className="flex items-center justify-between">
