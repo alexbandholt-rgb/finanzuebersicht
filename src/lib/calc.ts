@@ -11,13 +11,14 @@ export function annualPerMonth(items: LineItem[]): number {
 export function calcSummary(data: MonthData) {
   const einkuenfte = sum(data.einkuenfte)
   const wohnungskosten = sum(data.wohnungskosten)
-  const auto = sum(data.auto)
+  const auto = sum(data.auto.filter(i => !i.isAnnual))
   const fixkosten = sum(data.fixkosten)
   const sparRateBetrag = data.sparRate && data.sparRateActive === true && einkuenfte > 0 ? (einkuenfte * data.sparRate) / 100 : 0
   const sparen = sum(data.sparen) + sparRateBetrag
   const versicherungen = sum(data.versicherungen.filter(i => !i.isAnnual))
   const jaehrlichProMonat = annualPerMonth(data.jaehrliche_kosten)
     + sum(data.versicherungen.filter(i => i.isAnnual)) / 12
+    + sum(data.auto.filter(i => i.isAnnual)) / 12
   const lebenshaltung = sum(data.lebenshaltung ?? [])
 
   const gesamtAusgaben =
