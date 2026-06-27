@@ -178,90 +178,91 @@ export default function CategorySection({ title, color, items, onChange, annualM
             <div key={item.id} className="flex flex-col gap-1.5">
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {/* Label: Coin-Badge wenn Krypto, sonst Textfeld */}
-                {item.coinId ? (
-                  <div style={{ flex: 1, position: 'relative' }}>
-                    <button
-                      onClick={() => setCoinPickerOpen(coinPickerOpen === item.id ? null : item.id)}
-                      style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 14px', borderRadius: '12px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', border: '1px solid #a5b4fc', background: '#eef2ff', color: '#6366f1', width: '100%' }}
-                    >
-                      <span>{COMMON_COINS.find(c => c.id === item.coinId)?.symbol}</span>
-                      <span style={{ fontSize: '11px', color: '#a5b4fc', fontWeight: 400 }}>{COMMON_COINS.find(c => c.id === item.coinId)?.name}</span>
-                      <span style={{ marginLeft: 'auto', fontSize: '10px' }}>▾</span>
-                    </button>
-                    {coinPickerOpen === item.id && (
-                      <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: '4px', display: 'flex', gap: '4px', flexWrap: 'wrap', background: 'white', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 10 }}>
-                        {COMMON_COINS.map(c => (
-                          <button
-                            key={c.id}
-                            onClick={() => { updateCoin(item.id, c.id); setCoinPickerOpen(null) }}
-                            style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer', border: `1px solid ${item.coinId === c.id ? '#6366f1' : '#e2e8f0'}`, background: item.coinId === c.id ? '#eef2ff' : 'white', color: item.coinId === c.id ? '#6366f1' : '#64748b' }}
-                          >
-                            {c.symbol}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <input
-                    type="text"
-                    value={item.label}
-                    onChange={e => updateField(item.id, 'label', e.target.value)}
-                    placeholder="Position"
-                    className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none focus:border-slate-400 transition-colors"
-                    style={{ flex: 1 }}
-                  />
-                )}
 
-                {/* Menge (Krypto) oder Betrag (normal) */}
                 {item.coinId ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '140px' }}>
-                    <div className="flex items-center bg-slate-50 border border-indigo-200 rounded-xl overflow-hidden">
+                  /* ── Krypto-Zeile ── */
+                  <>
+                    {/* Coin-Badge als Dropdown */}
+                    <div style={{ position: 'relative', flexShrink: 0 }}>
+                      <button
+                        onClick={() => setCoinPickerOpen(coinPickerOpen === item.id ? null : item.id)}
+                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: '1px solid #a5b4fc', background: '#eef2ff', color: '#6366f1', whiteSpace: 'nowrap' }}
+                      >
+                        {COMMON_COINS.find(c => c.id === item.coinId)?.symbol}
+                        <span style={{ fontSize: '9px', opacity: 0.6 }}>▾</span>
+                      </button>
+                      {coinPickerOpen === item.id && (
+                        <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: '4px', display: 'flex', gap: '4px', flexWrap: 'wrap', background: 'white', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', zIndex: 20, minWidth: '200px' }}>
+                          {COMMON_COINS.map(c => (
+                            <button
+                              key={c.id}
+                              onClick={() => { updateCoin(item.id, c.id); setCoinPickerOpen(null) }}
+                              style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer', border: `1px solid ${item.coinId === c.id ? '#6366f1' : '#e2e8f0'}`, background: item.coinId === c.id ? '#eef2ff' : 'white', color: item.coinId === c.id ? '#6366f1' : '#64748b' }}
+                            >
+                              {c.symbol}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Mengenfeld */}
+                    <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', flex: 1 }}>
                       <input
                         type="number"
                         value={item.coinQuantity ?? ''}
                         onChange={e => updateCoinQuantity(item.id, e.target.value === '' ? null : parseFloat(e.target.value))}
                         placeholder="Menge"
                         step="any"
+                        style={{ flex: 1, background: 'transparent', border: 'none', padding: '8px 12px', fontSize: '13px', color: '#334155', outline: 'none', textAlign: 'right', minWidth: 0 }}
+                      />
+                      <span style={{ paddingRight: '10px', fontSize: '11px', color: '#94a3b8', flexShrink: 0 }}>{COMMON_COINS.find(c => c.id === item.coinId)?.symbol}</span>
+                    </div>
+
+                    {/* EUR-Wert (readonly) */}
+                    <div style={{ display: 'flex', alignItems: 'center', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '8px 12px', minWidth: '100px', justifyContent: 'flex-end' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 600, color: '#16a34a', fontFamily: 'monospace' }}>
+                        {item.amount !== null ? fmt(item.amount) : '—'}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  /* ── Normale Zeile ── */
+                  <>
+                    <input
+                      type="text"
+                      value={item.label}
+                      onChange={e => updateField(item.id, 'label', e.target.value)}
+                      placeholder="Position"
+                      className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none focus:border-slate-400 transition-colors"
+                      style={{ flex: 1 }}
+                    />
+                    <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden" style={{ width: '120px' }}>
+                      <input
+                        type="number"
+                        value={item.amount ?? ''}
+                        onChange={e => updateField(item.id, 'amount', e.target.value)}
+                        placeholder="0"
+                        step="0.01"
                         className="flex-1 bg-transparent px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none text-right min-w-0"
                       />
-                      <span className="pr-2 text-indigo-400 text-xs select-none">{COMMON_COINS.find(c => c.id === item.coinId)?.symbol}</span>
+                      <span className="pr-3 text-slate-400 text-xs select-none">€</span>
                     </div>
-                    {item.amount !== null && (
-                      <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#6366f1', textAlign: 'right' }}>≈ {fmt(item.amount)}</span>
+                    {!hideShare && (
+                      <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden" style={{ width: '52px' }}>
+                        <input
+                          type="number"
+                          value={item.share ?? ''}
+                          onChange={e => updateField(item.id, 'share', e.target.value)}
+                          placeholder="1"
+                          step="0.1"
+                          min="0"
+                          max="1"
+                          className="w-full bg-transparent px-2 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none text-right"
+                        />
+                      </div>
                     )}
-                    {item.coinId && cryptoPrices[item.coinId] && (
-                      <span style={{ fontSize: '10px', color: '#94a3b8', textAlign: 'right' }}>{fmt(cryptoPrices[item.coinId])} / Stk.</span>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden" style={{ width: '120px' }}>
-                    <input
-                      type="number"
-                      value={item.amount ?? ''}
-                      onChange={e => updateField(item.id, 'amount', e.target.value)}
-                      placeholder="0"
-                      step="0.01"
-                      className="flex-1 bg-transparent px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none text-right min-w-0"
-                    />
-                    <span className="pr-3 text-slate-400 text-xs select-none">€</span>
-                  </div>
-                )}
-
-                {!hideShare && !item.coinId && (
-                  <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden" style={{ width: '52px' }}>
-                    <input
-                      type="number"
-                      value={item.share ?? ''}
-                      onChange={e => updateField(item.id, 'share', e.target.value)}
-                      placeholder="1"
-                      step="0.1"
-                      min="0"
-                      max="1"
-                      className="w-full bg-transparent px-2 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none text-right"
-                    />
-                  </div>
+                  </>
                 )}
 
                 {/* Krypto-Toggle */}
