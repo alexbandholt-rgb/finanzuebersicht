@@ -272,18 +272,20 @@ return (
           )}
 
           <div className="mt-2 pt-2 border-t border-slate-100">
-            <button
-              onClick={() => setTab('legal')}
-              style={{ padding: '10px 14px' }}
-              className={`flex items-center gap-3 rounded-xl text-sm font-medium transition-all w-full text-left ${
-                tab === 'legal'
-                  ? 'bg-violet-50 text-violet-700 border border-violet-200'
-                  : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
-              }`}
-            >
-              <span className={tab === 'legal' ? 'text-violet-500' : 'text-slate-400'}><ScrollText size={16} /></span>
-              Rechtliches
-            </button>
+            {user.email === ADMIN_EMAIL && (
+              <button
+                onClick={() => setTab('legal')}
+                style={{ padding: '10px 14px' }}
+                className={`flex items-center gap-3 rounded-xl text-sm font-medium transition-all w-full text-left ${
+                  tab === 'legal'
+                    ? 'bg-violet-50 text-violet-700 border border-violet-200'
+                    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                <span className={tab === 'legal' ? 'text-violet-500' : 'text-slate-400'}><ScrollText size={16} /></span>
+                Rechtliches
+              </button>
+            )}
             <button
               onClick={() => tab === 'compare' ? setTab('monat') : setComparePickerOpen(true)}
               style={{ padding: '10px 14px' }}
