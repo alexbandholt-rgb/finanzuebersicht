@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Plus, Trash2, CalendarClock, ChevronDown, ChevronUp } from 'lucide-react'
 import type { LineItem } from '../types'
 
@@ -26,6 +26,8 @@ function newItem(): LineItem {
 
 export default function CategorySection({ title, color, items, onChange, annualMode, showAnnualToggle, hideShare, sparRate, sparRateActive, onSparRateChange, einkuenfte }: Props) {
   const [collapsed, setCollapsed] = useState(false)
+  const [annualTooltip, setAnnualTooltip] = useState<{ id: string; x: number; y: number; isAnnual: boolean } | null>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
   const updateField = (id: string, field: keyof LineItem, value: string) => {
     onChange(items.map(item => {
       if (item.id !== id) return item
@@ -52,8 +54,9 @@ export default function CategorySection({ title, color, items, onChange, annualM
 
   return (
     <div
+      ref={cardRef}
       className="rounded-2xl flex flex-col gap-4 bg-white shadow-sm"
-      style={{ borderLeft: `4px solid ${color}`, maxWidth: '590px', padding: '24px' }}
+      style={{ borderLeft: `4px solid ${color}`, maxWidth: '590px', padding: '24px', position: 'relative' }}
     >
       {/* Header */}
       <div className="flex items-center justify-between cursor-pointer" onClick={() => setCollapsed(c => !c)}>
@@ -75,6 +78,20 @@ export default function CategorySection({ title, color, items, onChange, annualM
           </span>
         </div>
       </div>
+
+      {annualTooltip && (
+        <div style={{
+          position: 'absolute', zIndex: 20,
+          left: annualTooltip.x, top: annualTooltip.y,
+          transform: 'translate(-50%, -100%)',
+          background: '#1e293b', color: 'white',
+          fontSize: '12px', borderRadius: '8px',
+          padding: '6px 10px', whiteSpace: 'nowrap',
+          pointerEvents: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        }}>
+          {annualTooltip.isAnnual ? 'Jährlicher Betrag — wird ÷ 12 gerechnet. Klicken zum Deaktivieren.' : 'Als Jahresbetrag markieren — wird ÷ 12 pro Monat angerechnet.'}
+        </div>
+      )}
 
       {collapsed ? null : (<>
 
@@ -160,7 +177,12 @@ export default function CategorySection({ title, color, items, onChange, annualM
                   {showAnnualToggle ? (
                     <button
                       onClick={() => toggleAnnual(item.id)}
-                      title={item.isAnnual ? 'Jährlich (klicken zum Deaktivieren)' : 'Als jährlich markieren'}
+                      onMouseEnter={e => {
+                        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+                        const cardRect = cardRef.current?.getBoundingClientRect()
+                        if (cardRect) setAnnualTooltip({ id: item.id, x: rect.left - cardRect.left + rect.width / 2, y: rect.top - cardRect.top - 8, isAnnual: !!item.isAnnual })
+                      }}
+                      onMouseLeave={() => setAnnualTooltip(null)}
                       className={`p-2 rounded-lg transition-all ${
                         item.isAnnual
                           ? 'text-orange-500 bg-orange-50 border border-orange-200'
