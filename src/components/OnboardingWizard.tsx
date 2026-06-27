@@ -14,13 +14,14 @@ const BUDGET_ITEMS = [
 interface Props {
   onComplete: (budgets: Record<string, number>, name: string) => void
   initialStep?: number
+  initialBudgets?: Record<string, number>
 }
 
-export default function OnboardingWizard({ onComplete, initialStep = 0 }: Props) {
+export default function OnboardingWizard({ onComplete, initialStep = 0, initialBudgets }: Props) {
   const [step, setStep] = useState(initialStep)
   const [name, setName] = useState('')
   const [budgets, setBudgets] = useState<Record<string, number>>(
-    Object.fromEntries(BUDGET_ITEMS.map(i => [i.key, i.default]))
+    initialBudgets ?? Object.fromEntries(BUDGET_ITEMS.map(i => [i.key, i.default]))
   )
 
   const total = Object.values(budgets).reduce((a, b) => a + b, 0)
@@ -129,12 +130,14 @@ export default function OnboardingWizard({ onComplete, initialStep = 0 }: Props)
           </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button
-              onClick={() => setStep(0)}
-              style={{ flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
-            >
-              Zurück
-            </button>
+            {initialStep === 0 && (
+              <button
+                onClick={() => setStep(0)}
+                style={{ flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+              >
+                Zurück
+              </button>
+            )}
             <button
               onClick={() => onComplete(budgets, name)}
               style={{ flex: 2, padding: '12px', borderRadius: '12px', background: '#7c3aed', color: 'white', fontWeight: 700, fontSize: '14px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}

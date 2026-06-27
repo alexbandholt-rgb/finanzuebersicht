@@ -49,5 +49,6 @@ export function createNewMonth(year: number, month: number, stammdaten: Stammdat
     barvermoegen: copyItems(stammdaten.barvermoegen ?? []),
     sparRate: stammdaten.sparRate ?? 10,
     sparRateActive: stammdaten.sparRateActive ?? false,
+    budgets: stammdaten.budgets,
   }
 }

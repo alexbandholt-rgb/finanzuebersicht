@@ -458,6 +458,7 @@ return (
       {showBudgetEditor && (
         <OnboardingWizard
           initialStep={1}
+          initialBudgets={data.budgets}
           onComplete={(budgets) => {
             const updated = { ...data, budgets }
             setData(updated)
