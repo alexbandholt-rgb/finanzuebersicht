@@ -94,10 +94,10 @@ export default function App() {
         const prev = cloudMonths.filter(m => m.year * 12 + m.month < THIS_YEAR * 12 + THIS_MONTH).at(-1)
         const template = prev ? await cloudLoadMonth(prev.year, prev.month) : null
         setData(createNewMonth(THIS_YEAR, THIS_MONTH, template ?? defaultStammdaten()))
-        if (cloudMonths.length === 0 || localStorage.getItem('finanz_show_onboarding') === '1') {
-          localStorage.removeItem('finanz_show_onboarding')
-          setShowOnboarding(true)
-        }
+      }
+      if (cloudMonths.length === 0 || localStorage.getItem('finanz_show_onboarding') === '1') {
+        localStorage.removeItem('finanz_show_onboarding')
+        setShowOnboarding(true)
       }
     }
     init()

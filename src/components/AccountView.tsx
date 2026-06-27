@@ -56,7 +56,7 @@ export default function AccountView({ email }: Props) {
 
   const inputStyle = {
     width: '100%',
-    padding: '9px 12px',
+    padding: '12px 16px',
     borderRadius: '10px',
     border: '1px solid #e2e8f0',
     fontSize: '14px',
@@ -71,7 +71,7 @@ export default function AccountView({ email }: Props) {
       <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b' }}>Konto</h2>
 
       {/* Profil */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Profildaten</p>
 
         <div>
@@ -135,7 +135,7 @@ export default function AccountView({ email }: Props) {
       </div>
 
       {/* Onboarding wiederholen */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Einstellungen</p>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
@@ -152,7 +152,7 @@ export default function AccountView({ email }: Props) {
       </div>
 
       {/* Konto löschen */}
-      <div className="bg-white rounded-2xl border border-red-100 shadow-sm p-6" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div className="bg-white rounded-2xl border border-red-100 shadow-sm" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <AlertTriangle size={15} color="#ef4444" />
           <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#ef4444' }}>Gefahrenzone</p>
