@@ -33,7 +33,7 @@ export default function MonthView({ data, onChange }: Props) {
   const sidebar = (
     <div className="flex flex-col gap-4" style={isMobile ? {} : { position: 'sticky', top: '1.5rem', alignSelf: 'start', maxHeight: 'calc(100vh - 6rem)', overflowY: 'auto' }}>
       <Summary data={data} onChange={onChange} />
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex flex-col gap-2">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm px-5 py-4 flex flex-col gap-2">
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Notizen</p>
         <textarea
           value={data.notes ?? ''}

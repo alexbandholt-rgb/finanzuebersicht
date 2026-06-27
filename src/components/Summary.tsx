@@ -237,14 +237,14 @@ export default function Summary({ data, onChange }: Props) {
           )
         })}
 
-        <div style={{ gridColumn: '1 / -1' }} className="rounded-2xl px-4 py-3 bg-slate-50 border border-slate-200 flex items-center justify-between shadow-sm">
+        <div style={{ gridColumn: '1 / -1' }} className="rounded-2xl px-5 py-4 bg-slate-50 border border-slate-200 flex items-center justify-between shadow-sm">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Gesamtausgaben</span>
           <span className="text-sm font-mono font-semibold text-slate-700">{fmt(s.gesamtAusgaben)}</span>
         </div>
       </div>
 
       {/* Verbleibend */}
-      <div className={`rounded-2xl p-4 border flex items-center justify-between shadow-sm ${
+      <div className={`rounded-2xl px-5 py-4 border flex items-center justify-between shadow-sm ${
         isPositive ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'
       }`}>
         <div>
@@ -267,7 +267,7 @@ export default function Summary({ data, onChange }: Props) {
         return (
           <div className="rounded-2xl border border-indigo-200 bg-indigo-50 shadow-sm overflow-hidden">
             <div
-              className="flex items-center justify-between p-4 cursor-pointer"
+              className="flex items-center justify-between px-5 py-4 cursor-pointer"
               onClick={() => scrollToSection('section-barvermoegen', '#6366f1')}
             >
               <div className="flex items-center gap-2">
@@ -283,7 +283,7 @@ export default function Summary({ data, onChange }: Props) {
               {sichtbar && <span className="text-lg font-mono font-bold text-indigo-600">{fmt(total)}</span>}
             </div>
             {sichtbar && (
-              <div className="flex flex-col gap-0.5 px-4 pb-3">
+              <div className="flex flex-col gap-0.5 px-5 pb-4">
                 {(data.barvermoegen ?? []).filter(i => i.amount && i.amount > 0).map(i => (
                   <div key={i.id} className="flex items-center justify-between text-xs">
                     <span className="text-indigo-400">{i.label}</span>
