@@ -217,10 +217,11 @@ export default function CategorySection({ title, color, items, onChange, annualM
                       />
                       <span style={{ paddingRight: isMobile ? '6px' : '10px', fontSize: '11px', color: '#94a3b8', flexShrink: 0 }}>{COMMON_COINS.find(c => c.id === item.coinId)?.symbol}</span>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: isMobile ? '6px 8px' : '8px 10px', width: isMobile ? '90px' : '120px', flexShrink: 0 }}>
-                      <span style={{ fontSize: isMobile ? '12px' : '13px', fontWeight: 600, color: '#16a34a', fontFamily: 'monospace' }}>
-                        {item.amount !== null ? fmt(item.amount) : '—'}
+                    <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', width: isMobile ? '80px' : '120px', flexShrink: 0 }}>
+                      <span style={{ flex: 1, padding: isMobile ? '6px 4px' : '8px 6px', fontSize: isMobile ? '12px' : '13px', color: '#334155', textAlign: 'right', minWidth: 0 }}>
+                        {item.amount !== null ? item.amount.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—'}
                       </span>
+                      <span style={{ paddingRight: isMobile ? '6px' : '8px', fontSize: '11px', color: '#94a3b8' }}>€</span>
                     </div>
                   </>
                 ) : (
