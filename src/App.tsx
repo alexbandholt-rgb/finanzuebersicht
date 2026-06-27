@@ -81,7 +81,28 @@ export default function App() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Nach Login: State zurücksetzen und Daten aus Cloud laden
+  // Refs für aktuelle Werte (immer aktuell, auch in beforeunload und Monatwechsel)
+  useEffect(() => { isDirtyRef.current = isDirty }, [isDirty])
+  useEffect(() => { dataRef.current = data }, [data])
+
+  // Seite schließen / neu laden → sofort speichern falls ungespeicherte Änderungen
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!isDirtyRef.current) return
+      // Synchron in localStorage sichern, Cloud-Save schlägt bei beforeunload fehl (async)
+      try {
+        localStorage.setItem('finanz_emergency_backup', JSON.stringify({
+          data: dataRef.current,
+          savedAt: Date.now(),
+        }))
+      } catch {}
+      e.preventDefault()
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [])
+
+  // Nach Login: State zurücksetzen und Daten aus Cloud laden (+ Notfall-Backup prüfen)
   useEffect(() => {
     if (!user) return
     setYear(THIS_YEAR)
@@ -96,12 +117,39 @@ export default function App() {
         cloudLoadMonth(THIS_YEAR, THIS_MONTH),
       ])
       setAllMonths(cloudMonths)
-      if (cloudMonth) setData(migrateMonthData(cloudMonth))
-      else {
-        const prev = cloudMonths.filter(m => m.year * 12 + m.month < THIS_YEAR * 12 + THIS_MONTH).at(-1)
-        const template = prev ? await cloudLoadMonth(prev.year, prev.month) : null
-        setData(createNewMonth(THIS_YEAR, THIS_MONTH, template ?? defaultStammdaten()))
+
+      // Notfall-Backup aus localStorage: wenn jünger als Cloud-Daten, wiederherstellen
+      let restored = false
+      try {
+        const raw = localStorage.getItem('finanz_emergency_backup')
+        if (raw) {
+          const backup = JSON.parse(raw) as { data: MonthData; savedAt: number }
+          const cloudAge = cloudMonth ? 0 : Infinity
+          if (backup.data.year === THIS_YEAR && backup.data.month === THIS_MONTH && Date.now() - backup.savedAt < 3600_000) {
+            if (!cloudMonth || backup.savedAt > (cloudAge)) {
+              await cloudSaveMonth(backup.data)
+              setData(migrateMonthData(backup.data))
+              restored = true
+            }
+          }
+          localStorage.removeItem('finanz_emergency_backup')
+        }
+      } catch {}
+
+      if (!restored) {
+        if (cloudMonth) setData(migrateMonthData(cloudMonth))
+        else {
+          const prev = cloudMonths.filter(m => m.year * 12 + m.month < THIS_YEAR * 12 + THIS_MONTH).at(-1)
+          const template = prev ? await cloudLoadMonth(prev.year, prev.month) : null
+          const newMonthData = createNewMonth(THIS_YEAR, THIS_MONTH, template ?? defaultStammdaten())
+          setData(newMonthData)
+          // Neuen Monat sofort speichern damit er nicht verschwindet
+          await cloudSaveMonth(newMonthData)
+          const updated = await cloudGetAllMonths()
+          setAllMonths(updated)
+        }
       }
+
       if (cloudMonths.length === 0 || localStorage.getItem('finanz_show_onboarding') === '1') {
         localStorage.removeItem('finanz_show_onboarding')
         setShowOnboarding(true)
@@ -110,30 +158,31 @@ export default function App() {
     init()
   }, [user])
 
-  // Refs für aktuelle Werte (verhindert stale-closure-Probleme beim Monatwechsel)
-  useEffect(() => { isDirtyRef.current = isDirty }, [isDirty])
-  useEffect(() => { dataRef.current = data }, [data])
-
   // Monat wechseln → vorher speichern falls nötig, dann aus Cloud laden
   useEffect(() => {
     if (!user) return
     const load = async () => {
       if (isDirtyRef.current) {
         await cloudSaveMonth(dataRef.current)
+        isDirtyRef.current = false
       }
       setIsDirty(false)
-      isDirtyRef.current = false
       const d = await cloudLoadMonth(year, month)
       if (d) { setData(migrateMonthData(d)); return }
       const all = await cloudGetAllMonths()
       const prev = all.filter(m => m.year * 12 + m.month < year * 12 + month).at(-1)
       const template = prev ? await cloudLoadMonth(prev.year, prev.month) : null
-      setData(createNewMonth(year, month, template ?? defaultStammdaten()))
+      const newMonthData = createNewMonth(year, month, template ?? defaultStammdaten())
+      setData(newMonthData)
+      // Neuen Monat sofort speichern
+      await cloudSaveMonth(newMonthData)
+      const updated = await cloudGetAllMonths()
+      setAllMonths(updated)
     }
     load()
   }, [year, month, user])
 
-  // Auto-save: 1 Sekunde nach letzter Nutzer-Änderung
+  // Auto-save: 500ms nach letzter Änderung
   useEffect(() => {
     if (!user || !isDirty) return
     const timer = setTimeout(async () => {
@@ -143,7 +192,7 @@ export default function App() {
       setIsDirty(false)
       setSaved(true)
       setTimeout(() => setSaved(false), 1500)
-    }, 1000)
+    }, 500)
     return () => clearTimeout(timer)
   }, [data, isDirty])
 
