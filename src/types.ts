@@ -24,6 +24,7 @@ export interface MonthData {
   sparen: LineItem[]
   versicherungen: LineItem[]
   jaehrliche_kosten: LineItem[]
+  lebenshaltung: LineItem[]
   sparRate?: number
   sparRateActive?: boolean
   notes?: string
@@ -76,4 +77,8 @@ export const DEFAULT_ITEMS = {
     { label: 'Berufsunfähigkeit' },
   ],
   jaehrliche_kosten: [] as { label: string }[],
+  lebenshaltung: [
+    { label: 'Verpflegung' },
+    { label: 'Tageskasse' },
+  ],
 }

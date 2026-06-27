@@ -12,6 +12,7 @@ const COLORS = {
   sparen: '#fb7185',
   versicherungen: '#38bdf8',
   jaehrliche_kosten: '#f97316',
+  lebenshaltung: '#14b8a6',
 }
 
 interface Props {
@@ -19,7 +20,7 @@ interface Props {
   onChange: (data: MonthData) => void
 }
 
-type CategoryKey = 'einkuenfte' | 'wohnungskosten' | 'auto' | 'fixkosten' | 'sparen' | 'versicherungen' | 'jaehrliche_kosten'
+type CategoryKey = 'einkuenfte' | 'wohnungskosten' | 'auto' | 'fixkosten' | 'sparen' | 'versicherungen' | 'jaehrliche_kosten' | 'lebenshaltung'
 
 export default function MonthView({ data, onChange }: Props) {
   const isMobile = useIsMobile()
@@ -74,6 +75,7 @@ export default function MonthView({ data, onChange }: Props) {
       /></div>
       <div id="section-versicherungen"><CategorySection title="Versicherungen" color={COLORS.versicherungen} items={data.versicherungen} onChange={update('versicherungen')} showAnnualToggle /></div>
       <div id="section-jaehrliche_kosten"><CategorySection title="Jährliche Kosten" color={COLORS.jaehrliche_kosten} items={data.jaehrliche_kosten} onChange={update('jaehrliche_kosten')} annualMode /></div>
+      <div id="section-lebenshaltung"><CategorySection title="Lebenshaltung" color={COLORS.lebenshaltung} items={data.lebenshaltung ?? []} onChange={update('lebenshaltung')} /></div>
     </div>
   )
 

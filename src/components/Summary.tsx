@@ -14,11 +14,12 @@ const fmt = (n: number) =>
 
 const DEFAULT_BUDGETS: Record<string, number> = {
   wohnungskosten: 30,
-  auto: 15,
+  auto: 10,
   fixkosten: 10,
   sparen: 20,
   versicherungen: 5,
   jaehrlichProMonat: 5,
+  lebenshaltung: 15,
 }
 
 const BLOCKS = [
@@ -29,6 +30,7 @@ const BLOCKS = [
   { key: 'sparen', label: 'Sparen', color: '#ec4899', bg: '#fdf2f8', border: '#fbcfe8', sectionId: 'section-sparen' },
   { key: 'versicherungen', label: 'Versicherungen', color: '#0ea5e9', bg: '#f0f9ff', border: '#bae6fd', sectionId: 'section-versicherungen' },
   { key: 'jaehrlichProMonat', label: 'Jährl. / Monat', color: '#f97316', bg: '#fff7ed', border: '#fed7aa', sectionId: 'section-jaehrliche_kosten' },
+  { key: 'lebenshaltung', label: 'Lebenshaltung', color: '#14b8a6', bg: '#f0fdfa', border: '#99f6e4', sectionId: 'section-lebenshaltung' },
 ]
 
 function scrollToSection(sectionId: string, color: string) {
@@ -53,6 +55,7 @@ const PIE_CATEGORIES = [
   { key: 'sparen', name: 'Sparen', color: '#ec4899' },
   { key: 'versicherungen', name: 'Versicherungen', color: '#0ea5e9' },
   { key: 'jaehrlichProMonat', name: 'Jährl./Monat', color: '#f97316' },
+  { key: 'lebenshaltung', name: 'Lebenshaltung', color: '#14b8a6' },
 ]
 
 const CustomTooltip = ({ active, payload }: any) => {

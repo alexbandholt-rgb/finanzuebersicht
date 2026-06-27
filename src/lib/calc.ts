@@ -18,9 +18,10 @@ export function calcSummary(data: MonthData) {
   const versicherungen = sum(data.versicherungen.filter(i => !i.isAnnual))
   const jaehrlichProMonat = annualPerMonth(data.jaehrliche_kosten)
     + sum(data.versicherungen.filter(i => i.isAnnual)) / 12
+  const lebenshaltung = sum(data.lebenshaltung ?? [])
 
   const gesamtAusgaben =
-    wohnungskosten + auto + fixkosten + versicherungen + jaehrlichProMonat
+    wohnungskosten + auto + fixkosten + versicherungen + jaehrlichProMonat + lebenshaltung
 
   const verbleibend = einkuenfte - gesamtAusgaben - sparen
 
@@ -32,6 +33,7 @@ export function calcSummary(data: MonthData) {
     sparen,
     versicherungen,
     jaehrlichProMonat,
+    lebenshaltung,
     gesamtAusgaben,
     verbleibend,
   }
