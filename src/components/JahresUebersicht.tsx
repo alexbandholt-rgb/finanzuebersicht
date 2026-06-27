@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { MONTH_NAMES } from '../types'
 import { useIsMobile } from '../hooks/useIsMobile'
 import type { MonthData } from '../types'
@@ -53,20 +53,22 @@ const SparquoteLabel = ({ x, y, width, index, data }: any) => {
   )
 }
 
-const CustomXTick = ({ x, y, payload, data }: any) => {
+const CustomXTick = ({ x, y, payload, data, onNoteEnter, onNoteLeave }: any) => {
   const m = data?.find((d: any) => d.name === payload.value)
   const note = m?.notes?.trim()
   return (
     <g transform={`translate(${x},${y})`}>
       <text x={0} y={0} dy={12} textAnchor="middle" fontSize={12} fill="#94a3b8">{payload.value}</text>
       {note && (
-        <g transform="translate(-7, 18)" style={{ cursor: 'default' }}>
-          <title>{note}</title>
-          {/* document body */}
+        <g
+          transform="translate(-7, 18)"
+          style={{ cursor: 'default' }}
+          onMouseEnter={(e) => onNoteEnter?.(note, e)}
+          onMouseLeave={() => onNoteLeave?.()}
+        >
+          <rect x={0} y={0} width={14} height={14} fill="transparent" />
           <rect x={0} y={0} width={10} height={13} rx={1.5} fill="#fef3c7" stroke="#fde68a" strokeWidth={0.8} />
-          {/* folded corner */}
           <path d="M7 0 L10 3 L7 3 Z" fill="#fde68a" />
-          {/* text lines */}
           <line x1={2} y1={5.5} x2={8} y2={5.5} stroke="#f59e0b" strokeWidth={1} strokeLinecap="round" />
           <line x1={2} y1={8} x2={8} y2={8} stroke="#f59e0b" strokeWidth={1} strokeLinecap="round" />
           <line x1={2} y1={10.5} x2={6} y2={10.5} stroke="#f59e0b" strokeWidth={1} strokeLinecap="round" />
@@ -80,6 +82,8 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
   const isMobile = useIsMobile()
   const [monthData, setMonthData] = useState<MonthData[]>([])
   const [loading, setLoading] = useState(true)
+  const [noteTooltip, setNoteTooltip] = useState<{ text: string; x: number; y: number } | null>(null)
+  const chartRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const gespeichert = allMonths.filter(m => m.year === year)
@@ -148,7 +152,7 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
       </div>
 
       {/* Balkendiagramm */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: isMobile ? '1rem' : '1.5rem' }}>
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: isMobile ? '1rem' : '1.5rem', position: 'relative' }} ref={chartRef}>
         <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-6">
           Jahresvergleich {year}
         </h3>
@@ -157,7 +161,16 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
             <XAxis
               dataKey="name"
-              tick={(props: any) => <CustomXTick {...props} data={monate} />}
+              tick={(props: any) => <CustomXTick
+                {...props}
+                data={monate}
+                onNoteEnter={(text: string, e: React.MouseEvent) => {
+                  const rect = chartRef.current?.getBoundingClientRect()
+                  if (!rect) return
+                  setNoteTooltip({ text, x: e.clientX - rect.left, y: e.clientY - rect.top })
+                }}
+                onNoteLeave={() => setNoteTooltip(null)}
+              />}
               axisLine={false}
               tickLine={false}
               height={50}
@@ -177,6 +190,28 @@ export default function JahresUebersicht({ year, allMonths }: Props) {
             </Bar>
           </BarChart>
         </ResponsiveContainer>
+
+        {noteTooltip && (
+          <div style={{
+            position: 'absolute',
+            left: noteTooltip.x,
+            top: noteTooltip.y - 8,
+            transform: 'translate(-50%, -100%)',
+            background: '#1e293b',
+            color: '#f8fafc',
+            borderRadius: '10px',
+            padding: '8px 12px',
+            fontSize: '12px',
+            lineHeight: '1.5',
+            whiteSpace: 'pre-wrap',
+            maxWidth: '220px',
+            zIndex: 50,
+            boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+            pointerEvents: 'none',
+          }}>
+            {noteTooltip.text}
+          </div>
+        )}
 
         <div className="flex items-center gap-4 mt-3">
           <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-sm bg-emerald-500" /><span className="text-xs text-slate-400">Einkünfte</span></div>
