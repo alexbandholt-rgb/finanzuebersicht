@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { Check, Loader2, Trash2, AlertTriangle } from 'lucide-react'
+import { Check, Loader2, Trash2, AlertTriangle, Sparkles } from 'lucide-react'
 
 interface Props {
   email: string
   lastSignInAt: string | null
+  onShowWhatsNew: () => void
 }
 
-export default function AccountView({ email, lastSignInAt }: Props) {
+export default function AccountView({ email, lastSignInAt, onShowWhatsNew }: Props) {
   const [name, setName] = useState('')
 
   useEffect(() => {
@@ -155,6 +156,19 @@ export default function AccountView({ email, lastSignInAt }: Props) {
             style={{ padding: '8px 14px', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc', color: '#64748b', fontSize: '13px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
           >
             Neu starten
+          </button>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <p style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Neuigkeiten</p>
+            <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>Was hat sich zuletzt geändert?</p>
+          </div>
+          <button
+            onClick={onShowWhatsNew}
+            style={{ padding: '8px 14px', borderRadius: '10px', border: '1px solid #ddd6fe', background: '#f5f3ff', color: '#8b5cf6', fontSize: '13px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '5px' }}
+          >
+            <Sparkles size={13} />
+            Anzeigen
           </button>
         </div>
       </div>
