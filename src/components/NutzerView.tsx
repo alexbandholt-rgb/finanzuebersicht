@@ -10,11 +10,19 @@ interface UserEntry {
   last_sign_in_at: string
 }
 
+interface DbStats {
+  db_size_mb: number | null
+  free_tier_limit_mb: number
+  month_rows: number
+  user_count: number
+}
+
 export default function NutzerView() {
   const [users, setUsers] = useState<UserEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [exporting, setExporting] = useState(false)
+  const [stats, setStats] = useState<DbStats | null>(null)
 
   const handleExportAll = async () => {
     setExporting(true)
@@ -42,9 +50,13 @@ export default function NutzerView() {
 
   useEffect(() => {
     const load = async () => {
-      const { data, error: fnError } = await supabase.functions.invoke('list-users')
-      if (fnError) { setError(fnError.message); setLoading(false); return }
-      setUsers(data)
+      const [usersRes, statsRes] = await Promise.all([
+        supabase.functions.invoke('list-users'),
+        supabase.functions.invoke('db-stats'),
+      ])
+      if (usersRes.error) { setError(usersRes.error.message); setLoading(false); return }
+      setUsers(usersRes.data)
+      if (!statsRes.error) setStats(statsRes.data)
       setLoading(false)
     }
     load()
@@ -69,6 +81,50 @@ export default function NutzerView() {
           {exporting ? 'Lädt…' : 'Alle Daten exportieren'}
         </button>
       </div>
+
+      {/* Supabase Free Tier Stats */}
+      {stats && (() => {
+        const dbPct = stats.db_size_mb !== null ? Math.round(stats.db_size_mb / stats.free_tier_limit_mb * 100) : null
+        const dbColor = dbPct === null ? '#94a3b8' : dbPct > 80 ? '#ef4444' : dbPct > 50 ? '#f97316' : '#10b981'
+        return (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
+            {[
+              {
+                label: 'Datenbank',
+                value: stats.db_size_mb !== null ? `${stats.db_size_mb} MB` : '—',
+                sub: `von 500 MB${dbPct !== null ? ` (${dbPct}%)` : ''}`,
+                color: dbColor,
+                bar: dbPct,
+              },
+              {
+                label: 'Datensätze',
+                value: stats.month_rows.toLocaleString('de-DE'),
+                sub: 'gespeicherte Monate',
+                color: '#6366f1',
+                bar: null,
+              },
+              {
+                label: 'Nutzer',
+                value: stats.user_count.toString(),
+                sub: 'von 50.000 MAU',
+                color: '#8b5cf6',
+                bar: Math.round(stats.user_count / stats.free_tier_limit_mb * 100),
+              },
+            ].map(k => (
+              <div key={k.label} className="bg-white rounded-2xl border border-slate-100 shadow-sm" style={{ padding: '14px 16px' }}>
+                <p style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>{k.label}</p>
+                <p style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'monospace', color: k.color }}>{k.value}</p>
+                <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>{k.sub}</p>
+                {k.bar !== null && (
+                  <div style={{ marginTop: '8px', height: '4px', background: '#f1f5f9', borderRadius: '2px', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${Math.min(100, k.bar)}%`, background: k.color, borderRadius: '2px', transition: 'width 0.5s' }} />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )
+      })()}
 
       {loading && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94a3b8', fontSize: '14px' }}>
