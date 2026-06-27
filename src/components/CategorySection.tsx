@@ -186,7 +186,7 @@ export default function CategorySection({ title, color, items, onChange, annualM
                     <div style={{ position: 'relative', flexShrink: 0 }}>
                       <button
                         onClick={() => setCoinPickerOpen(coinPickerOpen === item.id ? null : item.id)}
-                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '10px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: '1px solid #a5b4fc', background: '#eef2ff', color: '#6366f1', whiteSpace: 'nowrap' }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: '1px solid #a5b4fc', background: '#eef2ff', color: '#6366f1', whiteSpace: 'nowrap' }}
                       >
                         {COMMON_COINS.find(c => c.id === item.coinId)?.symbol}
                         <span style={{ fontSize: '9px', opacity: 0.6 }}>▾</span>
@@ -214,13 +214,13 @@ export default function CategorySection({ title, color, items, onChange, annualM
                         onChange={e => updateCoinQuantity(item.id, e.target.value === '' ? null : parseFloat(e.target.value))}
                         placeholder="Menge"
                         step="any"
-                        style={{ flex: 1, background: 'transparent', border: 'none', padding: '10px 12px', fontSize: '13px', color: '#334155', outline: 'none', textAlign: 'right', minWidth: 0 }}
+                        style={{ flex: 1, background: 'transparent', border: 'none', padding: '8px 8px', fontSize: '13px', color: '#334155', outline: 'none', textAlign: 'right', minWidth: 0 }}
                       />
                       <span style={{ paddingRight: '10px', fontSize: '11px', color: '#94a3b8', flexShrink: 0 }}>{COMMON_COINS.find(c => c.id === item.coinId)?.symbol}</span>
                     </div>
 
                     {/* EUR-Wert (readonly) */}
-                    <div style={{ display: 'flex', alignItems: 'center', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '10px 12px', minWidth: '100px', justifyContent: 'flex-end' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '8px 12px', minWidth: '100px', justifyContent: 'flex-end' }}>
                       <span style={{ fontSize: '13px', fontWeight: 600, color: '#16a34a', fontFamily: 'monospace' }}>
                         {item.amount !== null ? fmt(item.amount) : '—'}
                       </span>
@@ -234,22 +234,21 @@ export default function CategorySection({ title, color, items, onChange, annualM
                       value={item.label}
                       onChange={e => updateField(item.id, 'label', e.target.value)}
                       placeholder="Position"
-                      className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none focus:border-slate-400 transition-colors"
-                      style={{ flex: 1 }}
+                      style={{ flex: 1, background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px 12px', fontSize: '13px', color: '#334155', outline: 'none', fontFamily: 'inherit' }}
                     />
-                    <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden" style={{ width: '120px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', width: '120px' }}>
                       <input
                         type="number"
                         value={item.amount ?? ''}
                         onChange={e => updateField(item.id, 'amount', e.target.value)}
                         placeholder="0"
                         step="0.01"
-                        className="flex-1 bg-transparent px-3 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none text-right min-w-0"
+                        style={{ flex: 1, background: 'transparent', border: 'none', padding: '8px 8px', fontSize: '13px', color: '#334155', outline: 'none', textAlign: 'right', minWidth: 0 }}
                       />
-                      <span className="pr-3 text-slate-400 text-xs select-none">€</span>
+                      <span style={{ paddingRight: '10px', fontSize: '11px', color: '#94a3b8' }}>€</span>
                     </div>
                     {!hideShare && (
-                      <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden" style={{ width: '52px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', width: '52px' }}>
                         <input
                           type="number"
                           value={item.share ?? ''}
@@ -258,7 +257,7 @@ export default function CategorySection({ title, color, items, onChange, annualM
                           step="0.1"
                           min="0"
                           max="1"
-                          className="w-full bg-transparent px-2 py-2.5 text-sm text-slate-700 placeholder-slate-300 focus:outline-none text-right"
+                          style={{ width: '100%', background: 'transparent', border: 'none', padding: '8px 6px', fontSize: '13px', color: '#334155', outline: 'none', textAlign: 'right' }}
                         />
                       </div>
                     )}
