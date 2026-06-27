@@ -278,7 +278,7 @@ export default function Summary({ data, onChange }: Props) {
                   onClick={e => e.stopPropagation()}
                   style={{ width: '14px', height: '14px', accentColor: '#6366f1', cursor: 'pointer', flexShrink: 0 }}
                 />
-                <p className="text-xs font-semibold uppercase tracking-wider text-indigo-500">Barvermögen</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-indigo-500">Vermögen</p>
               </div>
               {sichtbar && <span className="text-lg font-mono font-bold text-indigo-600">{fmt(total)}</span>}
             </div>

@@ -177,7 +177,7 @@ export default function App() {
   const navItems = [
     { id: 'monat' as Tab, label: 'Monatsübersicht', icon: <BarChart2 size={16} /> },
     { id: 'jahresuebersicht' as Tab, label: 'Jahresübersicht', icon: <CalendarDays size={16} /> },
-    { id: 'barvermoegen' as Tab, label: 'Barvermögen', icon: <GitCompare size={16} /> },
+    { id: 'barvermoegen' as Tab, label: 'Vermögen', icon: <GitCompare size={16} /> },
     { id: 'konto' as Tab, label: 'Konto', icon: <UserCircle size={16} /> },
   ]
 

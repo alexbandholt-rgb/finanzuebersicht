@@ -80,8 +80,10 @@ export const DEFAULT_ITEMS = {
   ],
   jaehrliche_kosten: [] as { label: string }[],
   barvermoegen: [
-    { label: 'Notgroschen' },
-    { label: 'Urlaubsgeld' },
+    { label: 'Bargeld' },
+    { label: 'Liquides Geld' },
+    { label: 'ETF' },
+    { label: 'Krypto' },
   ],
   lebenshaltung: [
     { label: 'Verpflegung' },

@@ -33,7 +33,7 @@ export default function BarvermoegenView({ allMonths }: Props) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20 text-slate-400 text-sm">
-        Lade Barvermögen…
+        Lade Vermögen…
       </div>
     )
   }
@@ -50,8 +50,8 @@ export default function BarvermoegenView({ allMonths }: Props) {
   if (eintraege.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-        <p className="text-sm">Noch kein Barvermögen eingetragen.</p>
-        <p className="text-xs mt-1">Trage es in der Monatsübersicht unter "Barvermögen" ein.</p>
+        <p className="text-sm">Noch kein Vermögen eingetragen.</p>
+        <p className="text-xs mt-1">Trage es in der Monatsübersicht unter "Vermögen" ein.</p>
       </div>
     )
   }
