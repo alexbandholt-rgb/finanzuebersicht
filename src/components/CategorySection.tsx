@@ -3,6 +3,15 @@ import { Plus, Trash2, CalendarClock, ChevronDown, ChevronUp } from 'lucide-reac
 import type { LineItem } from '../types'
 import { COMMON_COINS, fetchCryptoPrices } from '../lib/crypto'
 import { useIsMobile } from '../hooks/useIsMobile'
+import {
+  DndContext, closestCenter, PointerSensor, TouchSensor,
+  useSensor, useSensors, type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext, verticalListSortingStrategy,
+  useSortable, arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 const fmt = (n: number) =>
   n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
@@ -25,6 +34,31 @@ interface Props {
 
 function newItem(): LineItem {
   return { id: crypto.randomUUID(), label: '', amount: null }
+}
+
+function SortableRow({ id, children }: { id: string; children: (handle: React.ReactNode) => React.ReactNode }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
+  const handle = (
+    <div
+      {...attributes}
+      {...listeners}
+      style={{ display: 'flex', flexDirection: 'column', gap: '3px', padding: '6px 4px', cursor: 'grab', flexShrink: 0, touchAction: 'none' }}
+    >
+      <span style={{ display: 'block', width: '14px', height: '1.5px', background: '#cbd5e1', borderRadius: '1px' }} />
+      <span style={{ display: 'block', width: '14px', height: '1.5px', background: '#cbd5e1', borderRadius: '1px' }} />
+      <span style={{ display: 'block', width: '14px', height: '1.5px', background: '#cbd5e1', borderRadius: '1px' }} />
+    </div>
+  )
+  return (
+    <div ref={setNodeRef} style={style} className="flex flex-col gap-1.5">
+      {children(handle)}
+    </div>
+  )
 }
 
 export default function CategorySection({ title, color, items, onChange, annualMode, showAnnualToggle, hideShare, showCrypto, sparRate, sparRateActive, onSparRateChange, einkuenfte }: Props) {
@@ -85,6 +119,20 @@ export default function CategorySection({ title, color, items, onChange, annualM
 
   const remove = (id: string) => onChange(items.filter(i => i.id !== id))
   const add = () => onChange([...items, newItem()])
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } }),
+  )
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (over && active.id !== over.id) {
+      const oldIndex = items.findIndex(i => i.id === active.id)
+      const newIndex = items.findIndex(i => i.id === over.id)
+      onChange(arrayMove(items, oldIndex, newIndex))
+    }
+  }
 
   const monthlyTotal = items.filter(i => !i.isAnnual).reduce((acc, i) => acc + (i.amount ?? 0) * (i.share ?? 1), 0)
   const annualTotal = items.filter(i => i.isAnnual).reduce((acc, i) => acc + (i.amount ?? 0) * (i.share ?? 1), 0)
@@ -171,15 +219,18 @@ export default function CategorySection({ title, color, items, onChange, annualM
       )}
 
       {/* Items */}
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
       <div className="flex flex-col gap-2">
         {items.map(item => {
           const effective = (item.amount ?? 0) * (item.share ?? 1)
           const showShare = item.share !== undefined
 
           return (
-            <div key={item.id} className="flex flex-col gap-1.5">
-
+            <SortableRow key={item.id} id={item.id}>
+              {(handle) => (
               <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '4px' : '8px' }}>
+                {handle}
 
                 {item.coinId ? (
                   /* ── Krypto-Zeile ── */
@@ -313,10 +364,12 @@ export default function CategorySection({ title, color, items, onChange, annualM
                   <div style={{ width: '30px' }} />
                 </div>
               )}
-            </div>
+            </SortableRow>
           )
         })}
       </div>
+        </SortableContext>
+      </DndContext>
 
       <button
         onClick={add}
