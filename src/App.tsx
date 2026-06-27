@@ -351,12 +351,12 @@ return (
       {isMobile && (
         <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'white', borderTop: '1px solid #e2e8f0', display: 'flex', alignItems: 'flex-start', zIndex: 50, paddingBottom: 'env(safe-area-inset-bottom)', boxShadow: '0 -2px 8px rgba(0,0,0,0.06)' }}>
           {[...navItems, ...(user.email === ADMIN_EMAIL ? [{ id: 'nutzer' as Tab, label: 'Nutzer', icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> }] : [])].map(item => (
-            <button key={item.id} onClick={() => setTab(item.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px', color: tab === item.id ? '#7c3aed' : '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', fontSize: '10px', fontWeight: tab === item.id ? 600 : 400, height: '100%' }}>
+            <button key={item.id} onClick={() => setTab(item.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px', color: tab === item.id ? '#7c3aed' : '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', fontSize: '10px', fontWeight: tab === item.id ? 600 : 400, paddingTop: '12px', paddingBottom: '8px' }}>
               <span style={{ color: tab === item.id ? '#7c3aed' : '#94a3b8' }}>{item.icon}</span>
               {item.label.replace('übersicht', '').replace('Monats', 'Monat')}
             </button>
           ))}
-          <button onClick={() => supabase.auth.signOut()} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px', color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', fontSize: '10px', height: '100%' }}>
+          <button onClick={() => supabase.auth.signOut()} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px', color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', fontSize: '10px', paddingTop: '12px', paddingBottom: '8px' }}>
             <LogOut size={20} />
             Abmelden
           </button>
