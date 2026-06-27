@@ -186,7 +186,7 @@ export default function CategorySection({ title, color, items, onChange, annualM
                     <div style={{ position: 'relative', flexShrink: 0 }}>
                       <button
                         onClick={() => setCoinPickerOpen(coinPickerOpen === item.id ? null : item.id)}
-                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: '1px solid #a5b4fc', background: '#eef2ff', color: '#6366f1', whiteSpace: 'nowrap' }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '10px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: '1px solid #a5b4fc', background: '#eef2ff', color: '#6366f1', whiteSpace: 'nowrap' }}
                       >
                         {COMMON_COINS.find(c => c.id === item.coinId)?.symbol}
                         <span style={{ fontSize: '9px', opacity: 0.6 }}>▾</span>
@@ -214,13 +214,13 @@ export default function CategorySection({ title, color, items, onChange, annualM
                         onChange={e => updateCoinQuantity(item.id, e.target.value === '' ? null : parseFloat(e.target.value))}
                         placeholder="Menge"
                         step="any"
-                        style={{ flex: 1, background: 'transparent', border: 'none', padding: '8px 12px', fontSize: '13px', color: '#334155', outline: 'none', textAlign: 'right', minWidth: 0 }}
+                        style={{ flex: 1, background: 'transparent', border: 'none', padding: '10px 12px', fontSize: '13px', color: '#334155', outline: 'none', textAlign: 'right', minWidth: 0 }}
                       />
                       <span style={{ paddingRight: '10px', fontSize: '11px', color: '#94a3b8', flexShrink: 0 }}>{COMMON_COINS.find(c => c.id === item.coinId)?.symbol}</span>
                     </div>
 
                     {/* EUR-Wert (readonly) */}
-                    <div style={{ display: 'flex', alignItems: 'center', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '8px 12px', minWidth: '100px', justifyContent: 'flex-end' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '10px 12px', minWidth: '100px', justifyContent: 'flex-end' }}>
                       <span style={{ fontSize: '13px', fontWeight: 600, color: '#16a34a', fontFamily: 'monospace' }}>
                         {item.amount !== null ? fmt(item.amount) : '—'}
                       </span>
