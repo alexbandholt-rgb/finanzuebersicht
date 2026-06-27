@@ -221,16 +221,16 @@ export default function CategorySection({ title, color, items, onChange, annualM
       {/* Items */}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
-      <div className="flex flex-col gap-2">
-        {items.map(item => {
-          const effective = (item.amount ?? 0) * (item.share ?? 1)
-          const showShare = item.share !== undefined
+          <div className="flex flex-col gap-2">
+            {items.map(item => {
+              const effective = (item.amount ?? 0) * (item.share ?? 1)
+              const showShare = item.share !== undefined
 
-          return (
-            <SortableRow key={item.id} id={item.id}>
-              {(handle) => (
-              <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '4px' : '8px' }}>
-                {handle}
+              return (
+                <SortableRow key={item.id} id={item.id}>
+                  {(handle) => (<>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '4px' : '8px' }}>
+                    {handle}
 
                 {item.coinId ? (
                   /* ── Krypto-Zeile ── */
@@ -348,26 +348,27 @@ export default function CategorySection({ title, color, items, onChange, annualM
                   style={{ padding: isMobile ? '4px' : '8px', borderRadius: '8px', border: 'none', background: 'transparent', color: '#cbd5e1', cursor: 'pointer', width: isMobile ? '24px' : '30px', flexShrink: 0 }}
                 >
                   <Trash2 size={isMobile ? 13 : 14} />
-                </button>
-              </div>
-
-              {showShare && item.amount !== null && !isMobile && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ flex: 1 }} />
-                  <div style={{ width: '120px', display: 'flex', justifyContent: 'flex-end', paddingRight: '4px' }}>
-                    <span className="text-xs text-slate-400">
-                      = <span className="font-mono font-medium" style={{ color }}>{fmt(effective)}</span> dein Anteil
-                    </span>
+                  </button>
                   </div>
-                  <div style={{ width: '52px' }} />
-                  <div style={{ width: '30px' }} />
-                  <div style={{ width: '30px' }} />
-                </div>
-              )}
-            </SortableRow>
-          )
-        })}
-      </div>
+
+                  {showShare && item.amount !== null && !isMobile && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ flex: 1 }} />
+                      <div style={{ width: '120px', display: 'flex', justifyContent: 'flex-end', paddingRight: '4px' }}>
+                        <span className="text-xs text-slate-400">
+                          = <span className="font-mono font-medium" style={{ color }}>{fmt(effective)}</span> dein Anteil
+                        </span>
+                      </div>
+                      <div style={{ width: '52px' }} />
+                      <div style={{ width: '30px' }} />
+                      <div style={{ width: '30px' }} />
+                    </div>
+                  )}
+                  </>)}
+                </SortableRow>
+              )
+            })}
+          </div>
         </SortableContext>
       </DndContext>
 
