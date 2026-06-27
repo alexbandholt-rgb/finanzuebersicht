@@ -182,16 +182,22 @@ export default function CategorySection({ title, color, items, onChange, annualM
                 {item.coinId ? (
                   /* ── Krypto-Zeile ── */
                   <>
-                    {/* Coin-Badge als Dropdown */}
-                    <div style={{ position: 'relative', flexShrink: 0 }}>
+                    {/* Coin-Badge als Dropdown — flex 1 wie Bezeichnungsfeld */}
+                    <div style={{ position: 'relative', flex: 1 }}>
                       <button
                         onClick={() => setCoinPickerOpen(coinPickerOpen === item.id ? null : item.id)}
-                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: '1px solid #a5b4fc', background: '#eef2ff', color: '#6366f1', whiteSpace: 'nowrap' }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: '1px solid #a5b4fc', background: '#eef2ff', color: '#6366f1', whiteSpace: 'nowrap', width: '100%' }}
                       >
                         {COMMON_COINS.find(c => c.id === item.coinId)?.symbol}
                         <span style={{ fontSize: '9px', opacity: 0.6 }}>▾</span>
                       </button>
-                      {coinPickerOpen === item.id && (
+                      {item.amount !== null && (
+                      <div style={{ fontSize: '11px', color: '#16a34a', fontFamily: 'monospace', marginTop: '2px', paddingLeft: '2px' }}>
+                        ≈ {fmt(item.amount)}
+                        {item.coinId && cryptoPrices[item.coinId] && <span style={{ color: '#94a3b8', marginLeft: '6px' }}>{fmt(cryptoPrices[item.coinId])}/Stk.</span>}
+                      </div>
+                    )}
+                    {coinPickerOpen === item.id && (
                         <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: '4px', display: 'flex', gap: '4px', flexWrap: 'wrap', background: 'white', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', zIndex: 20, minWidth: '200px' }}>
                           {COMMON_COINS.map(c => (
                             <button
@@ -206,8 +212,8 @@ export default function CategorySection({ title, color, items, onChange, annualM
                       )}
                     </div>
 
-                    {/* Mengenfeld */}
-                    <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', flex: 1 }}>
+                    {/* Mengenfeld — 120px wie normales Betragsfeld */}
+                    <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', width: '120px', flexShrink: 0 }}>
                       <input
                         type="number"
                         value={item.coinQuantity ?? ''}
@@ -219,12 +225,6 @@ export default function CategorySection({ title, color, items, onChange, annualM
                       <span style={{ paddingRight: '10px', fontSize: '11px', color: '#94a3b8', flexShrink: 0 }}>{COMMON_COINS.find(c => c.id === item.coinId)?.symbol}</span>
                     </div>
 
-                    {/* EUR-Wert (readonly) */}
-                    <div style={{ display: 'flex', alignItems: 'center', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '8px 12px', minWidth: '100px', justifyContent: 'flex-end' }}>
-                      <span style={{ fontSize: '13px', fontWeight: 600, color: '#16a34a', fontFamily: 'monospace' }}>
-                        {item.amount !== null ? fmt(item.amount) : '—'}
-                      </span>
-                    </div>
                   </>
                 ) : (
                   /* ── Normale Zeile ── */
