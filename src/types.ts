@@ -1,11 +1,15 @@
 export interface LineItem {
   id: string
   label: string
-  amount: number | null
+  amount: number | null  // bei Schulden: aktueller Restbetrag
   share?: number
   isAnnual?: boolean
   coinId?: string
   coinQuantity?: number
+  // Schulden-Felder
+  gesamtbetrag?: number
+  monatlicheRate?: number
+  startDatum?: string
 }
 
 export interface Category {
@@ -29,6 +33,7 @@ export interface MonthData {
   lebenshaltung: LineItem[]
   barvermoegen?: LineItem[]
   barvermoegenSichtbar?: boolean
+  schulden?: LineItem[]
   sparRate?: number
   sparRateActive?: boolean
   notes?: string

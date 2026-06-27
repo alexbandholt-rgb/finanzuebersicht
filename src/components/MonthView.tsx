@@ -1,6 +1,7 @@
 import type { MonthData, LineItem } from '../types'
 import { sum } from '../lib/calc'
 import CategorySection from './CategorySection'
+import SchuldenSection from './SchuldenSection'
 import Summary from './Summary'
 import { useIsMobile } from '../hooks/useIsMobile'
 
@@ -20,7 +21,7 @@ interface Props {
   onChange: (data: MonthData) => void
 }
 
-type CategoryKey = 'einkuenfte' | 'wohnungskosten' | 'auto' | 'fixkosten' | 'sparen' | 'versicherungen' | 'jaehrliche_kosten' | 'lebenshaltung' | 'barvermoegen'
+type CategoryKey = 'einkuenfte' | 'wohnungskosten' | 'auto' | 'fixkosten' | 'sparen' | 'versicherungen' | 'jaehrliche_kosten' | 'lebenshaltung' | 'barvermoegen' | 'schulden'
 
 const now = new Date()
 
@@ -88,6 +89,14 @@ export default function MonthView({ data, onChange }: Props) {
       {data.barvermoegenSichtbar !== false && (
         <div id="section-barvermoegen"><CategorySection title="Vermögen" color="#6366f1" items={data.barvermoegen ?? []} onChange={update('barvermoegen')} hideShare showCrypto isCurrentMonth={isCurrentMonth} /></div>
       )}
+
+      <div className="flex items-center gap-3 mt-2">
+        <div className="flex-1 h-px bg-slate-200" />
+        <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Schulden</span>
+        <div className="flex-1 h-px bg-slate-200" />
+      </div>
+
+      <SchuldenSection items={data.schulden ?? []} onChange={items => onChange({ ...data, schulden: items })} />
     </div>
   )
 
