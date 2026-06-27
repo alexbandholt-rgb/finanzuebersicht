@@ -134,6 +134,23 @@ export default function AccountView({ email }: Props) {
         </button>
       </div>
 
+      {/* Onboarding wiederholen */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Einstellungen</p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <p style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Einrichtungsassistent</p>
+            <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>Budgetziele beim nächsten Laden neu setzen</p>
+          </div>
+          <button
+            onClick={() => { localStorage.setItem('finanz_show_onboarding', '1'); window.location.reload() }}
+            style={{ padding: '8px 14px', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc', color: '#64748b', fontSize: '13px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >
+            Neu starten
+          </button>
+        </div>
+      </div>
+
       {/* Konto löschen */}
       <div className="bg-white rounded-2xl border border-red-100 shadow-sm p-6" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
