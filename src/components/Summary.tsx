@@ -167,7 +167,7 @@ export default function Summary({ data, onChange }: Props) {
       )}
 
       {/* Kacheln */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
         {BLOCKS.map(block => {
           const val = (s as any)[block.key] as number
           const pct = s.einkuenfte > 0 ? (val / s.einkuenfte) * 100 : 0
@@ -179,14 +179,14 @@ export default function Summary({ data, onChange }: Props) {
           return (
             <div
               key={block.key}
-              className="rounded-lg border flex flex-col gap-1 shadow-sm group"
-              style={{ background: block.bg, borderColor: isEditing ? barColor : block.border, padding: '6px 8px', cursor: block.sectionId ? 'pointer' : 'default', transition: 'border-color 0.15s' }}
+              className="rounded-xl border flex flex-col gap-1.5 shadow-sm group"
+              style={{ background: block.bg, borderColor: isEditing ? barColor : block.border, padding: '10px 12px', cursor: block.sectionId ? 'pointer' : 'default', transition: 'border-color 0.15s' }}
               onClick={() => { if (!isEditing && block.sectionId) scrollToSection(block.sectionId, block.color) }}
             >
               <div className="flex items-center justify-between gap-1">
-                <div className="flex items-center gap-1 min-w-0">
-                  <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: block.color }} />
-                  <span className="text-[9px] font-bold uppercase tracking-wide truncate" style={{ color: block.color }}>
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <div className="w-2 h-2 rounded-full shrink-0" style={{ background: block.color }} />
+                  <span className="text-[10px] font-bold uppercase tracking-wide truncate" style={{ color: block.color }}>
                     {block.label}
                   </span>
                 </div>
@@ -197,7 +197,7 @@ export default function Summary({ data, onChange }: Props) {
                     title="Budget setzen"
                     style={{ padding: '1px', lineHeight: 1 }}
                   >
-                    <Pencil size={9} style={{ color: block.color }} />
+                    <Pencil size={10} style={{ color: block.color }} />
                   </button>
                 )}
               </div>
@@ -221,23 +221,23 @@ export default function Summary({ data, onChange }: Props) {
                 </div>
               ) : (
                 <div className="flex items-end justify-between gap-1">
-                  <span className="text-[11px] font-mono font-bold text-slate-700">{fmt(val)}</span>
+                  <span className="text-[13px] font-mono font-bold text-slate-700">{fmt(val)}</span>
                   {budget && (
-                    <span className="text-[9px] font-mono shrink-0" style={{ color: barColor }}>
+                    <span className="text-[10px] font-mono shrink-0" style={{ color: barColor }}>
                       {pct.toFixed(1)}/{budget}%
                     </span>
                   )}
                 </div>
               )}
 
-              <div className="h-1 bg-white rounded-full overflow-hidden">
+              <div className="h-1.5 bg-white rounded-full overflow-hidden">
                 <div className="h-full rounded-full transition-all" style={{ width: `${barWidth}%`, background: barColor, opacity: budget ? 1 : 0.7 }} />
               </div>
             </div>
           )
         })}
 
-        <div style={{ gridColumn: '1 / -1' }} className="rounded-2xl p-3 bg-slate-50 border border-slate-200 flex items-center justify-between shadow-sm">
+        <div style={{ gridColumn: '1 / -1' }} className="rounded-2xl px-4 py-3 bg-slate-50 border border-slate-200 flex items-center justify-between shadow-sm">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Gesamtausgaben</span>
           <span className="text-sm font-mono font-semibold text-slate-700">{fmt(s.gesamtAusgaben)}</span>
         </div>
