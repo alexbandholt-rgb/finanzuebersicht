@@ -52,6 +52,7 @@ export default function App() {
   const [comparePickerOpen, setComparePickerOpen] = useState(false)
   const [selectedForCompare, setSelectedForCompare] = useState<string[]>([])
   const [futureLimit, setFutureLimit] = useState(0)
+  const [monthPickerOpen, setMonthPickerOpen] = useState(false)
   const [pastLimit, setPastLimit] = useState(0)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
 
@@ -276,9 +277,9 @@ return (
                   <button onClick={prevMonth} disabled={isAtMin} style={{ padding: '7px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', color: isAtMin ? '#cbd5e1' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <ChevronLeft size={16} />
                   </button>
-                  <span style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: '15px', color: '#334155', whiteSpace: 'nowrap' }}>
+                  <button onClick={() => setMonthPickerOpen(true)} style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: '15px', color: '#334155', whiteSpace: 'nowrap', background: 'none', border: 'none', cursor: 'pointer', padding: '7px 4px' }}>
                     {MONTH_NAMES[month - 1]} {year}
-                  </span>
+                  </button>
                   {isAtMax ? (
                     <button onClick={async () => {
                       setFutureLimit(l => l + 1)
@@ -401,6 +402,33 @@ return (
               <button onClick={() => setDeleteConfirmOpen(false)} className="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium transition-colors">Abbrechen</button>
               <button onClick={handleDelete} className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-medium transition-colors">Ja, löschen</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Month Picker Modal (Mobile) */}
+      {monthPickerOpen && (
+        <div className="fixed inset-0 bg-black/40 flex items-end justify-center z-50" onClick={() => setMonthPickerOpen(false)}>
+          <div className="bg-white rounded-t-2xl shadow-xl w-full max-h-[60vh] flex flex-col" onClick={e => e.stopPropagation()}>
+            <div style={{ padding: '16px 20px 8px', borderBottom: '1px solid #f1f5f9' }}>
+              <p className="text-sm font-semibold text-slate-700">Monat auswählen</p>
+            </div>
+            <div className="overflow-y-auto flex flex-col">
+              {[...allMonths].reverse().map(({ year: y, month: m }) => {
+                const isActive = y === year && m === month
+                return (
+                  <button key={`${y}-${m}`} onClick={() => { setYear(y); setMonth(m); setMonthPickerOpen(false) }}
+                    style={{ padding: '14px 20px', textAlign: 'left', background: isActive ? '#f5f3ff' : 'white', color: isActive ? '#7c3aed' : '#334155', fontWeight: isActive ? 700 : 400, fontSize: '15px', border: 'none', borderBottom: '1px solid #f8fafc', cursor: 'pointer' }}
+                  >
+                    {MONTH_NAMES[m - 1]} {y}
+                    {isActive && <span style={{ float: 'right', fontSize: '12px' }}>✓</span>}
+                  </button>
+                )
+              })}
+            </div>
+            <button onClick={() => setMonthPickerOpen(false)} style={{ padding: '14px', color: '#94a3b8', fontSize: '14px', background: 'white', border: 'none', borderTop: '1px solid #e2e8f0', cursor: 'pointer' }}>
+              Abbrechen
+            </button>
           </div>
         </div>
       )}
